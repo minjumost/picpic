@@ -1,5 +1,7 @@
 package net.minipia.apiPayload;
 
+import net.minipia.apiPayload.code.status.SuccessStatus;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
