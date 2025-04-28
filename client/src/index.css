@@ -2,7 +2,7 @@
 
 html,
 body {
-  height: 100%;
+  height: 100vh;
 }
 
 @theme {
@@ -10,20 +10,18 @@ body {
   --color-red: #ff6f61;
   --color-orange: #fbc48a;
   --color-yellow: #f7f0a5;
+  --color-text: #35455e;
 
   --color-greenBorder: #54a25e;
   --color-yellowBorder: #fcf9e5;
   --color-redBorder: #e1493a;
 
-  --text-default: #35455e;
-  --text-white: #ffffff;
+  --color-bg: #fbfbf6;
 
   --text-default: 24px;
   --text-sub: 18px;
   --text-title: 40px;
   --text-subtitle: 32px;
-
-  --background-color: #fbfbf6;
 }
 
 @font-face {
