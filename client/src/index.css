@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+html,
+body {
+  height: 100%;
+}
+
+@theme {
+  --color-primary: #fb9ec6;
+  --color-secondary: #b1d9ff;
+  --color-boy: #2878f5;
+  --color-girl: #ffecf6;
+  --color-white: #ffffff;
+  --color-gray: #f9f9f9;
+  --color-bordergray: #afafaf;
+  --color-lightBlue: #d9e9f8;
+
+  --color-safe: #4fb643;
+  --color-warning: #f12121;
+  --color-danger: #f04141;
+
+  --text-default: #35455e;
+  --text-white: #ffffff;
+
+  --text-default: 24px;
+  --text-sub: 18px;
+  --text-title: 40px;
+  --text-subtitle: 32px;
+
+  --shadow-mainBox: -3px -3px 4px rgba(237, 237, 237, 0.25),
+    3px 3px 4px rgba(160, 160, 160, 0.25);
+
+  --background-color: #ffffff;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 500;
+  font-style: normal;
+  src: url("/fonts/Pretendard-Medium.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 600;
+  font-style: normal;
+  src: url("/fonts/Pretendard-SemiBold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Pretendard";
+  font-weight: 700;
+  font-style: normal;
+  src: url("/fonts/Pretendard-Bold.otf") format("opentype");
+}
+
+@layer base {
+  :root {
+    font-family: "Pretendard", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji", "Apple Color Emoji", ui-sans-serif, system-ui,
+      sans-serif;
+    color: var(--text-black);
+    font-size: var(--text-default2);
+    letter-spacing: 0.04rem;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
