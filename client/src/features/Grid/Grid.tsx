@@ -1,36 +1,10 @@
 import Konva from "konva";
 import { useState, useMemo } from "react";
-import { Stage, Layer, Line, Rect } from "react-konva";
-
-function createGridLines(minCoord: number, maxCoord: number, cellSize: number) {
-  const lines = [];
-
-  for (let x = minCoord; x <= maxCoord; x += cellSize) {
-    lines.push(
-      <Line
-        key={`v-${x}`}
-        points={[x, minCoord, x, maxCoord]}
-        stroke="lightgray"
-        strokeWidth={1}
-        listening={false}
-      />
-    );
-  }
-
-  for (let y = minCoord; y <= maxCoord; y += cellSize) {
-    lines.push(
-      <Line
-        key={`h-${y}`}
-        points={[minCoord, y, maxCoord, y]}
-        stroke="lightgray"
-        strokeWidth={1}
-        listening={false}
-      />
-    );
-  }
-
-  return lines;
-}
+import { Stage, Layer, Rect } from "react-konva";
+import { useObjectStore } from "../../store/objectStore";
+import GridImage from "./GridImage";
+import createGridLines from "./GridLines";
+import { PlacedObject } from "../../types/object";
 
 const Grid = () => {
   const logicalWidth = 2500;
@@ -40,10 +14,13 @@ const Grid = () => {
   const minCoord = 0;
   const maxCoord = 2500;
 
+  const { selectedObject } = useObjectStore();
+
   const [selectedCell, setSelectedCell] = useState<{
     row: number;
     col: number;
   } | null>(null);
+  const [placedObjects, setPlacedObjects] = useState<PlacedObject[]>([]);
 
   const gridLines = useMemo(
     () => createGridLines(minCoord, maxCoord, cellSize),
@@ -53,7 +30,7 @@ const Grid = () => {
   const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const stage = e.target.getStage();
     const pointer = stage?.getPointerPosition();
-    if (!pointer) return;
+    if (!pointer || !selectedObject) return;
 
     const x = pointer.x;
     const y = pointer.y;
@@ -67,6 +44,15 @@ const Grid = () => {
       }
       return { row, col };
     });
+
+    setPlacedObjects((prev) => [
+      ...prev,
+      {
+        ...selectedObject,
+        positionX: col * cellSize,
+        positionY: row * cellSize,
+      },
+    ]);
   };
 
   return (
@@ -74,13 +60,27 @@ const Grid = () => {
       <Stage width={logicalWidth} height={logicalHeight} onClick={handleClick}>
         <Layer listening={false}>
           {gridLines}
+
+          {placedObjects.map((obj, idx) => (
+            <GridImage
+              key={idx}
+              src={obj.src}
+              x={obj.positionX + cellSize / 2}
+              y={obj.positionY + cellSize / 2}
+              size={cellSize}
+              type={obj.type}
+              width={obj.width}
+              height={obj.height}
+            />
+          ))}
+
           {selectedCell && (
             <Rect
               x={selectedCell.col * cellSize}
               y={selectedCell.row * cellSize}
               width={cellSize}
               height={cellSize}
-              stroke="red" // ✨ 빨간 테두리
+              stroke="red"
               strokeWidth={2}
               listening={false}
             />
