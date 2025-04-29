@@ -1,8 +1,6 @@
-import  { useMemo } from "react";
-import { Stage, Layer, Line } from "react-konva";
+import { useState, useMemo } from "react";
+import { Stage, Layer, Line, Rect } from "react-konva";
 
-
-// ✨ Grid 선 생성 함수
 function createGridLines(minCoord: number, maxCoord: number, cellSize: number) {
   const lines = [];
 
@@ -34,19 +32,22 @@ function createGridLines(minCoord: number, maxCoord: number, cellSize: number) {
 }
 
 const Grid = () => {
-
-  const logicalWidth = 1000; // Stage 실제 크기
+  const logicalWidth = 1000;
   const logicalHeight = 1000;
 
   const cellSize = 50;
   const minCoord = 0;
   const maxCoord = 1000;
 
-  const gridLines = useMemo(() => createGridLines(minCoord, maxCoord, cellSize), [
-    minCoord,
-    maxCoord,
-    cellSize,
-  ]);
+  const [selectedCell, setSelectedCell] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
+
+  const gridLines = useMemo(
+    () => createGridLines(minCoord, maxCoord, cellSize),
+    [minCoord, maxCoord, cellSize]
+  );
 
   const handleClick = (e: any) => {
     const stage = e.target.getStage();
@@ -59,7 +60,7 @@ const Grid = () => {
     const col = Math.floor((x - minCoord) / cellSize);
     const row = Math.floor((y - minCoord) / cellSize);
 
-    console.log(`Clicked cell: Row ${row}, Col ${col}`);
+    setSelectedCell({ row, col }); // ✨ 클릭한 칸 저장
   };
 
   return (
@@ -75,6 +76,17 @@ const Grid = () => {
       >
         <Layer listening={false}>
           {gridLines}
+          {selectedCell && (
+            <Rect
+              x={selectedCell.col * cellSize}
+              y={selectedCell.row * cellSize}
+              width={cellSize}
+              height={cellSize}
+              stroke="red" // ✨ 빨간 테두리
+              strokeWidth={2}
+              listening={false}
+            />
+          )}
         </Layer>
       </Stage>
     </div>
