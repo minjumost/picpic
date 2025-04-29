@@ -1,17 +1,19 @@
-import "./App.css";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./App.css";
 import LandingPage from "./pages/LandingPage";
-import TopSheet from "../src/features/TopSheet.tsx";
-import BottomSheet from "./features/BottomSheet.tsx";
+import MainPage from "./pages/MainPage";
 
-function App() {
-  return (
-    <>
-      {/* <LandingPage /> */}
-      <TopSheet />
-      <BottomSheet />
-    </>
-  );
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/main",
+    element: <MainPage />,
+  },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App;
