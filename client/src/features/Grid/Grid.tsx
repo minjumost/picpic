@@ -1,3 +1,4 @@
+import Konva from "konva";
 import { useState, useMemo } from "react";
 import { Stage, Layer, Line, Rect } from "react-konva";
 
@@ -32,12 +33,12 @@ function createGridLines(minCoord: number, maxCoord: number, cellSize: number) {
 }
 
 const Grid = () => {
-  const logicalWidth = 1000;
-  const logicalHeight = 1000;
+  const logicalWidth = 2500;
+  const logicalHeight = 2500;
 
   const cellSize = 50;
   const minCoord = 0;
-  const maxCoord = 1000;
+  const maxCoord = 2500;
 
   const [selectedCell, setSelectedCell] = useState<{
     row: number;
@@ -49,9 +50,9 @@ const Grid = () => {
     [minCoord, maxCoord, cellSize]
   );
 
-  const handleClick = (e: any) => {
+  const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const stage = e.target.getStage();
-    const pointer = stage.getPointerPosition();
+    const pointer = stage?.getPointerPosition();
     if (!pointer) return;
 
     const x = pointer.x;
