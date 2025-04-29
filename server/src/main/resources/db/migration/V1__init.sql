@@ -15,9 +15,11 @@ CREATE TABLE objects
 CREATE TABLE rooms
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code       VARCHAR(8) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL UNIQUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at DATETIME DEFAULT NULL
+    deleted_at DATETIME DEFAULT NULL,
+    INDEX idx_room_code (code)
 );
 
 -- 방에 배치된 오브젝트 테이블
