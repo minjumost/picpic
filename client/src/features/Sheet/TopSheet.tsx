@@ -1,8 +1,8 @@
 import { useState } from "react";
-import woodTile from "../assets/tiles/test_tile.png";
-import table from "../assets/furnitures/test_furniture.png";
-import furniture from "../assets/furnitures/test_furniture2.png";
-import checkIcon from "../assets/check.png"; // ✅ 체크 아이콘
+import woodTile from "../../assets/tiles/test_tile.png";
+import table from "../../assets/furnitures/test_furniture.png";
+import furniture from "../../assets/furnitures/test_furniture2.png";
+import checkIcon from "../../assets/check.png"; // ✅ 체크 아이콘
 
 // 타입 정의
 interface AssetItem {
@@ -16,7 +16,7 @@ const assets: AssetItem[] = [
   { src: furniture, alt: "Printer" },
 ];
 
-function App() {
+function TopSheet() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const handleClick = (index: number) => {
@@ -24,7 +24,7 @@ function App() {
   };
 
   return (
-    <div className="mx-auto w-full p-2 flex flex-col items-start gap-2 bg-orange border-[3px] border-blackBorder rounded-lg">
+    <div className=" absolute top-0  z-10 mx-auto w-full p-2 flex flex-col items-start gap-2 bg-orange border-[3px] border-blackBorder rounded-lg">
       <div className="relative w-full flex flex-wrap justify-center items-center gap-4 p-5 bg-yellowBorder border-[3px] border-orangeBorder rounded-lg box-border">
         {assets.map((asset, index) => (
           <div
@@ -52,4 +52,4 @@ function App() {
   );
 }
 
-export default App;
+export default TopSheet;
