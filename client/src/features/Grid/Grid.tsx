@@ -60,20 +60,17 @@ const Grid = () => {
     const col = Math.floor((x - minCoord) / cellSize);
     const row = Math.floor((y - minCoord) / cellSize);
 
-    setSelectedCell({ row, col }); // ✨ 클릭한 칸 저장
+    setSelectedCell((prev) => {
+      if (prev && prev.row === row && prev.col === col) {
+        return null;
+      }
+      return { row, col };
+    });
   };
 
   return (
-    <div
-      id="scroll-wrapper"
-      className="w-[400px] h-full overflow-auto border border-solid"
-    >
-      <Stage
-        width={logicalWidth}
-        height={logicalHeight}
-        onClick={handleClick}
-        style={{ background: "#fff" }}
-      >
+    <div id="scroll-wrapper" className="w-full h-full overflow-auto">
+      <Stage width={logicalWidth} height={logicalHeight} onClick={handleClick}>
         <Layer listening={false}>
           {gridLines}
           {selectedCell && (
