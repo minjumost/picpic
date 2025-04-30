@@ -30,7 +30,7 @@ export const furnitures: ServerObject[] = [
 
 export const tiles: ServerObject[] = [
   {
-    id: 1,
+    id: 4,
     width: 50,
     height: 50,
     type: 0,
@@ -40,7 +40,7 @@ export const tiles: ServerObject[] = [
 
 export const walls: ServerObject[] = [
   {
-    id: 1,
+    id: 5,
     width: 50,
     height: 50,
     type: 2,
