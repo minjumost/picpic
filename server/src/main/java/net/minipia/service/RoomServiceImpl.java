@@ -16,6 +16,9 @@ import net.minipia.dto.PlaceObjectRequestDTO;
 import net.minipia.dto.PlaceObjectResponseDTO;
 import net.minipia.dto.ReadObjectsInRangeRequestDTO;
 import net.minipia.dto.ReadObjectsInRangeResponseDTO;
+import net.minipia.dto.RemoveObjectPayloadDTO;
+import net.minipia.dto.RemoveObjectRequestDTO;
+import net.minipia.dto.RemoveObjectResponseDTO;
 import net.minipia.entity.Object;
 import net.minipia.entity.Room;
 import net.minipia.entity.RoomObject;
@@ -134,6 +137,25 @@ public class RoomServiceImpl implements RoomService {
 					.width(object.getWidth())
 					.height(object.getHeight())
 					.imageUrl(object.getImageUrl())
+					.build()
+				)
+				.build()
+		);
+	}
+
+	@Override
+	public void removeObject(RemoveObjectRequestDTO removeObjectRequestDTO) {
+		RoomObject roomObject = roomObjectRepository.findById(removeObjectRequestDTO.roomObjectId()).orElseThrow(
+			() -> new NotFoundException(ErrorStatus.INVALID_OBJECT_ID)
+		);
+
+		roomObjectRepository.delete(roomObject);
+
+		simpMessagingTemplate.convertAndSend("/pub/room/" + removeObjectRequestDTO.code(),
+			RemoveObjectResponseDTO.builder()
+				.type("object_removed")
+				.payload(RemoveObjectPayloadDTO.builder()
+					.roomObjectId(roomObject.getId())
 					.build()
 				)
 				.build()
