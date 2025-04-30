@@ -13,9 +13,9 @@ const PlacedObjects = ({ objects, cellSize }: PlacedObjectsProps) => {
       {objects.map((obj, idx) => (
         <GridImage
           key={idx}
-          src={obj.src}
-          x={obj.positionX + cellSize / 2}
-          y={obj.positionY + cellSize / 2}
+          src={obj.imageUrl}
+          x={obj.posX + cellSize / 2}
+          y={obj.posY + cellSize / 2}
           size={cellSize}
           type={obj.type}
           width={obj.width}

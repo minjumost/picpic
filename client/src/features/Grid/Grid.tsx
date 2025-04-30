@@ -54,8 +54,9 @@ const Grid = () => {
       ...prev,
       {
         ...selectedObject,
-        positionX: gridPosition.col * CELL_SIZE,
-        positionY: gridPosition.row * CELL_SIZE,
+        posX: gridPosition.col * CELL_SIZE,
+        posY: gridPosition.row * CELL_SIZE,
+        imageUrl: selectedObject.src,
       },
     ]);
   };

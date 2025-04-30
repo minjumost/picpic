@@ -3,14 +3,24 @@
 import { useState } from "react";
 import { furnitures, tiles, walls } from "../../mocks/item";
 import { useObjectStore } from "../../store/objectStore";
-import { ServerObject, CATEGORIES, CategoryKey } from "../../types/object"; // ✨ types import
+import {
+  ServerObject,
+  OBJECT_TYPES,
+  OBJECT_TYPE_LABELS,
+} from "../../types/object";
 
-const categories = CATEGORIES; // ✨ 중앙 관리된 카테고리 사용
+// 카테고리 정의
+const CATEGORIES = [
+  { key: OBJECT_TYPES.TILE, label: OBJECT_TYPE_LABELS[OBJECT_TYPES.TILE] },
+  { key: OBJECT_TYPES.OBJECT, label: OBJECT_TYPE_LABELS[OBJECT_TYPES.OBJECT] },
+  { key: OBJECT_TYPES.WALL, label: OBJECT_TYPE_LABELS[OBJECT_TYPES.WALL] },
+] as const;
 
-const categoryItems: Record<CategoryKey, ServerObject[]> = {
-  furniture: furnitures,
-  tile: tiles,
-  wall: walls,
+// 카테고리별 아이템 매핑
+const categoryItems: Record<number, ServerObject[]> = {
+  [OBJECT_TYPES.TILE]: tiles,
+  [OBJECT_TYPES.OBJECT]: furnitures,
+  [OBJECT_TYPES.WALL]: walls,
 };
 
 const BottomSheet = () => {
@@ -20,25 +30,28 @@ const BottomSheet = () => {
 
   const handlePrev = () => {
     setCurrentCategoryIndex((prev) =>
-      prev === 0 ? categories.length - 1 : prev - 1
+      prev === 0 ? CATEGORIES.length - 1 : prev - 1
     );
     setSelectedIndex(null);
   };
 
   const handleNext = () => {
     setCurrentCategoryIndex((prev) =>
-      prev === categories.length - 1 ? 0 : prev + 1
+      prev === CATEGORIES.length - 1 ? 0 : prev + 1
     );
     setSelectedIndex(null);
   };
 
-  const currentCategory = categories[currentCategoryIndex];
+  const currentCategory = CATEGORIES[currentCategoryIndex];
   const items = categoryItems[currentCategory.key] || [];
 
   const handleItemClick = (index: number) => {
     setSelectedIndex(index);
-    const clickedItem = items[index]; // ServerObject 전체 넘김
-    setSelectedObject(clickedItem);
+    const clickedItem = items[index];
+    setSelectedObject({
+      ...clickedItem,
+      type: currentCategory.key, // 숫자 타입으로 설정
+    });
   };
 
   return (
