@@ -4,13 +4,17 @@ import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
+import net.minipia.apiPayload.code.status.ErrorStatus;
+import net.minipia.apiPayload.exception.NotFoundException;
 import net.minipia.dto.CreateRoomResponseDTO;
 import net.minipia.entity.Room;
 import net.minipia.repository.RoomRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
 
@@ -37,5 +41,14 @@ public class RoomServiceImpl implements RoomService {
 		roomRepository.save(room);
 
 		return CreateRoomResponseDTO.builder().code(code).build();
+	}
+
+	@Override
+	public void enterRoom(String code) {
+		
+		Room room = roomRepository.findByCode(code)
+			.orElseThrow(() -> new NotFoundException(ErrorStatus.INVALID_ROOM_CODE));
+
+		log.info("[방 입장] code={}", code);
 	}
 }
