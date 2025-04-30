@@ -46,11 +46,19 @@ const BottomSheet = () => {
   const items = categoryItems[currentCategory.key] || [];
 
   const handleItemClick = (index: number) => {
+    // 이미 선택된 아이템을 다시 클릭한 경우
+    if (selectedIndex === index) {
+      setSelectedIndex(null);
+      setSelectedObject(null); // 선택 해제
+      return;
+    }
+
+    // 새로운 아이템 선택
     setSelectedIndex(index);
     const clickedItem = items[index];
     setSelectedObject({
       ...clickedItem,
-      type: currentCategory.key, // 숫자 타입으로 설정
+      type: currentCategory.key,
     });
   };
 
