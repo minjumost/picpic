@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.minipia.entity.Object;
@@ -18,6 +19,7 @@ import jakarta.persistence.PersistenceContext;
 
 @DataJpaTest
 @Transactional
+@ActiveProfiles(profiles = "test")
 @Import(RoomObjectEntityTest.AuditingConfig.class) // Auditing 활성화
 class RoomObjectEntityTest {
 
@@ -32,7 +34,7 @@ class RoomObjectEntityTest {
 	@Test
 	void 방오브젝트_엔티티_직접_저장_조회() {
 		// given
-		Room room = Room.builder().build();
+		Room room = Room.builder().code("123456").build();
 		Object object = Object.builder()
 			.type(Byte.valueOf("1"))
 			.width(10)

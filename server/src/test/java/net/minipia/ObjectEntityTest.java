@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.minipia.entity.Object;
@@ -16,6 +17,7 @@ import jakarta.persistence.PersistenceContext;
 
 @DataJpaTest
 @Transactional
+@ActiveProfiles(profiles = "test")
 @Import(ObjectEntityTest.AuditingConfig.class) // Auditing 활성화
 class ObjectEntityTest {
 
