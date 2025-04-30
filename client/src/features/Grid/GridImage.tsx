@@ -1,6 +1,6 @@
 import { Image } from "react-konva";
 import useImage from "use-image";
-import { ObjectType } from "../../types/object";
+import { OBJECT_TYPES, ObjectType } from "../../types/object";
 
 interface GridImageProps {
   src: string;
@@ -24,7 +24,7 @@ const GridImage = ({
   const [image] = useImage(src);
   if (!image) return null;
 
-  if (type === "tile") {
+  if (type === OBJECT_TYPES.TILE) {
     return (
       <Image
         image={image}
