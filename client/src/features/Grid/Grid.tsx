@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { Stage, Layer } from "react-konva";
 import { useObjectStore } from "../../store/objectStore";
 import createGridLines from "./GridLines";
-import { PlacedObject } from "../../types/object";
+import { PlacedObject, OBJECT_TYPES } from "../../types/object";
 import {
   GRID_WIDTH,
   GRID_HEIGHT,
@@ -24,6 +24,7 @@ const Grid = () => {
     row: number;
     col: number;
   } | null>(null);
+  const [showTopSheet, setShowTopSheet] = useState(false);
 
   // 로컬 상태로 배치된 오브젝트 관리 (신규 배치용)
   const [newPlacedObjects, setNewPlacedObjects] = useState<PlacedObject[]>([]);
@@ -36,6 +37,26 @@ const Grid = () => {
 
   // 서버 데이터와 로컬 데이터 합치기
   const allPlacedObjects = [...serverPlacedObjects, ...newPlacedObjects];
+
+  // 특정 셀에 타일 타입 오브젝트가 있는지 확인하는 함수
+  const hasTileInCell = (col: number, row: number) => {
+    return allPlacedObjects.some(
+      (obj) =>
+        obj.type === OBJECT_TYPES.TILE &&
+        obj.posX === col * CELL_SIZE &&
+        obj.posY === row * CELL_SIZE
+    );
+  };
+
+  // 같은 오브젝트 중복 체크 (이미지 URL로 비교)
+  const hasSameObjectInCell = (col: number, row: number, imageUrl: string) => {
+    return allPlacedObjects.some(
+      (obj) =>
+        obj.imageUrl === imageUrl && // id 대신 이미지 URL로 비교
+        obj.posX === col * CELL_SIZE &&
+        obj.posY === row * CELL_SIZE
+    );
+  };
 
   // 선택된 셀의 오브젝트들 찾기
   const getSelectedCellObjects = () => {
@@ -51,7 +72,7 @@ const Grid = () => {
 
   const gridLines = useMemo(
     () => createGridLines(MIN_COORD, MAX_COORD, CELL_SIZE),
-    [MIN_COORD, MAX_COORD, CELL_SIZE]
+    []
   );
 
   const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -65,20 +86,32 @@ const Grid = () => {
       MIN_COORD
     );
 
-    // 셀 선택은 항상 가능하도록 수정
-    setSelectedCell((prev) => {
-      if (
-        prev &&
-        prev.row === gridPosition.row &&
-        prev.col === gridPosition.col
-      ) {
-        return null;
-      }
-      return gridPosition;
-    });
-
-    // 오브젝트 배치는 selectedObject가 있을 때만
+    // 배치 모드일 때 (selectedObject가 있을 때)
     if (selectedObject) {
+      setShowTopSheet(false);
+      setSelectedCell(null);
+
+      // 타일 타입일 경우
+      if (selectedObject.type === OBJECT_TYPES.TILE) {
+        if (hasTileInCell(gridPosition.col, gridPosition.row)) {
+          console.warn("이미 타일이 배치되어 있습니다.");
+          return;
+        }
+      }
+      // 소품이나 벽일 경우
+      else if (
+        (selectedObject.type === OBJECT_TYPES.OBJECT ||
+          selectedObject.type === OBJECT_TYPES.WALL) &&
+        hasSameObjectInCell(
+          gridPosition.col,
+          gridPosition.row,
+          selectedObject.src // id 대신 src 사용
+        )
+      ) {
+        console.warn("이미 같은 오브젝트가 배치되어 있습니다.");
+        return;
+      }
+
       setNewPlacedObjects((prev) => [
         ...prev,
         {
@@ -88,12 +121,36 @@ const Grid = () => {
           imageUrl: selectedObject.src,
         },
       ]);
+      return;
     }
+
+    // 셀 선택 모드 (selectedObject가 없을 때)
+    setSelectedCell((prev) => {
+      if (
+        prev &&
+        prev.row === gridPosition.row &&
+        prev.col === gridPosition.col
+      ) {
+        setShowTopSheet(false);
+        return null;
+      }
+      setShowTopSheet(true);
+      return gridPosition;
+    });
   };
 
   return (
     <>
-      <TopSheet objects={getSelectedCellObjects()} />
+      {showTopSheet && selectedCell && !selectedObject && (
+        <TopSheet
+          objects={getSelectedCellObjects()}
+          position={selectedCell}
+          onClose={() => {
+            setShowTopSheet(false);
+            setSelectedCell(null);
+          }}
+        />
+      )}
       <div id="scroll-wrapper" className="w-full h-full overflow-auto">
         <Stage width={GRID_WIDTH} height={GRID_HEIGHT} onClick={handleClick}>
           <Layer listening={false}>
