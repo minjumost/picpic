@@ -1,19 +1,39 @@
 import { useState } from "react";
 import checkIcon from "../../assets/check.png"; // ✅ 체크 아이콘
 import { PlacedObject } from "../../types/object";
+import { useObjectStore } from "../../store/objectStore";
 
 interface TopSheetProps {
   objects: PlacedObject[];
+  onClose: () => void;
 }
 
-function TopSheet({ objects }: TopSheetProps) {
+function TopSheet({ objects, onClose }: TopSheetProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const { removePlacedObject } = useObjectStore();
+
+  console.log(objects);
 
   // 오브젝트가 없으면 렌더링하지 않음
   if (objects.length === 0) return null;
 
   const handleClick = (index: number) => {
-    setSelectedIndex(index);
+    if (selectedIndex === index) {
+      const objectToDelete = objects[index];
+      console.log(objectToDelete);
+      removePlacedObject(
+        objectToDelete.id,
+        objectToDelete.posX,
+        objectToDelete.posY
+      );
+      setSelectedIndex(null);
+    }
+
+    if (objects.length === 1) {
+      onClose();
+    } else {
+      setSelectedIndex(index);
+    }
   };
 
   return (
