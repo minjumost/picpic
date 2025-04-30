@@ -2,11 +2,12 @@ import { useNavigate } from "react-router-dom";
 import PuppyImg from "../assets/puppy.png";
 
 const LandingPage = () => {
-  const navigate = useNavigate(); // 추가
+  const navigate = useNavigate();
 
   const handleStart = () => {
-    navigate("/main"); // "/main"으로 이동
+    navigate(`/main?r=${import.meta.env.VITE_ROOM_CODE}`);
   };
+
   return (
     <div className="bg-bg h-full flex flex-col items-center justify-center gap-10">
       <div className="flex flex-col items-center">
