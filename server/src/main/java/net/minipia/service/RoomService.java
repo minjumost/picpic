@@ -4,4 +4,6 @@ import net.minipia.dto.CreateRoomResponseDTO;
 
 public interface RoomService {
 	public CreateRoomResponseDTO createRoom();
+
+	public void enterRoom(String code);
 }
