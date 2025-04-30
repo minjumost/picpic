@@ -10,18 +10,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.1.1",
     "@tailwindcss/vite": "^4.1.4",
     "@tanstack/react-query": "^5.74.7",
+    "@types/sharedworker": "^0.0.158",
+    "@types/sockjs-client": "^1.5.4",
     "konva": "^9.3.20",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-konva": "^19.0.3",
     "react-router-dom": "^7.5.2",
+    "sockjs-client": "^1.6.1",
     "tailwindcss": "^4.1.4",
     "use-image": "^1.1.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@eslint/js": "^9.22.0",
     "@types/node": "^22.15.3",
     "@types/react": "^19.0.10",
