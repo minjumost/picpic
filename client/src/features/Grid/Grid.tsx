@@ -1,9 +1,9 @@
 import Konva from "konva";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Stage, Layer } from "react-konva";
 import { useObjectStore } from "../../store/objectStore";
 import createGridLines from "./GridLines";
-import { PlacedObject, OBJECT_TYPES } from "../../types/object";
+import { OBJECT_TYPES } from "../../types/object";
 import {
   GRID_WIDTH,
   GRID_HEIGHT,
@@ -19,15 +19,13 @@ import { getPlacedObjects } from "../../api/grid";
 import TopSheet from "../Sheet/TopSheet";
 
 const Grid = () => {
-  const { selectedObject } = useObjectStore();
+  const { selectedObject, placedObjects, addPlacedObject, initPlacedObjects } =
+    useObjectStore();
   const [selectedCell, setSelectedCell] = useState<{
     row: number;
     col: number;
   } | null>(null);
   const [showTopSheet, setShowTopSheet] = useState(false);
-
-  // 로컬 상태로 배치된 오브젝트 관리 (신규 배치용)
-  const [newPlacedObjects, setNewPlacedObjects] = useState<PlacedObject[]>([]);
 
   // 서버에서 기존 배치된 오브젝트 목록 조회
   const { data: serverPlacedObjects = [] } = useQuery({
@@ -35,12 +33,15 @@ const Grid = () => {
     queryFn: getPlacedObjects,
   });
 
-  // 서버 데이터와 로컬 데이터 합치기
-  const allPlacedObjects = [...serverPlacedObjects, ...newPlacedObjects];
+  useEffect(() => {
+    if (serverPlacedObjects.length > 0) {
+      initPlacedObjects(serverPlacedObjects);
+    }
+  }, [serverPlacedObjects]);
 
   // 특정 셀에 타일 타입 오브젝트가 있는지 확인하는 함수
   const hasTileInCell = (col: number, row: number) => {
-    return allPlacedObjects.some(
+    return placedObjects.some(
       (obj) =>
         obj.type === OBJECT_TYPES.TILE &&
         obj.posX === col * CELL_SIZE &&
@@ -50,7 +51,7 @@ const Grid = () => {
 
   // 같은 오브젝트 중복 체크 (이미지 URL로 비교)
   const hasSameObjectInCell = (col: number, row: number, imageUrl: string) => {
-    return allPlacedObjects.some(
+    return placedObjects.some(
       (obj) =>
         obj.imageUrl === imageUrl && // id 대신 이미지 URL로 비교
         obj.posX === col * CELL_SIZE &&
@@ -65,7 +66,7 @@ const Grid = () => {
     const cellX = selectedCell.col * CELL_SIZE;
     const cellY = selectedCell.row * CELL_SIZE;
 
-    return allPlacedObjects.filter(
+    return placedObjects.filter(
       (obj) => obj.posX === cellX && obj.posY === cellY
     );
   };
@@ -112,15 +113,12 @@ const Grid = () => {
         return;
       }
 
-      setNewPlacedObjects((prev) => [
-        ...prev,
-        {
-          ...selectedObject,
-          posX: gridPosition.col * CELL_SIZE,
-          posY: gridPosition.row * CELL_SIZE,
-          imageUrl: selectedObject.src,
-        },
-      ]);
+      addPlacedObject({
+        ...selectedObject,
+        posX: gridPosition.col * CELL_SIZE,
+        posY: gridPosition.row * CELL_SIZE,
+        imageUrl: selectedObject.src,
+      });
       return;
     }
 
@@ -144,7 +142,6 @@ const Grid = () => {
       {showTopSheet && selectedCell && !selectedObject && (
         <TopSheet
           objects={getSelectedCellObjects()}
-          position={selectedCell}
           onClose={() => {
             setShowTopSheet(false);
             setSelectedCell(null);
@@ -155,7 +152,7 @@ const Grid = () => {
         <Stage width={GRID_WIDTH} height={GRID_HEIGHT} onClick={handleClick}>
           <Layer listening={false}>
             {gridLines}
-            <PlacedObjects objects={allPlacedObjects} cellSize={CELL_SIZE} />
+            <PlacedObjects objects={placedObjects} cellSize={CELL_SIZE} />
             <SelectionOverlay
               selectedCell={selectedCell}
               cellSize={CELL_SIZE}
