@@ -1,21 +1,21 @@
+// BottomSheet.tsx
+
 import { useState } from "react";
-import furnitureImage from "../../assets/furnitures/test_furniture.png";
-import tileImage from "../../assets/tiles/test_tile.png";
+import { furnitures, tiles, walls } from "../../mocks/item";
+import { useObjectStore } from "../../store/objectStore";
+import { ServerObject, CATEGORIES, CategoryKey } from "../../types/object"; // ✨ types import
 
-interface CategoryItems {
-  [category: string]: string[];
-}
+const categories = CATEGORIES; // ✨ 중앙 관리된 카테고리 사용
 
-const categories: string[] = ["가구", "타일", "벽"];
-
-const categoryItems: CategoryItems = {
-  가구: Array(12).fill(furnitureImage),
-  타일: Array(12).fill(tileImage),
-  벽: Array(12).fill(tileImage),
+const categoryItems: Record<CategoryKey, ServerObject[]> = {
+  furniture: furnitures,
+  tile: tiles,
+  wall: walls,
 };
 
 const BottomSheet = () => {
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState<number>(0);
+  const { setSelectedObject } = useObjectStore();
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const handlePrev = () => {
@@ -32,11 +32,13 @@ const BottomSheet = () => {
     setSelectedIndex(null);
   };
 
-  const currentCategory: string = categories[currentCategoryIndex];
-  const items: string[] = categoryItems[currentCategory];
+  const currentCategory = categories[currentCategoryIndex];
+  const items = categoryItems[currentCategory.key] || [];
 
   const handleItemClick = (index: number) => {
     setSelectedIndex(index);
+    const clickedItem = items[index]; // ServerObject 전체 넘김
+    setSelectedObject(clickedItem);
   };
 
   return (
@@ -47,7 +49,7 @@ const BottomSheet = () => {
           {"<"}
         </button>
         <span className="text-blackBorder text-subtitle">
-          {currentCategory}
+          {currentCategory.label}
         </span>
         <button onClick={handleNext} className="text-blackBorder text-2xl">
           {">"}
@@ -58,17 +60,17 @@ const BottomSheet = () => {
       <div className="flex flex-wrap justify-center content-start gap-5 p-3 bg-yellowBorder border-[3px] border-orangeBorder rounded-lg w-full h-[251px] overflow-y-auto">
         {items.map((item, index) => (
           <div
-            key={index}
+            key={item.id}
             onClick={() => handleItemClick(index)}
             className={`flex justify-center items-center cursor-pointer p-1 
-                ${
-                  selectedIndex === index
-                    ? "rounded-lg border-2 border-red-500"
-                    : ""
-                }`}
+              ${
+                selectedIndex === index
+                  ? "rounded-lg border-2 border-red-500"
+                  : ""
+              }`}
           >
             <img
-              src={item}
+              src={item.src}
               alt={`item-${index}`}
               className="block max-w-[60px] max-h-[60px] object-contain"
             />
