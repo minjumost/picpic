@@ -4,6 +4,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.minipia.dto.PlaceObjectRequestDTO;
+import net.minipia.dto.RemoveObjectRequestDTO;
 import net.minipia.dto.RoomEnterMessage;
 import net.minipia.service.RoomService;
 
@@ -20,5 +22,15 @@ public class RoomWebSocketController {
 	@MessageMapping("/room/enter")
 	public void enterRoom(RoomEnterMessage roomEnterMessage) {
 		roomService.enterRoom(roomEnterMessage.code());
+	}
+
+	@MessageMapping("/room/object/place")
+	public void placeObject(PlaceObjectRequestDTO placeObjectRequestDTO) {
+		roomService.placeObject(placeObjectRequestDTO);
+	}
+
+	@MessageMapping("/room/object/remove")
+	public void removeObject(RemoveObjectRequestDTO removeObjectRequestDTO) {
+		roomService.removeObject(removeObjectRequestDTO);
 	}
 }
