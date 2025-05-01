@@ -140,6 +140,8 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
         ...selectedObject,
         posX: gridPosition.col * CELL_SIZE,
         posY: gridPosition.row * CELL_SIZE,
+        width: selectedObject.width,
+        height: selectedObject.height,
         imageUrl: selectedObject.src,
       };
 
