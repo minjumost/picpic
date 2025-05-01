@@ -83,38 +83,6 @@ const Grid = ({ code, stompMessage }: GridProps) => {
     }
   }, [serverPlacedObjects]);
 
-  // 특정 셀에 타일 타입 오브젝트가 있는지 확인하는 함수
-  const hasTileInCell = (col: number, row: number) => {
-    return placedObjects.some(
-      (obj) =>
-        obj.type === OBJECT_TYPES.TILE &&
-        obj.posX === col * CELL_SIZE &&
-        obj.posY === row * CELL_SIZE
-    );
-  };
-
-  // 같은 오브젝트 중복 체크 (이미지 URL로 비교)
-  const hasSameObjectInCell = (col: number, row: number, imageUrl: string) => {
-    return placedObjects.some(
-      (obj) =>
-        obj.imageUrl === imageUrl && // id 대신 이미지 URL로 비교
-        obj.posX === col * CELL_SIZE &&
-        obj.posY === row * CELL_SIZE
-    );
-  };
-
-  // 선택된 셀의 오브젝트들 찾기
-  const getSelectedCellObjects = () => {
-    if (!selectedCell) return [];
-
-    const cellX = selectedCell.col * CELL_SIZE;
-    const cellY = selectedCell.row * CELL_SIZE;
-
-    return placedObjects.filter(
-      (obj) => obj.posX === cellX && obj.posY === cellY
-    );
-  };
-
   const gridLines = useMemo(
     () => createGridLines(MIN_COORD, MAX_COORD, CELL_SIZE),
     []
@@ -155,13 +123,10 @@ const Grid = ({ code, stompMessage }: GridProps) => {
       }
 
       addPlacedObject({
-        id: selectedObject.id,
+        ...selectedObject,
         posX: gridPosition.col * CELL_SIZE,
         posY: gridPosition.row * CELL_SIZE,
-        width: selectedObject.width,
-        height: selectedObject.height,
         imageUrl: selectedObject.src,
-        type: selectedObject.type,
       });
 
       return;
