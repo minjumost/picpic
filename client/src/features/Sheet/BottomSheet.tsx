@@ -1,42 +1,65 @@
+// BottomSheet.tsx
+
 import { useState } from "react";
-import furnitureImage from "../../assets/furnitures/test_furniture.png";
-import tileImage from "../../assets/tiles/test_tile.png";
+import { furnitures, tiles, walls } from "../../mocks/item";
+import { useObjectStore } from "../../store/objectStore";
+import {
+  ServerObject,
+  OBJECT_TYPES,
+  OBJECT_TYPE_LABELS,
+} from "../../types/object";
 
-interface CategoryItems {
-  [category: string]: string[];
-}
+// 카테고리 정의
+const CATEGORIES = [
+  { key: OBJECT_TYPES.TILE, label: OBJECT_TYPE_LABELS[OBJECT_TYPES.TILE] },
+  { key: OBJECT_TYPES.OBJECT, label: OBJECT_TYPE_LABELS[OBJECT_TYPES.OBJECT] },
+  { key: OBJECT_TYPES.WALL, label: OBJECT_TYPE_LABELS[OBJECT_TYPES.WALL] },
+] as const;
 
-const categories: string[] = ["가구", "타일", "벽"];
-
-const categoryItems: CategoryItems = {
-  가구: Array(12).fill(furnitureImage),
-  타일: Array(12).fill(tileImage),
-  벽: Array(12).fill(tileImage),
+// 카테고리별 아이템 매핑
+const categoryItems: Record<number, ServerObject[]> = {
+  [OBJECT_TYPES.TILE]: tiles,
+  [OBJECT_TYPES.OBJECT]: furnitures,
+  [OBJECT_TYPES.WALL]: walls,
 };
 
 const BottomSheet = () => {
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState<number>(0);
+  const { setSelectedObject } = useObjectStore();
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const handlePrev = () => {
     setCurrentCategoryIndex((prev) =>
-      prev === 0 ? categories.length - 1 : prev - 1
+      prev === 0 ? CATEGORIES.length - 1 : prev - 1
     );
     setSelectedIndex(null);
   };
 
   const handleNext = () => {
     setCurrentCategoryIndex((prev) =>
-      prev === categories.length - 1 ? 0 : prev + 1
+      prev === CATEGORIES.length - 1 ? 0 : prev + 1
     );
     setSelectedIndex(null);
   };
 
-  const currentCategory: string = categories[currentCategoryIndex];
-  const items: string[] = categoryItems[currentCategory];
+  const currentCategory = CATEGORIES[currentCategoryIndex];
+  const items = categoryItems[currentCategory.key] || [];
 
   const handleItemClick = (index: number) => {
+    // 이미 선택된 아이템을 다시 클릭한 경우
+    if (selectedIndex === index) {
+      setSelectedIndex(null);
+      setSelectedObject(null); // 선택 해제
+      return;
+    }
+
+    // 새로운 아이템 선택
     setSelectedIndex(index);
+    const clickedItem = items[index];
+    setSelectedObject({
+      ...clickedItem,
+      type: currentCategory.key,
+    });
   };
 
   return (
@@ -47,7 +70,7 @@ const BottomSheet = () => {
           {"<"}
         </button>
         <span className="text-blackBorder text-subtitle">
-          {currentCategory}
+          {currentCategory.label}
         </span>
         <button onClick={handleNext} className="text-blackBorder text-2xl">
           {">"}
@@ -58,17 +81,17 @@ const BottomSheet = () => {
       <div className="flex flex-wrap justify-center content-start gap-5 p-3 bg-yellowBorder border-[3px] border-orangeBorder rounded-lg w-full h-[251px] overflow-y-auto">
         {items.map((item, index) => (
           <div
-            key={index}
+            key={item.id}
             onClick={() => handleItemClick(index)}
             className={`flex justify-center items-center cursor-pointer p-1 
-                ${
-                  selectedIndex === index
-                    ? "rounded-lg border-2 border-red-500"
-                    : ""
-                }`}
+              ${
+                selectedIndex === index
+                  ? "rounded-lg border-2 border-red-500"
+                  : ""
+              }`}
           >
             <img
-              src={item}
+              src={item.src}
               alt={`item-${index}`}
               className="block max-w-[60px] max-h-[60px] object-contain"
             />

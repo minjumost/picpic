@@ -8,11 +8,6 @@ plugins {
 group = 'net.minipia'
 version = '0.0.1-SNAPSHOT'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
 
 configurations {
     compileOnly {
@@ -31,13 +26,13 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.flywaydb:flyway-core'
-    compileOnly "org.flywaydb:flyway-mysql"
+    implementation 'org.flywaydb:flyway-mysql'
     implementation 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    runtimeOnly 'com.h2database:h2'
+    testRuntimeOnly 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
