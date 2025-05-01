@@ -1,8 +1,8 @@
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import BottomSheet from "../features/Sheet/BottomSheet";
 import Grid from "../features/Grid/Grid";
 import { useStomp } from "../hooks/useStomp";
-import { useState } from "react";
 import { StompMessage } from "../types/stomp";
 
 const MainPage = () => {
