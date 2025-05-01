@@ -1,5 +1,6 @@
 import { CELL_SIZE } from "../../constants/grid";
 import { OBJECT_TYPES, PlacedObject } from "../../types/object";
+import { Client } from "@stomp/stompjs";
 
 interface GridPosition {
   row: number;
@@ -79,5 +80,55 @@ export const getSelectedCellObjects = (
 
   return placedObjects.filter(
     (obj) => obj.posX === cellX && obj.posY === cellY
+  );
+};
+
+export const sendPlaceObjectMessage = ({
+  client,
+  code,
+  object,
+}: {
+  client: Client | null;
+  code: string;
+  object: PlacedObject;
+}) => {
+  if (!client || !client.connected) {
+    console.warn("[STOMP] 연결되지 않았거나 client 없음");
+    return;
+  }
+
+  client.send(
+    `/app/room/object/place`,
+    {},
+    JSON.stringify({
+      code: code,
+      roomObjectId: object.id,
+      posX: object.posX,
+      posY: object.posY,
+    })
+  );
+};
+
+export const sendRemoveObjectMessage = ({
+  client,
+  code,
+  object,
+}: {
+  client: Client | null;
+  code: string;
+  object: PlacedObject;
+}) => {
+  if (!client || !client.connected) {
+    console.warn("[STOMP] 연결되지 않았거나 client 없음");
+    return;
+  }
+
+  client.send(
+    `/app/room/object/delete`,
+    {},
+    JSON.stringify({
+      code: code,
+      roomObjectId: object.id,
+    })
   );
 };

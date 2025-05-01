@@ -10,12 +10,18 @@ const MainPage = () => {
   const roomCode = searchParams.get("r");
   const [stompMessage, setStompMessage] = useState<StompMessage | null>(null);
 
-  useStomp(roomCode, setStompMessage);
+  const clientRef = useStomp(roomCode, setStompMessage);
 
   return (
     <div className="bg-bg relative h-full flex flex-col items-center justify-center">
       <BottomSheet />
-      {roomCode && <Grid code={roomCode} stompMessage={stompMessage} />}
+      {roomCode && (
+        <Grid
+          code={roomCode}
+          stompMessage={stompMessage}
+          stompClient={clientRef.current}
+        />
+      )}
     </div>
   );
 };

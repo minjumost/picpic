@@ -2,17 +2,19 @@ import { useState } from "react";
 import checkIcon from "../../assets/check.png"; // ✅ 체크 아이콘
 import { PlacedObject } from "../../types/object";
 import { useObjectStore } from "../../store/objectStore";
+import { sendRemoveObjectMessage } from "../Grid/utils";
+import { Client } from "@stomp/stompjs";
 
 interface TopSheetProps {
+  stompClient: Client | null;
+  code: string;
   objects: PlacedObject[];
   onClose: () => void;
 }
 
-function TopSheet({ objects, onClose }: TopSheetProps) {
+function TopSheet({ stompClient, code, objects, onClose }: TopSheetProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const { removePlacedObject } = useObjectStore();
-
-  console.log(objects);
+  const { removePlacedObjectById } = useObjectStore();
 
   // 오브젝트가 없으면 렌더링하지 않음
   if (objects.length === 0) return null;
@@ -20,12 +22,12 @@ function TopSheet({ objects, onClose }: TopSheetProps) {
   const handleClick = (index: number) => {
     if (selectedIndex === index) {
       const objectToDelete = objects[index];
-      console.log(objectToDelete);
-      removePlacedObject(
-        objectToDelete.id,
-        objectToDelete.posX,
-        objectToDelete.posY
-      );
+      removePlacedObjectById(objectToDelete.id);
+      sendRemoveObjectMessage({
+        client: stompClient,
+        code,
+        object: objectToDelete,
+      });
       setSelectedIndex(null);
     }
 
