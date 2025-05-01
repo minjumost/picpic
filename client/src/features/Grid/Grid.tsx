@@ -11,7 +11,12 @@ import {
   MIN_COORD,
   MAX_COORD,
 } from "../../constants/grid";
-import { calculateGridPosition } from "./utils";
+import {
+  calculateGridPosition,
+  getSelectedCellObjects,
+  hasSameObjectInCell,
+  hasTileInCell,
+} from "./utils";
 import PlacedObjects from "./PlacedObjects";
 import SelectionOverlay from "./SelectionOverlay";
 import { useQuery } from "@tanstack/react-query";
@@ -53,12 +58,6 @@ const Grid = ({ code, stompMessage }: GridProps) => {
   });
 
   useEffect(() => {
-    if (serverPlacedObjects.length > 0) {
-      initPlacedObjects(serverPlacedObjects);
-    }
-  }, [serverPlacedObjects]);
-
-  useEffect(() => {
     if (!stompMessage) return;
     const { type, payload } = stompMessage;
 
@@ -78,6 +77,13 @@ const Grid = ({ code, stompMessage }: GridProps) => {
     }
   }, [stompMessage]);
 
+  useEffect(() => {
+    if (serverPlacedObjects.length > 0) {
+      initPlacedObjects(serverPlacedObjects);
+    }
+  }, [serverPlacedObjects]);
+
+  // 특정 셀에 타일 타입 오브젝트가 있는지 확인하는 함수
   const hasTileInCell = (col: number, row: number) => {
     return placedObjects.some(
       (obj) =>
@@ -87,15 +93,17 @@ const Grid = ({ code, stompMessage }: GridProps) => {
     );
   };
 
+  // 같은 오브젝트 중복 체크 (이미지 URL로 비교)
   const hasSameObjectInCell = (col: number, row: number, imageUrl: string) => {
     return placedObjects.some(
       (obj) =>
-        obj.imageUrl === imageUrl &&
+        obj.imageUrl === imageUrl && // id 대신 이미지 URL로 비교
         obj.posX === col * CELL_SIZE &&
         obj.posY === row * CELL_SIZE
     );
   };
 
+  // 선택된 셀의 오브젝트들 찾기
   const getSelectedCellObjects = () => {
     if (!selectedCell) return [];
 
@@ -128,7 +136,7 @@ const Grid = ({ code, stompMessage }: GridProps) => {
       setSelectedCell(null);
 
       if (selectedObject.type === OBJECT_TYPES.TILE) {
-        if (hasTileInCell(gridPosition.col, gridPosition.row)) {
+        if (hasTileInCell(gridPosition.col, gridPosition.row, placedObjects)) {
           console.warn("이미 타일이 배치되어 있습니다.");
           return;
         }
@@ -138,7 +146,8 @@ const Grid = ({ code, stompMessage }: GridProps) => {
         hasSameObjectInCell(
           gridPosition.col,
           gridPosition.row,
-          selectedObject.src
+          selectedObject.src,
+          placedObjects
         )
       ) {
         console.warn("이미 같은 오브젝트가 배치되어 있습니다.");
@@ -176,7 +185,7 @@ const Grid = ({ code, stompMessage }: GridProps) => {
     <>
       {showTopSheet && selectedCell && !selectedObject && (
         <TopSheet
-          objects={getSelectedCellObjects()}
+          objects={getSelectedCellObjects(selectedCell, placedObjects)}
           onClose={() => {
             setShowTopSheet(false);
             setSelectedCell(null);
