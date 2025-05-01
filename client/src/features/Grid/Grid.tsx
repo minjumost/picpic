@@ -1,5 +1,6 @@
 import Konva from "konva";
 import { useState, useMemo, useEffect } from "react";
+import { Client } from "@stomp/stompjs";
 import { Stage, Layer } from "react-konva";
 import { useObjectStore } from "../../store/objectStore";
 import createGridLines from "./GridLines";
@@ -16,6 +17,7 @@ import {
   getSelectedCellObjects,
   hasSameObjectInCell,
   hasTileInCell,
+  sendPlaceObjectMessage,
 } from "./utils";
 import PlacedObjects from "./PlacedObjects";
 import SelectionOverlay from "./SelectionOverlay";
@@ -28,9 +30,16 @@ import { toPlacedObjectFromPayload } from "../../utils/stompMsgMapper";
 interface GridProps {
   code: string;
   stompMessage: StompMessage | null;
+  stompClient: Client | null;
 }
 
-const Grid = ({ code, stompMessage }: GridProps) => {
+const ACTION_TYPE = {
+  PLACED: "furniture_placed",
+  MOVED: "object_moved",
+  REMOVE: "object_removed",
+} as const;
+
+const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
   const {
     selectedObject,
     placedObjects,
@@ -61,18 +70,18 @@ const Grid = ({ code, stompMessage }: GridProps) => {
     if (!stompMessage) return;
     const { type, payload } = stompMessage;
 
-    if (type === "furniture_placed") {
+    if (type === ACTION_TYPE.PLACED) {
       addPlacedObject(toPlacedObjectFromPayload(payload));
     }
 
-    if (type === "object_moved") {
+    if (type === ACTION_TYPE.MOVED) {
       movePlacedObject(payload.roomObjectId, {
         posX: payload.posX,
         posY: payload.posY,
       });
     }
 
-    if (type === "object_removed") {
+    if (type === ACTION_TYPE.REMOVE) {
       removePlacedObjectById(payload.roomObjectId);
     }
   }, [stompMessage]);
@@ -122,12 +131,15 @@ const Grid = ({ code, stompMessage }: GridProps) => {
         return;
       }
 
-      addPlacedObject({
+      const newObject = {
         ...selectedObject,
         posX: gridPosition.col * CELL_SIZE,
         posY: gridPosition.row * CELL_SIZE,
         imageUrl: selectedObject.src,
-      });
+      };
+
+      addPlacedObject(newObject);
+      sendPlaceObjectMessage({ client: stompClient, code, object: newObject });
 
       return;
     }
@@ -150,6 +162,8 @@ const Grid = ({ code, stompMessage }: GridProps) => {
     <>
       {showTopSheet && selectedCell && !selectedObject && (
         <TopSheet
+          stompClient={stompClient}
+          code={code}
           objects={getSelectedCellObjects(selectedCell, placedObjects)}
           onClose={() => {
             setShowTopSheet(false);
