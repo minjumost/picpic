@@ -1,8 +1,12 @@
 import { useEffect, useRef } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import { StompMessage } from "../types/stomp";
 
-export const useStomp = (roomCode: string | null) => {
+export const useStomp = (
+  roomCode: string | null,
+  onMessage: (msg: StompMessage) => void
+) => {
   const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
@@ -19,17 +23,19 @@ export const useStomp = (roomCode: string | null) => {
     });
 
     client.onConnect = () => {
-      // 구독
       client.subscribe(`/topic/room/${roomCode}`, (message: IMessage) => {
-        const body = JSON.parse(message.body);
-        if (body.type === "INIT") {
-          console.log("[ROOM INIT]", body.data);
-        } else if (body.type === "UPDATE") {
-          console.log("[ROOM UPDATE]", body.data);
+        try {
+          const body = JSON.parse(message.body);
+          if (body.type === "INIT") {
+            console.log("[ROOM INIT]", body.data);
+          } else {
+            onMessage(body);
+          }
+        } catch (err) {
+          console.error("[STOMP PARSE ERROR]", err);
         }
       });
 
-      // 입장
       client.publish({
         destination: "/app/room/enter",
         body: JSON.stringify({ code: roomCode }),
@@ -46,7 +52,7 @@ export const useStomp = (roomCode: string | null) => {
     return () => {
       client.deactivate();
     };
-  }, [roomCode]);
+  }, [roomCode, onMessage]);
 
   return clientRef;
 };

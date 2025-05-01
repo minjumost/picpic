@@ -22,10 +22,23 @@ import SelectionOverlay from "./SelectionOverlay";
 import { useQuery } from "@tanstack/react-query";
 import { getPlacedObjects } from "../../api/grid";
 import TopSheet from "../Sheet/TopSheet";
+import { StompMessage } from "../../types/stomp";
+import { toPlacedObjectFromPayload } from "../../utils/stompMsgMapper";
 
-const Grid = () => {
-  const { selectedObject, placedObjects, addPlacedObject, initPlacedObjects } =
-    useObjectStore();
+interface GridProps {
+  code: string;
+  stompMessage: StompMessage | null;
+}
+
+const Grid = ({ code, stompMessage }: GridProps) => {
+  const {
+    selectedObject,
+    placedObjects,
+    addPlacedObject,
+    initPlacedObjects,
+    movePlacedObject,
+    removePlacedObjectById,
+  } = useObjectStore();
   const [selectedCell, setSelectedCell] = useState<{
     row: number;
     col: number;
@@ -34,9 +47,35 @@ const Grid = () => {
 
   // 서버에서 기존 배치된 오브젝트 목록 조회
   const { data: serverPlacedObjects = [] } = useQuery({
-    queryKey: ["placedObjects"],
-    queryFn: getPlacedObjects,
+    queryKey: ["placedObjects", code],
+    queryFn: () =>
+      getPlacedObjects(code, {
+        startX: 1,
+        startY: 1,
+        endX: 10,
+        endY: 10,
+      }),
   });
+
+  useEffect(() => {
+    if (!stompMessage) return;
+    const { type, payload } = stompMessage;
+
+    if (type === "furniture_placed") {
+      addPlacedObject(toPlacedObjectFromPayload(payload));
+    }
+
+    if (type === "object_moved") {
+      movePlacedObject(payload.roomObjectId, {
+        posX: payload.posX,
+        posY: payload.posY,
+      });
+    }
+
+    if (type === "object_removed") {
+      removePlacedObjectById(payload.roomObjectId);
+    }
+  }, [stompMessage]);
 
   useEffect(() => {
     if (serverPlacedObjects.length > 0) {
@@ -60,20 +99,16 @@ const Grid = () => {
       MIN_COORD
     );
 
-    // 배치 모드일 때 (selectedObject가 있을 때)
     if (selectedObject) {
       setShowTopSheet(false);
       setSelectedCell(null);
 
-      // 타일 타입일 경우
       if (selectedObject.type === OBJECT_TYPES.TILE) {
         if (hasTileInCell(gridPosition.col, gridPosition.row, placedObjects)) {
           console.warn("이미 타일이 배치되어 있습니다.");
           return;
         }
-      }
-      // 소품이나 벽일 경우
-      else if (
+      } else if (
         (selectedObject.type === OBJECT_TYPES.OBJECT ||
           selectedObject.type === OBJECT_TYPES.WALL) &&
         hasSameObjectInCell(
@@ -93,10 +128,10 @@ const Grid = () => {
         posY: gridPosition.row * CELL_SIZE,
         imageUrl: selectedObject.src,
       });
+
       return;
     }
 
-    // 셀 선택 모드 (selectedObject가 없을 때)
     setSelectedCell((prev) => {
       if (
         prev &&
