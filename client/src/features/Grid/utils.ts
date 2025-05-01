@@ -1,3 +1,6 @@
+import { CELL_SIZE } from "../../constants/grid";
+import { OBJECT_TYPES, PlacedObject } from "../../types/object";
+
 interface GridPosition {
   row: number;
   col: number;
@@ -33,4 +36,48 @@ export const calculateObjectPosition = (
     x: gridPosition.col * cellSize,
     y: gridPosition.row * cellSize,
   };
+};
+
+// 특정 셀에 타일 타입 오브젝트가 있는지 확인하는 함수
+export const hasTileInCell = (
+  col: number,
+  row: number,
+  placedObjects: PlacedObject[]
+) => {
+  return placedObjects.some(
+    (obj) =>
+      obj.type === OBJECT_TYPES.TILE &&
+      obj.posX === col * CELL_SIZE &&
+      obj.posY === row * CELL_SIZE
+  );
+};
+
+// 같은 오브젝트 중복 체크 (이미지 URL로 비교)
+export const hasSameObjectInCell = (
+  col: number,
+  row: number,
+  imageUrl: string,
+  placedObjects: PlacedObject[]
+) => {
+  return placedObjects.some(
+    (obj) =>
+      obj.imageUrl === imageUrl && // id 대신 이미지 URL로 비교
+      obj.posX === col * CELL_SIZE &&
+      obj.posY === row * CELL_SIZE
+  );
+};
+
+// 선택된 셀의 오브젝트들 찾기
+export const getSelectedCellObjects = (
+  selectedCell: { row: number; col: number },
+  placedObjects: PlacedObject[]
+) => {
+  if (!selectedCell) return [];
+
+  const cellX = selectedCell.col * CELL_SIZE;
+  const cellY = selectedCell.row * CELL_SIZE;
+
+  return placedObjects.filter(
+    (obj) => obj.posX === cellX && obj.posY === cellY
+  );
 };
