@@ -1,7 +1,6 @@
 import { CELL_SIZE } from "../../constants/grid";
 import { OBJECT_TYPES, PlacedObject } from "../../types/object";
 import { Client } from "@stomp/stompjs";
-import { Client } from "@stomp/stompjs";
 
 interface GridPosition {
   row: number;
