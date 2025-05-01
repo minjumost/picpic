@@ -97,16 +97,15 @@ export const sendPlaceObjectMessage = ({
     return;
   }
 
-  client.send(
-    `/app/room/object/place`,
-    {},
-    JSON.stringify({
+  client.publish({
+    destination: `/app/room/object/place`,
+    body: JSON.stringify({
       code: code,
       roomObjectId: object.id,
       posX: object.posX,
       posY: object.posY,
-    })
-  );
+    }),
+  });
 };
 
 export const sendRemoveObjectMessage = ({
@@ -123,12 +122,11 @@ export const sendRemoveObjectMessage = ({
     return;
   }
 
-  client.send(
-    `/app/room/object/delete`,
-    {},
-    JSON.stringify({
+  client.publish({
+    destination: `/app/room/object/delete`,
+    body: JSON.stringify({
       code: code,
       roomObjectId: object.id,
-    })
-  );
+    }),
+  });
 };
