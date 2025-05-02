@@ -1,0 +1,18 @@
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin: 40px auto;
+}
+
+.upload-form label {
+  font-weight: bold;
+}
+
+.upload-form input,
+.upload-form select,
+.upload-form button {
+  padding: 8px;
+  font-size: 14px;
+}
