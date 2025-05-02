@@ -5,9 +5,9 @@ import "./UploadPage.css";
 type AssetType = "floor" | "wall" | "furniture";
 
 const typeMap: Record<AssetType, number> = {
-  floor: 1,
+  floor: 0,
+  furniture: 1,
   wall: 2,
-  furniture: 3,
 };
 
 const UploadPage = () => {
@@ -79,7 +79,6 @@ const UploadPage = () => {
             <option value="furniture">가구</option>
           </select>
         </div>
-
         <div>
           <label>이미지 선택: </label>
           <input
@@ -92,7 +91,6 @@ const UploadPage = () => {
             }}
           />
         </div>
-
         <button type="submit">업로드</button>
       </form>
     </div>
