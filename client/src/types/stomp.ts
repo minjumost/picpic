@@ -5,13 +5,13 @@ export interface FurniturePlacedPayload {
   width: number;
   height: number;
   imageUrl: string;
-  category: string;
   objectId: number;
+  type: number;
 }
 
 export type StompMessage =
   | {
-      type: "furniture_placed";
+      type: "object_placed";
       payload: FurniturePlacedPayload;
     }
   | {
