@@ -13,7 +13,7 @@ export const getPlacedObjects = async (
   payload: GetPlacedObjectsPayload
 ): Promise<PlacedObject[]> => {
   const { data } = await client.post<ApiResponse<PlacedObject[]>>(
-    `/api/v1/room/${code}/objects`,
+    `/api/v1/room/12345678/objects`,
     payload
   );
   return data.result;
