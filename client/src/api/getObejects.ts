@@ -9,9 +9,14 @@ export interface BaseObject {
   creadtedAt: string;
   updatedAt: string;
 }
+export interface ObjectResponse {
+  tiles: BaseObject[];
+  objects: BaseObject[];
+  walls: BaseObject[];
+}
 
-export const getObjects = async () => {
-  const { data } = await client.get<ApiResponse<BaseObject[]>>(
+export const getObjects = async (): Promise<ObjectResponse> => {
+  const { data } = await client.get<ApiResponse<ObjectResponse>>(
     `/api/v1/objects`
   );
   return data.result ?? [];

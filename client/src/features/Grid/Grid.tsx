@@ -34,16 +34,12 @@ interface GridProps {
 }
 
 const ACTION_TYPE = {
-  PLACED: "furniture_placed",
+  PLACED: "object_placed",
   MOVED: "object_moved",
   REMOVE: "object_removed",
 } as const;
 
 const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
-  useEffect(() => {
-    console.log(stompClient);
-  }, [stompClient]);
-
   const {
     selectedObject,
     placedObjects,
@@ -75,6 +71,7 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
     const { type, payload } = stompMessage;
 
     if (type === ACTION_TYPE.PLACED) {
+      console.log(payload);
       addPlacedObject(toPlacedObjectFromPayload(payload));
     }
 
@@ -141,6 +138,8 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
         posY: gridPosition.row * CELL_SIZE,
         imageUrl: selectedObject.src,
       };
+
+      console.log(newObject);
 
       addPlacedObject(newObject);
       sendPlaceObjectMessage({ client: stompClient, code, object: newObject });

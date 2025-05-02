@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useObjectStore } from "../../store/objectStore";
 import { useQuery } from "@tanstack/react-query";
-import { BaseObject, getObjects } from "../../api/getObejects";
-import { tiles } from "../../mocks/item";
+import { BaseObject, getObjects, ObjectResponse } from "../../api/getObejects";
 
 // 새로운 타입 정의
 export interface ServerItem {
@@ -38,7 +37,7 @@ const CATEGORIES = [
 ] as const;
 
 const BottomSheet = () => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<ObjectResponse>({
     queryKey: ["getObjects"],
     queryFn: getObjects,
   });

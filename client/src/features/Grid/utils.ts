@@ -101,7 +101,7 @@ export const sendPlaceObjectMessage = ({
     destination: `/app/room/object/place`,
     body: JSON.stringify({
       code: code,
-      roomObjectId: object.id,
+      objectId: object.id,
       posX: object.posX,
       posY: object.posY,
     }),
