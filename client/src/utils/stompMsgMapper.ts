@@ -4,6 +4,7 @@ import { FurniturePlacedPayload } from "../types/stomp";
 export const toPlacedObjectFromPayload = (
   payload: FurniturePlacedPayload
 ): PlacedObject => {
+  console.log(payload);
   return {
     id: payload.roomObjectId,
     posX: payload.posX,
@@ -11,17 +12,17 @@ export const toPlacedObjectFromPayload = (
     width: payload.width,
     height: payload.height,
     imageUrl: payload.imageUrl,
-    type: getTypeFromCategory(payload.category),
+    type: getTypeFromCategory(payload.type),
   };
 };
 
-const getTypeFromCategory = (category: string): ObjectType => {
+const getTypeFromCategory = (category: number): ObjectType => {
   switch (category) {
-    case "tile":
+    case 0:
       return OBJECT_TYPES.TILE;
-    case "wall":
+    case 1:
       return OBJECT_TYPES.WALL;
-    case "furniture":
+    case 2:
       return OBJECT_TYPES.OBJECT;
     default:
       throw new Error("Unknown category: " + category);
