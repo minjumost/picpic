@@ -40,10 +40,6 @@ const ACTION_TYPE = {
 } as const;
 
 const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
-  useEffect(() => {
-    console.log(stompClient);
-  }, [stompClient]);
-
   const {
     selectedObject,
     placedObjects,
