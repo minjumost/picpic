@@ -22,6 +22,7 @@ function TopSheet({ stompClient, code, objects, onClose }: TopSheetProps) {
   const handleClick = (index: number) => {
     if (selectedIndex === index) {
       const objectToDelete = objects[index];
+      console.log(objectToDelete);
       removePlacedObjectById(objectToDelete.id);
       sendRemoveObjectMessage({
         client: stompClient,
@@ -31,7 +32,7 @@ function TopSheet({ stompClient, code, objects, onClose }: TopSheetProps) {
       setSelectedIndex(null);
     }
 
-    if (objects.length === 1) {
+    if (objects.length === 0) {
       onClose();
     } else {
       setSelectedIndex(index);
