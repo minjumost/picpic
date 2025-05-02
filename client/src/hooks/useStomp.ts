@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { StompMessage } from "../types/stomp";
@@ -7,13 +7,14 @@ export const useStomp = (
   roomCode: string | null,
   onMessage: (msg: StompMessage) => void
 ) => {
-  const clientRef = useRef<Client | null>(null);
+  const [client, setClient] = useState<Client | null>(null);
+  // const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
     if (!roomCode) return;
 
     const socket = new SockJS(`${import.meta.env.VITE_BASE_URL}/ws`);
-    const client = new Client({
+    const stompClient = new Client({
       webSocketFactory: () => socket,
       connectHeaders: {},
       debug: (str) => console.log("[STOMP DEBUG]:", str),
@@ -22,8 +23,9 @@ export const useStomp = (
       heartbeatOutgoing: 4000,
     });
 
-    client.onConnect = () => {
-      client.subscribe(`/topic/room/${roomCode}`, (message: IMessage) => {
+    stompClient.onConnect = () => {
+      setClient(stompClient);
+      stompClient.subscribe(`/topic/room/${roomCode}`, (message: IMessage) => {
         try {
           const body = JSON.parse(message.body);
           if (body.type === "INIT") {
@@ -36,23 +38,30 @@ export const useStomp = (
         }
       });
 
-      client.publish({
+      stompClient.subscribe("/user/queue/error", (message: IMessage) => {
+        console.log(message);
+      });
+
+      stompClient.publish({
         destination: "/app/room/enter",
         body: JSON.stringify({ code: roomCode }),
       });
     };
 
-    client.onStompError = (frame) => {
+    stompClient.onStompError = (frame) => {
       console.error("[STOMP ERROR]", frame.headers["message"]);
+      setClient(null);
+      onerror?.(frame.headers["message"]);
     };
 
-    client.activate();
-    clientRef.current = client;
+    stompClient.activate();
+    // clientRef.current = client;
 
     return () => {
-      client.deactivate();
+      stompClient.deactivate();
+      setClient(null);
     };
   }, [roomCode, onMessage]);
 
-  return clientRef;
+  return client;
 };
