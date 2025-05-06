@@ -1,12 +1,12 @@
-import { OBJECT_TYPES, PlacedObject, ObjectType } from "../types/object";
+import { OBJECT_TYPES, ObjectType, PlacedObj } from "../types/object";
 import { FurniturePlacedPayload } from "../types/stomp";
 
 export const toPlacedObjectFromPayload = (
   payload: FurniturePlacedPayload
-): PlacedObject => {
+): PlacedObj => {
   console.log(payload);
   return {
-    id: payload.roomObjectId,
+    roomObjectId: payload.roomObjectId,
     posX: payload.posX,
     posY: payload.posY,
     width: payload.width,

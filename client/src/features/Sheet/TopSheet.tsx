@@ -1,6 +1,6 @@
 import { useState } from "react";
 import checkIcon from "../../assets/check.png"; // ✅ 체크 아이콘
-import { PlacedObject } from "../../types/object";
+import { PlacedObj } from "../../types/object";
 import { useObjectStore } from "../../store/objectStore";
 import { sendRemoveObjectMessage } from "../Grid/utils";
 import { Client } from "@stomp/stompjs";
@@ -8,7 +8,7 @@ import { Client } from "@stomp/stompjs";
 interface TopSheetProps {
   stompClient: Client | null;
   code: string;
-  objects: PlacedObject[];
+  objects: PlacedObj[];
   onClose: () => void;
 }
 
@@ -23,7 +23,7 @@ function TopSheet({ stompClient, code, objects, onClose }: TopSheetProps) {
     if (selectedIndex === index) {
       const objectToDelete = objects[index];
       console.log(objectToDelete);
-      removePlacedObjectById(objectToDelete.id);
+      removePlacedObjectById(objectToDelete.roomObjectId);
       sendRemoveObjectMessage({
         client: stompClient,
         code,

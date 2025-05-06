@@ -1,5 +1,5 @@
 import { CELL_SIZE } from "../../constants/grid";
-import { OBJECT_TYPES, PlacedObject } from "../../types/object";
+import { OBJECT_TYPES, PlacedObj } from "../../types/object";
 import { Client } from "@stomp/stompjs";
 
 interface GridPosition {
@@ -43,7 +43,7 @@ export const calculateObjectPosition = (
 export const hasTileInCell = (
   col: number,
   row: number,
-  placedObjects: PlacedObject[]
+  placedObjects: PlacedObj[]
 ) => {
   return placedObjects.some(
     (obj) =>
@@ -58,7 +58,7 @@ export const hasSameObjectInCell = (
   col: number,
   row: number,
   imageUrl: string,
-  placedObjects: PlacedObject[]
+  placedObjects: PlacedObj[]
 ) => {
   return placedObjects.some(
     (obj) =>
@@ -71,7 +71,7 @@ export const hasSameObjectInCell = (
 // 선택된 셀의 오브젝트들 찾기
 export const getSelectedCellObjects = (
   selectedCell: { row: number; col: number },
-  placedObjects: PlacedObject[]
+  placedObjects: PlacedObj[]
 ) => {
   if (!selectedCell) return [];
 
@@ -90,7 +90,7 @@ export const sendPlaceObjectMessage = ({
 }: {
   client: Client | null;
   code: string;
-  object: PlacedObject;
+  object: PlacedObj;
 }) => {
   if (!client || !client.connected) {
     console.warn("[STOMP] 연결되지 않았거나 client 없음");
@@ -101,7 +101,7 @@ export const sendPlaceObjectMessage = ({
     destination: `/app/room/object/place`,
     body: JSON.stringify({
       code: code,
-      objectId: object.id,
+      objectId: object.objectId,
       posX: object.posX,
       posY: object.posY,
     }),
@@ -115,7 +115,7 @@ export const sendRemoveObjectMessage = ({
 }: {
   client: Client | null;
   code: string;
-  object: PlacedObject;
+  object: PlacedObj;
 }) => {
   if (!client || !client.connected) {
     console.warn("[STOMP] 연결되지 않았거나 client 없음");
@@ -126,7 +126,13 @@ export const sendRemoveObjectMessage = ({
     destination: `/app/room/object/delete`,
     body: JSON.stringify({
       code: code,
-      roomObjectId: object.id,
+      roomObjectId: object.roomObjectId,
     }),
   });
 };
+
+let currentId = 1000;
+
+export function generateUniqueId(): number {
+  return currentId++;
+}
