@@ -13,7 +13,7 @@ export const useStomp = (
   useEffect(() => {
     if (!roomCode) return;
 
-    const socket = new SockJS(`${import.meta.env.VITE_BASE_URL}/ws`);
+    const socket = new SockJS(`${import.meta.env.VITE_BASE_URL}/wss`);
     const stompClient = new Client({
       webSocketFactory: () => socket,
       connectHeaders: {},
