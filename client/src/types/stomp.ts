@@ -1,3 +1,5 @@
+import { PlacedObj } from "./object";
+
 export interface FurniturePlacedPayload {
   roomObjectId: number;
   posX: number;
@@ -12,7 +14,7 @@ export interface FurniturePlacedPayload {
 export type StompMessage =
   | {
       type: "object_placed";
-      payload: FurniturePlacedPayload;
+      payload: PlacedObj;
     }
   | {
       type: "object_moved";

@@ -12,9 +12,9 @@ const MainPage = () => {
 
   const stompClient = useStomp(roomCode, setStompMessage);
 
-  if (!roomCode || !stompClient) {
-    return <div>Loading...</div>; // 또는 적절한 로딩 상태 표시
-  }
+  // if (!roomCode || !stompClient) {
+  //   return <div>Loading...</div>; // 또는 적절한 로딩 상태 표시
+  // }
 
   return (
     <div className="bg-bg relative h-full flex flex-col items-center justify-center">
