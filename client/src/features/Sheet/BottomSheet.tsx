@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useObjectStore } from "../../store/objectStore";
 import { useQuery } from "@tanstack/react-query";
 import { getObjects, ObjectResponse } from "../../api/getObejects";
-import { mockup } from "../../mocks/item";
 import { BaseObject } from "../../types/object";
 
 const CATEGORY_TYPES = ["tiles", "objects", "walls"] as const;
@@ -40,7 +39,7 @@ const BottomSheet = () => {
   if (isLoading) return <div>로딩 중...</div>;
   if (error || !data) return <div>데이터를 불러올 수 없습니다.</div>;
 
-  const items = mockup[currentCategory];
+  const items = data[currentCategory];
 
   const handleItemClick = (item: BaseObject) => {
     if (selectedObject?.id === item.id) {

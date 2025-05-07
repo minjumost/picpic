@@ -14,10 +14,6 @@ const MainPage = () => {
 
   const stompClient = useStomp(roomCode, setStompMessage);
 
-  // if (!roomCode || !stompClient) {
-  //   return <div>Loading...</div>; // 또는 적절한 로딩 상태 표시
-  // }
-
   useEffect(() => {
     if (roomCode) {
       trackRoomEnter(roomCode);
@@ -29,6 +25,10 @@ const MainPage = () => {
       }
     };
   }, [roomCode]);
+
+  if (!roomCode || !stompClient) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
