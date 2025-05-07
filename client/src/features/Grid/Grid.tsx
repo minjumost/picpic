@@ -63,10 +63,10 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
     queryKey: ["placedObjects", code],
     queryFn: () =>
       getPlacedObjects(code, {
-        startX: 1,
-        startY: 1,
-        endX: 10,
-        endY: 10,
+        startX: 0,
+        startY: 0,
+        endX: 500,
+        endY: 500,
       }),
   });
 
@@ -75,7 +75,6 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
     const { type, payload } = stompMessage;
 
     if (type === ACTION_TYPE.PLACED) {
-      console.log(payload);
       addPlacedObject(payload);
     }
 
