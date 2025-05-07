@@ -4,7 +4,7 @@ import { Client } from "@stomp/stompjs";
 import { Stage, Layer } from "react-konva";
 import { useObjectStore } from "../../store/objectStore";
 import createGridLines from "./GridLines";
-import { OBJECT_TYPES } from "../../types/object";
+import { OBJECT_TYPES, PlacedObj } from "../../types/object";
 import {
   GRID_WIDTH,
   GRID_HEIGHT,
@@ -14,6 +14,7 @@ import {
 } from "../../constants/grid";
 import {
   calculateGridPosition,
+  generateUniqueId,
   getSelectedCellObjects,
   hasSameObjectInCell,
   hasTileInCell,
@@ -25,7 +26,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getPlacedObjects } from "../../api/grid";
 import TopSheet from "../Sheet/TopSheet";
 import { StompMessage } from "../../types/stomp";
-import { toPlacedObjectFromPayload } from "../../utils/stompMsgMapper";
 
 interface GridProps {
   code: string;
@@ -40,10 +40,6 @@ const ACTION_TYPE = {
 } as const;
 
 const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
-  useEffect(() => {
-    console.log(stompClient);
-  }, [stompClient]);
-
   const {
     selectedObject,
     placedObjects,
@@ -59,7 +55,11 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
   const [showTopSheet, setShowTopSheet] = useState(false);
 
   // 서버에서 기존 배치된 오브젝트 목록 조회
-  const { data: serverPlacedObjects = [] } = useQuery({
+  const {
+    data: serverPlacedObjects = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["placedObjects", code],
     queryFn: () =>
       getPlacedObjects(code, {
@@ -76,7 +76,7 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
 
     if (type === ACTION_TYPE.PLACED) {
       console.log(payload);
-      addPlacedObject(toPlacedObjectFromPayload(payload));
+      addPlacedObject(payload);
     }
 
     if (type === ACTION_TYPE.MOVED) {
@@ -91,16 +91,25 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
     }
   }, [stompMessage]);
 
-  useEffect(() => {
-    if (serverPlacedObjects.length > 0) {
-      initPlacedObjects(serverPlacedObjects);
-    }
-  }, [serverPlacedObjects]);
-
   const gridLines = useMemo(
     () => createGridLines(MIN_COORD, MAX_COORD, CELL_SIZE),
     []
   );
+
+  useEffect(() => {
+    if (!isLoading && !error && serverPlacedObjects) {
+      initPlacedObjects(serverPlacedObjects);
+    }
+  }, [isLoading, error, serverPlacedObjects]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error || !serverPlacedObjects)
+    return (
+      <div>
+        데이터를 불러올 수 없습니다.
+        <br /> 네트워크를 확인해주세요
+      </div>
+    );
 
   const handleClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const stage = e.target.getStage();
@@ -128,7 +137,7 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
         hasSameObjectInCell(
           gridPosition.col,
           gridPosition.row,
-          selectedObject.src,
+          selectedObject.imageUrl,
           placedObjects
         )
       ) {
@@ -136,11 +145,12 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
         return;
       }
 
-      const newObject = {
+      const newObject: PlacedObj = {
         ...selectedObject,
+        objectId: selectedObject.id,
         posX: gridPosition.col * CELL_SIZE,
         posY: gridPosition.row * CELL_SIZE,
-        imageUrl: selectedObject.src,
+        roomObjectId: generateUniqueId(),
       };
 
       console.log(newObject);

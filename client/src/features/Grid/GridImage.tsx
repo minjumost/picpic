@@ -1,35 +1,35 @@
 import { Image } from "react-konva";
 import useImage from "use-image";
-import { OBJECT_TYPES, ObjectType } from "../../types/object";
+import { OBJECT_TYPES } from "../../types/object";
 
 interface GridImageProps {
-  src: string;
-  x: number;
-  y: number;
-  size: number;
-  type: ObjectType;
+  imageUrl: string;
+  posX: number;
+  posY: number;
+  type: number;
   width: number;
   height: number;
+  size: number;
 }
 
 const GridImage = ({
-  src,
-  x,
-  y,
-  size,
+  imageUrl,
+  posX,
+  posY,
   type,
   width,
   height,
+  size,
 }: GridImageProps) => {
-  const [image] = useImage(src);
+  const [image] = useImage(imageUrl);
   if (!image) return null;
 
   if (type === OBJECT_TYPES.TILE) {
     return (
       <Image
         image={image}
-        x={x - size / 2}
-        y={y - size / 2}
+        x={posX - size / 2}
+        y={posY - size / 2}
         width={size}
         height={size}
       />
@@ -40,8 +40,8 @@ const GridImage = ({
     return (
       <Image
         image={image}
-        x={x - size / 2}
-        y={y - size / 2}
+        x={posX - size / 2}
+        y={posY - size / 2}
         width={width}
         height={height}
       />
@@ -51,8 +51,8 @@ const GridImage = ({
   return (
     <Image
       image={image}
-      x={x - width / 2}
-      y={y - height / 2}
+      x={posX - width / 2}
+      y={posY - height / 2}
       width={width}
       height={height}
     />
