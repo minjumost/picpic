@@ -1,6 +1,7 @@
 package net.minipia.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,7 @@ import java.net.URI;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties(S3Properties.class)
 public class S3Config {
 
 	private final S3Properties s3Properties;
