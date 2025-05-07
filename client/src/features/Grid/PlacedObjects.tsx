@@ -1,25 +1,25 @@
 // src/features/Grid/components/PlacedObjects.tsx
-import { PlacedObject } from "../../types/object";
+import { PlacedObj } from "../../types/object";
 import GridImage from "./GridImage";
 
 interface PlacedObjectsProps {
-  objects: PlacedObject[];
+  objects: PlacedObj[];
   cellSize: number;
 }
 
 const PlacedObjects = ({ objects, cellSize }: PlacedObjectsProps) => {
   return (
     <>
-      {objects.map((obj, idx) => (
+      {objects.map((obj) => (
         <GridImage
-          key={idx}
-          src={obj.imageUrl}
-          x={obj.posX + cellSize / 2}
-          y={obj.posY + cellSize / 2}
-          size={cellSize}
+          key={obj.roomObjectId}
+          imageUrl={obj.imageUrl}
+          posX={obj.posX + cellSize / 2}
+          posY={obj.posY + cellSize / 2}
           type={obj.type}
           width={obj.width}
           height={obj.height}
+          size={cellSize}
         />
       ))}
     </>

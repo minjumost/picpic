@@ -1,12 +1,5 @@
-import { client } from "./axios";
-import { PlacedObject } from "../types/object";
-
-interface ApiResponse<T> {
-  success: boolean;
-  code: number;
-  message: string;
-  result: T;
-}
+import { ApiResponse, client } from "./axios";
+import { PlacedObj } from "../types/object";
 
 interface GetPlacedObjectsPayload {
   startX: number;
@@ -18,8 +11,8 @@ interface GetPlacedObjectsPayload {
 export const getPlacedObjects = async (
   code: string,
   payload: GetPlacedObjectsPayload
-): Promise<PlacedObject[]> => {
-  const { data } = await client.post<ApiResponse<PlacedObject[]>>(
+): Promise<PlacedObj[]> => {
+  const { data } = await client.post<ApiResponse<PlacedObj[]>>(
     `/api/v1/room/${code}/objects`,
     payload
   );

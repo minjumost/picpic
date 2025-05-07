@@ -1,18 +1,9 @@
-export interface FurniturePlacedPayload {
-  roomObjectId: number;
-  posX: number;
-  posY: number;
-  width: number;
-  height: number;
-  imageUrl: string;
-  category: string;
-  objectId: number;
-}
+import { PlacedObj } from "./object";
 
 export type StompMessage =
   | {
-      type: "furniture_placed";
-      payload: FurniturePlacedPayload;
+      type: "object_placed";
+      payload: PlacedObj;
     }
   | {
       type: "object_moved";

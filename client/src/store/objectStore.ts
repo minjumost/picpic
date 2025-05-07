@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import { ServerObject, PlacedObject } from "../types/object";
+import { BaseObject, PlacedObj } from "../types/object";
 
 interface ObjectStore {
-  selectedObject: ServerObject | null;
-  setSelectedObject: (obj: ServerObject | null) => void;
-  placedObjects: PlacedObject[];
-  initPlacedObjects: (objects: PlacedObject[]) => void;
-  addPlacedObject: (object: PlacedObject) => void;
+  selectedObject: BaseObject | null;
+  setSelectedObject: (obj: BaseObject | null) => void;
+  placedObjects: PlacedObj[];
+  initPlacedObjects: (objects: PlacedObj[] | []) => void;
+  addPlacedObject: (object: PlacedObj) => void;
   removePlacedObjectById: (roomObjectId: number) => void;
   movePlacedObject: (
     roomObjectId: number,
@@ -28,13 +28,13 @@ export const useObjectStore = create<ObjectStore>((set) => ({
   removePlacedObjectById: (roomObjectId) =>
     set((state) => ({
       placedObjects: state.placedObjects.filter(
-        (obj) => obj.id !== roomObjectId
+        (obj) => obj.roomObjectId !== roomObjectId
       ),
     })),
   movePlacedObject: (roomObjectId, pos) =>
     set((state) => ({
       placedObjects: state.placedObjects.map((obj) =>
-        obj.id === roomObjectId ? { ...obj, ...pos } : obj
+        obj.roomObjectId === roomObjectId ? { ...obj, ...pos } : obj
       ),
     })),
   clearPlacedObjects: () => set({ placedObjects: [] }),

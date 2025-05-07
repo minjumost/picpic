@@ -8,6 +8,10 @@ plugins {
 group = 'net.minipia'
 version = '0.0.1-SNAPSHOT'
 
+bootJar {
+    archiveFileName = 'app.jar'
+}
+
 
 configurations {
     compileOnly {

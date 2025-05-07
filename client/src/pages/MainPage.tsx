@@ -1,28 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import BottomSheet from "../features/Sheet/BottomSheet";
 import Grid from "../features/Grid/Grid";
 import { useStomp } from "../hooks/useStomp";
 import { StompMessage } from "../types/stomp";
+import { trackRoomEnter, trackRoomExit } from "../utils/analytics";
+import GA4Initializer from "../GA4Initializer";
 
 const MainPage = () => {
   const [searchParams] = useSearchParams();
   const roomCode = searchParams.get("r");
   const [stompMessage, setStompMessage] = useState<StompMessage | null>(null);
 
-  const clientRef = useStomp(roomCode, setStompMessage);
+  const stompClient = useStomp(roomCode, setStompMessage);
+
+  // if (!roomCode || !stompClient) {
+  //   return <div>Loading...</div>; // 또는 적절한 로딩 상태 표시
+  // }
+
+  useEffect(() => {
+    if (roomCode) {
+      trackRoomEnter(roomCode);
+    }
+
+    return () => {
+      if (roomCode) {
+        trackRoomExit(roomCode);
+      }
+    };
+  }, [roomCode]);
 
   return (
-    <div className="bg-bg relative h-full flex flex-col items-center justify-center">
-      <BottomSheet />
-      {roomCode && (
-        <Grid
-          code={roomCode}
-          stompMessage={stompMessage}
-          stompClient={clientRef.current}
-        />
-      )}
-    </div>
+    <>
+      <GA4Initializer />
+      <div className="bg-bg relative h-full flex flex-col items-center justify-center">
+        <BottomSheet />
+        {roomCode && (
+          <Grid
+            code={roomCode}
+            stompMessage={stompMessage}
+            stompClient={stompClient}
+          />
+        )}
+      </div>
+    </>
   );
 };
 
