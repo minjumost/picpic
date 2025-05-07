@@ -1,16 +1,5 @@
 import { PlacedObj } from "./object";
 
-export interface FurniturePlacedPayload {
-  roomObjectId: number;
-  posX: number;
-  posY: number;
-  width: number;
-  height: number;
-  imageUrl: string;
-  objectId: number;
-  type: number;
-}
-
 export type StompMessage =
   | {
       type: "object_placed";

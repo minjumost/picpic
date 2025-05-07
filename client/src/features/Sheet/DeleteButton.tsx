@@ -1,9 +1,9 @@
-import { PlacedObject } from "../../types/object";
+import { PlacedObj } from "../../types/object";
 import deleteIcon from "../../assets/delete.png";
 
 interface DeleteButtonProps {
-  object: PlacedObject;
-  onDelete: (object: PlacedObject) => void;
+  object: PlacedObj;
+  onDelete: (object: PlacedObj) => void;
 }
 
 const DeleteButton = ({ object, onDelete }: DeleteButtonProps) => {
