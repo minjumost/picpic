@@ -153,8 +153,6 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
         roomObjectId: generateUniqueId(),
       };
 
-      console.log(newObject);
-
       addPlacedObject(newObject);
       sendPlaceObjectMessage({ client: stompClient, code, object: newObject });
 

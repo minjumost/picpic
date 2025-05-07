@@ -7,11 +7,6 @@ export interface ObjectResponse {
   objects: BaseObject[];
   walls: BaseObject[];
 }
-export interface ObjectResponse {
-  tiles: BaseObject[];
-  objects: BaseObject[];
-  walls: BaseObject[];
-}
 
 export const getObjects = async (): Promise<ObjectResponse> => {
   const { data } = await client.get<ApiResponse<ObjectResponse>>(
