@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Client } from "@stomp/stompjs";
 import { Stage, Layer } from "react-konva";
 import { useObjectStore } from "../../store/objectStore";
@@ -96,11 +96,19 @@ const Grid = ({ code, stompMessage, stompClient }: GridProps) => {
     []
   );
 
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
-    if (!isLoading && !error && serverPlacedObjects) {
+    if (
+      !hasInitialized.current &&
+      !isLoading &&
+      !error &&
+      serverPlacedObjects.length > 0
+    ) {
       initPlacedObjects(serverPlacedObjects);
+      hasInitialized.current = true;
     }
-  }, [isLoading, error, serverPlacedObjects]);
+  }, [serverPlacedObjects, isLoading, error]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error || !serverPlacedObjects)
