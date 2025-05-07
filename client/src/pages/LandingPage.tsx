@@ -2,13 +2,23 @@ import { useNavigate } from "react-router-dom";
 import PuppyImg from "../assets/puppy.png";
 import { sendEvent } from "../utils/analytics";
 import GA4Initializer from "../GA4Initializer";
+import { useMutation } from "@tanstack/react-query";
+import { getRoomCode } from "../api/room";
 
 const LandingPage = () => {
   const navigate = useNavigate();
 
+  const { mutate } = useMutation({
+    mutationFn: getRoomCode,
+    onSuccess: (roomCode) => {
+      sendEvent("LandingPage", "StartButtonClick");
+      navigate(`/main?r=${roomCode.code}`);
+    },
+  });
+
   const handleStart = () => {
     sendEvent("LandingPage", "StartButtonClick");
-    navigate(`/main?r=${import.meta.env.VITE_ROOM_CODE}`);
+    mutate();
   };
 
   return (
