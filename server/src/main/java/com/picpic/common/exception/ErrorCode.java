@@ -15,6 +15,9 @@ public enum ErrorCode {
 
 	// 🔍 리소스 없음
 	NOT_FOUND(3000, HttpStatus.NOT_FOUND, "요청하신 리소스를 찾을 수 없습니다."),
+	NOT_FOUND_MEMBER(3001, HttpStatus.NOT_FOUND, "요청하신 유저를 찾을 수 없습니다."),
+	NOT_FOUND_FRAME(3002, HttpStatus.NOT_FOUND, "요청하신 프레임을 찾을 수 없습니다."),
+	NOT_FOUND_BACKGROUND(3003, HttpStatus.NOT_FOUND, "요청하신 배경을 찾을 수 없습니다."),
 
 	// ❌ 잘못된 요청
 	BAD_REQUEST(4000, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
