@@ -67,7 +67,7 @@ public class Session {
 	private LocalDateTime deletedAt;
 
 	@Getter
-	enum SessionStatus {
+	public enum SessionStatus {
 		WAITING(0),
 		PHOTO(1),
 		DECORATE(2),
