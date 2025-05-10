@@ -50,7 +50,7 @@ public class S3Service {
 			".amazonaws.com/" + key;
 
 		return S3ImageUploadResponseDTO.builder()
-			.preSignedUrl(presignedUrl.toString())
+			.presignedUrl(presignedUrl.toString())
 			.imageUrl(fileUrl)
 			.build();
 	}

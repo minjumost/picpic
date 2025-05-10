@@ -4,7 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record S3ImageUploadResponseDTO(
-	String preSignedUrl,
+	String presignedUrl,
 	String imageUrl
 ) {
 }
