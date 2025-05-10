@@ -17,6 +17,9 @@ local.properties
 server/gradle.properties
 server/src/main/resources/application.yml
 
+application.yml
+application-test.yml
+
 # External tool builders
 .externalToolBuilders/
 
