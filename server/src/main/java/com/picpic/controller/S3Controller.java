@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/s3")
+@RequestMapping("/api/v1/presigned-url")
 public class S3Controller {
 
 	private final S3Service s3Service;
