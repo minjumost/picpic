@@ -2,6 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,java,windows,macos,eclipse,visualstudiocode
 
 ### Eclipse ###
+.idea
 .metadata
 bin/
 tmp/
