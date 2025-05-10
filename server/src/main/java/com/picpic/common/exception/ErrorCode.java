@@ -18,10 +18,15 @@ public enum ErrorCode {
 	NOT_FOUND_MEMBER(3001, HttpStatus.NOT_FOUND, "요청하신 유저를 찾을 수 없습니다."),
 	NOT_FOUND_FRAME(3002, HttpStatus.NOT_FOUND, "요청하신 프레임을 찾을 수 없습니다."),
 	NOT_FOUND_BACKGROUND(3003, HttpStatus.NOT_FOUND, "요청하신 배경을 찾을 수 없습니다."),
+	NOT_FOUND_SESSION(3004, HttpStatus.NOT_FOUND, "요청하신 세션을 찾을 수 없습니다."),
 
 	// ❌ 잘못된 요청
 	BAD_REQUEST(4000, HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
 	INVALID_INPUT_VALUE(4001, HttpStatus.BAD_REQUEST, "입력값이 올바르지 않습니다."),
+	INCORRECT_PASSWORD(4002, HttpStatus.BAD_REQUEST, "비밀번호가 다릅니다."),
+	FINISHED_SESSION(4003, HttpStatus.BAD_REQUEST, "종료된 세션입니다."),
+	ALREADY_ENTERED(4004, HttpStatus.BAD_REQUEST, "이미 참여중입니다."),
+	SESSION_FULL(4005, HttpStatus.BAD_REQUEST, "최대 인원에 도달하였습니다."),
 
 	// ⚙️ 서버 오류
 	INTERNAL_ERROR(5000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류입니다.");

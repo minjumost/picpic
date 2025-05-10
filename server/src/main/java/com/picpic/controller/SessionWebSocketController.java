@@ -1,0 +1,28 @@
+package com.picpic.controller;
+
+import java.security.Principal;
+
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+
+import com.picpic.dto.session.EnterSessionRequestDTO;
+import com.picpic.dto.session.EnterSessionResponseDTO;
+import com.picpic.service.SessionService;
+
+import lombok.RequiredArgsConstructor;
+
+@Controller
+@RequiredArgsConstructor
+public class SessionWebSocketController {
+
+	private final SessionService sessionService;
+	private final SimpMessagingTemplate messagingTemplate;
+
+	@MessageMapping("/session/enter")
+	public void enterSession(Principal principal, EnterSessionRequestDTO enterSessionRequestDTO) {
+		Long memberId = Long.parseLong(principal.getName());
+		EnterSessionResponseDTO res = sessionService.enterSession(memberId, enterSessionRequestDTO);
+		messagingTemplate.convertAndSend("/topic/session/" + enterSessionRequestDTO.sessionCode(), res);
+	}
+}
