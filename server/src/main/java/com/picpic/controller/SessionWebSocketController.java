@@ -23,6 +23,6 @@ public class SessionWebSocketController {
 	public void enterSession(Principal principal, EnterSessionRequestDTO enterSessionRequestDTO) {
 		Long memberId = Long.parseLong(principal.getName());
 		EnterSessionResponseDTO res = sessionService.enterSession(memberId, enterSessionRequestDTO);
-		messagingTemplate.convertAndSend("/topic/session/" + enterSessionRequestDTO.sessionCode(), res);
+		messagingTemplate.convertAndSend("/broadcast/" + enterSessionRequestDTO.sessionCode(), res);
 	}
 }
