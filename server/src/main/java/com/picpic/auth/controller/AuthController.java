@@ -1,4 +1,4 @@
-package com.picpic.api.v1.auth.controller;
+package com.picpic.auth.controller;
 
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +25,9 @@ public class AuthController {
 
 		ResponseCookie cookie = ResponseCookie.from("access-token", accessToken)
 			.httpOnly(true)
-			.secure(false) // 개발 중일 경우 false
+			.secure(true) // 개발 중일 경우 false
 			.path("/")
-			.sameSite("Lax")
+			.sameSite("None")
 			.maxAge(60 * 60 * 24)
 			.build();
 
