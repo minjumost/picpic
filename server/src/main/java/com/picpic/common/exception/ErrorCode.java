@@ -27,6 +27,8 @@ public enum ErrorCode {
 	FINISHED_SESSION(4003, HttpStatus.BAD_REQUEST, "종료된 세션입니다."),
 	ALREADY_ENTERED(4004, HttpStatus.BAD_REQUEST, "이미 참여중입니다."),
 	SESSION_FULL(4005, HttpStatus.BAD_REQUEST, "최대 인원에 도달하였습니다."),
+	ALREADY_STARTED(4006, HttpStatus.BAD_REQUEST, "이미 시작된 세션입니다."),
+	OWNER_CAN_START(4006, HttpStatus.BAD_REQUEST, "방장만 시작할 수 있습니다."),
 
 	// ⚙️ 서버 오류
 	INTERNAL_ERROR(5000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류입니다.");

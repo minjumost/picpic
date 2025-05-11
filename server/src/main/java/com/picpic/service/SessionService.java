@@ -13,6 +13,8 @@ import com.picpic.dto.session.CreateSessionRequestDTO;
 import com.picpic.dto.session.CreateSessionResponseDTO;
 import com.picpic.dto.session.EnterSessionRequestDTO;
 import com.picpic.dto.session.EnterSessionResponseDTO;
+import com.picpic.dto.session.StartSessionRequestDTO;
+import com.picpic.dto.session.StartSessionResponseDTO;
 import com.picpic.entity.Background;
 import com.picpic.entity.Frame;
 import com.picpic.entity.Member;
@@ -114,7 +116,7 @@ public class SessionService {
 		participants.add(participant);
 
 		return EnterSessionResponseDTO.builder()
-			.type("enter")
+			.type("session_enter")
 			.status(session.getStatus().toString())
 			.participants(
 				participants.stream()
@@ -130,4 +132,30 @@ public class SessionService {
 			)
 			.build();
 	}
+
+	public StartSessionResponseDTO startSession(Long memberId, StartSessionRequestDTO startSessionRequestDTO) {
+
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
+		);
+
+		Session session = sessionRepository.findById(startSessionRequestDTO.sessionId()).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		if (session.getStatus() != Session.SessionStatus.WAITING) {
+			throw new ApiException(ErrorCode.ALREADY_STARTED);
+		}
+
+		if (Long.compare(session.getMember().getMemberId(), member.getMemberId()) != 0) {
+			throw new ApiException(ErrorCode.OWNER_CAN_START);
+		}
+
+		session.start();
+
+		return StartSessionResponseDTO.builder()
+			.type("session_start")
+			.build();
+	}
+
 }

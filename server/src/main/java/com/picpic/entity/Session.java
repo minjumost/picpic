@@ -80,4 +80,8 @@ public class Session {
 			this.status = status;
 		}
 	}
+
+	public void start() {
+		this.status = SessionStatus.PHOTO;
+	}
 }

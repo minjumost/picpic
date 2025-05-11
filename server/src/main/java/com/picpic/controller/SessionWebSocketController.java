@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 
 import com.picpic.dto.session.EnterSessionRequestDTO;
 import com.picpic.dto.session.EnterSessionResponseDTO;
+import com.picpic.dto.session.StartSessionRequestDTO;
+import com.picpic.dto.session.StartSessionResponseDTO;
 import com.picpic.service.SessionService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,5 +26,12 @@ public class SessionWebSocketController {
 		Long memberId = Long.parseLong(principal.getName());
 		EnterSessionResponseDTO res = sessionService.enterSession(memberId, enterSessionRequestDTO);
 		messagingTemplate.convertAndSend("/broadcast/" + enterSessionRequestDTO.sessionCode(), res);
+	}
+
+	@MessageMapping("/session/start")
+	public void startSession(Principal principal, StartSessionRequestDTO startSessionRequestDTO) {
+		Long memberId = Long.parseLong(principal.getName());
+		StartSessionResponseDTO res = sessionService.startSession(memberId, startSessionRequestDTO);
+		messagingTemplate.convertAndSend("/broadcast" + startSessionRequestDTO.sessionCode());
 	}
 }
