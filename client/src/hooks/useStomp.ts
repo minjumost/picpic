@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Client, IMessage } from "@stomp/stompjs";
+import { Client, type IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { StompMessage } from "../types/stomp";
+import { type StompMessage } from "../types/stomp";
 
 export const useStomp = (
   roomCode: string | null,

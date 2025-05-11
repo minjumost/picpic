@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+html,
+body {
+  height: 100vh;
+}
+
+@theme {
+  --color-green: #77bc6a;
+  --color-red: #ff6f61;
+  --color-orange: #fbc48a;
+  --color-yellow: #f7f0a5;
+  --color-text: #35455e;
+
+  --color-greenBorder: #54a25e;
+  --color-yellowBorder: #fcf9e5;
+  --color-redBorder: #e1493a;
+  --color-orangeBorder: #ea994e;
+  --color-blackBorder: #35455e;
+
+  --color-bg: #fbfbf6;
+
+  --text-default: 24px;
+  --text-sub: 18px;
+  --text-title: 40px;
+  --text-subtitle: 32px;
+}
+
+@font-face {
+  font-family: "DungGeunMo";
+  font-weight: 500;
+  font-style: normal;
+  src: url("/fonts/DungGeunMo.woff2") format("opentype");
+}
+
+@layer base {
+  :root {
+    font-family: "DungGeunMo", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji", "Apple Color Emoji", ui-sans-serif, system-ui,
+      sans-serif;
+    color: var(--text-default);
+    font-size: var(--text-default);
+    letter-spacing: 0.04rem;
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

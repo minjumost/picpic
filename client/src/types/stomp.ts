@@ -1,21 +1,12 @@
-import { PlacedObj } from "./object";
+export interface User {
+  memberId: number;
+  nickname: string;
+  color: string;
+  profileImageUrl: string;
+}
 
-export type StompMessage =
-  | {
-      type: "object_placed";
-      payload: PlacedObj;
-    }
-  | {
-      type: "object_moved";
-      payload: {
-        roomObjectId: number;
-        posX: number;
-        posY: number;
-      };
-    }
-  | {
-      type: "object_removed";
-      payload: {
-        roomObjectId: number;
-      };
-    };
+export type StompMessage = {
+  type: "session_enter";
+  status: string;
+  participants: User[];
+};
