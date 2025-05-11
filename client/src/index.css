@@ -10,7 +10,7 @@ body {
   --color-main2: #98b9ff;
   --color-secondary1: #f4d570;
   --color-text: #222222;
-  --color-text-white: #f6f6f6;
+  --color-text-white: #ffffff;
 
   --color-success: #8ff470;
   --color-warning: #f49370;
@@ -45,8 +45,8 @@ body {
     font-family: "Pretendard", "Segoe UI Emoji", "Segoe UI Symbol",
       "Noto Color Emoji", "Apple Color Emoji", ui-sans-serif, system-ui,
       sans-serif;
-    color: var(--text-default);
-    font-size: var(--text-default);
+    color: var(--color-text);
+    font-size: var(--text-body2);
     letter-spacing: 0.04rem;
 
     ::-webkit-scrollbar {
