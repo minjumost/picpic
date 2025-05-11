@@ -111,13 +111,23 @@ public class SessionService {
 
 		participantRepository.save(participant);
 
+		participants.add(participant);
+
 		return EnterSessionResponseDTO.builder()
 			.type("enter")
-			.memberId(memberId)
-			.nickname(member.getNickname())
-			.color(member.getColor())
-			.profileImageUrl(member.getProfileImageUrl())
+			.status(session.getStatus().toString())
+			.participants(
+				participants.stream()
+					.map(p -> {
+						return EnterSessionResponseDTO.ParticipantListDTO.builder()
+							.memeberId(p.getMember().getMemberId())
+							.nickname(p.getMember().getNickname())
+							.color(p.getMember().getColor())
+							.profileImageUrl(p.getMember().getProfileImageUrl())
+							.build();
+					})
+					.toList()
+			)
 			.build();
-
 	}
 }
