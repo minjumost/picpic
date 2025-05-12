@@ -1,6 +1,7 @@
 package com.picpic.auth;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 
@@ -18,6 +19,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class JwtTokenProvider {
@@ -77,6 +80,17 @@ public class JwtTokenProvider {
 		byte[] bytes = Base64.getDecoder()
 			.decode(secret.getBytes(StandardCharsets.UTF_8));
 		return new SecretKeySpec(bytes, "HmacSHA256");
+	}
+
+	public String resolveToken(HttpServletRequest request) {
+		if (request.getCookies() == null)
+			return null;
+
+		return Arrays.stream(request.getCookies())
+			.filter(cookie -> "access-token".equals(cookie.getName()))
+			.findFirst()
+			.map(Cookie::getValue)
+			.orElse(null);
 	}
 
 }
