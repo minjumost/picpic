@@ -1,16 +1,14 @@
-import { initStompClient } from "./stompClient";
+import stompClient from "./stompClient";
 
 export const connectAndEnterSession = (
   sessionCode: string,
   sessionId: number
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const client = initStompClient();
-
-    client.onConnect = () => {
+    stompClient.onConnect = () => {
       console.log("✅ WebSocket connected");
 
-      client.publish({
+      stompClient.publish({
         destination: "/send/session/start",
         body: JSON.stringify({ sessionCode, sessionId }),
       });
@@ -18,10 +16,10 @@ export const connectAndEnterSession = (
       resolve();
     };
 
-    client.onStompError = (frame) => {
+    stompClient.onStompError = (frame) => {
       console.error("STOMP Error:", frame);
       reject(frame);
     };
-    client.activate();
+    stompClient.activate();
   });
 };

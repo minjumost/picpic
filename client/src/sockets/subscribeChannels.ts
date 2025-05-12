@@ -1,5 +1,5 @@
 import type { Client } from "@stomp/stompjs";
-import { stompClient } from "./stompClient";
+import stompClient from "./stompClient";
 
 export const subscribeChannels = (
   sessionCode: string,

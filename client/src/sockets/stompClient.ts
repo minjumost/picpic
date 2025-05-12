@@ -1,14 +1,14 @@
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
-export let stompClient: Client | null = null;
+const stompClient = new Client({
+  webSocketFactory: () =>
+    new SockJS(`${import.meta.env.VITE_BASE_URL}/connection`),
+  connectHeaders: {},
+  debug: (str) => console.log("[STOMP DEBUG]:", str),
+  reconnectDelay: 5000,
+  heartbeatIncoming: 4000,
+  heartbeatOutgoing: 4000,
+});
 
-export const initStompClient = () => {
-  const socket = new SockJS(`${import.meta.env.VITE_BASE_URL}/connection`);
-  stompClient = new Client({
-    webSocketFactory: () => socket,
-    debug: (str) => console.log("[STOMP]", str),
-    reconnectDelay: 5000,
-  });
-  return stompClient;
-};
+export default stompClient;
