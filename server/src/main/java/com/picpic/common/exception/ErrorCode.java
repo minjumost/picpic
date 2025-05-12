@@ -34,6 +34,7 @@ public enum ErrorCode {
 
 	// ⚙️ 서버 오류
 	INTERNAL_ERROR(5000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류입니다."),
+	
 	// 처리 제한
 	AUTH_LIMIT(6001, HttpStatus.TOO_MANY_REQUESTS, "같은 ip에서 1분에 5번만 요청할 수 있습니다."),
 	RATE_LIMIT(6002, HttpStatus.TOO_MANY_REQUESTS, "1초에 10번만 요청을 보낼 수 있습니다.");

@@ -5,9 +5,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.picpic.entity.Photo;
-
-import software.amazon.awssdk.services.s3.model.ObjectPart;
+import com.picpic.entity.Session;
 
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
-	Optional<Photo> findBySessionIdAndSlotIndex(Long sessionId, Integer slotIndex);
+	Optional<Photo> findBySessionAndSlotIndex(Session session, Integer slotIndex);
 }
