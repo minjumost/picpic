@@ -1,4 +1,4 @@
-package com.picpic.global.config;
+package com.picpic.auth;
 
 import java.util.Arrays;
 
@@ -14,8 +14,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.picpic.auth.JwtAuthenticationFilter;
-import com.picpic.auth.JwtTokenProvider;
+import com.picpic.common.filter.ExceptionHandlerFilter;
+import com.picpic.common.filter.RateLimitFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,13 +26,19 @@ public class SecurityConfig {
 	private final JwtTokenProvider jwtTokenProvider;
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, RateLimitFilter rateLimitFilter,
+		ExceptionHandlerFilter exceptionHandlerFilter,
+		JwtAuthenticationFilter jwtAuthenticationFilter) throws
+		Exception {
 		return http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(
 				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthenticationFilter, RateLimitFilter.class)
+			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
+
 			.authorizeHttpRequests(
 				authorizeRequests ->
 					authorizeRequests.requestMatchers(HttpMethod.POST, "api/v1/auth/guest")
@@ -60,6 +66,21 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", configuration);
 
 		return source;
+	}
+
+	@Bean
+	public RateLimitFilter rateLimitFilter() {
+		return new RateLimitFilter(jwtTokenProvider);
+	}
+
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter(jwtTokenProvider);
+	}
+
+	@Bean
+	public ExceptionHandlerFilter exceptionHandlerFilter() {
+		return new ExceptionHandlerFilter();
 	}
 
 }
