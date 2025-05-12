@@ -2,31 +2,22 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGetFrames } from "../api/frame";
+import frame1 from "../assets/frames/frame1.png";
+import frame2 from "../assets/frames/frame2.png";
 
 interface FrameOptionProps {
   name: string;
-  gridClasses: string; // Tailwind grid 클래스
-  slotCount: number;
+  image: string;
   onClick: () => void;
 }
 
-const FrameOption: React.FC<FrameOptionProps> = ({
-  name,
-  gridClasses,
-  slotCount,
-  onClick,
-}) => (
+const FrameOption: React.FC<FrameOptionProps> = ({ name, image, onClick }) => (
   <div
-    className="flex flex-col items-center cursor-pointer p-3 border border-gray-300 rounded-lg bg-white flex-1 min-w-[90px] hover:border-orange-400 transition-colors"
+    className="flex flex-col items-center cursor-pointer p-3 border gap-2 bg-black/20 border-gray-300 rounded-lg flex-1 min-w-[90px] hover:bg-secondary1 transition-colors"
     onClick={onClick}
   >
-    {/* TODO 추후 이미지로 교체 */}
-    <div
-      className={`w-[70px] h-[90px] border-2 border-gray-400 bg-gray-100 mb-2 grid ${gridClasses}`}
-    >
-      {[...Array(slotCount)].map((_, i) => (
-        <div key={i} className="border border-gray-300"></div>
-      ))}
+    <div>
+      <img src={image} />
     </div>
     <span className="bg-main1 text-text-white py-1 px-3 rounded-full">
       {name}
@@ -54,27 +45,17 @@ const SelectFrameScreen: React.FC = () => {
 
       <div className="flex space-x-3 overflow-x-auto pb-2 w-full justify-start md:justify-center">
         <FrameOption
-          name="8 Cuts"
-          gridClasses="grid-cols-2 grid-rows-4"
-          slotCount={8}
+          name="4 Cuts"
+          image={frame1}
           onClick={() => {
-            alert("추후 개발 예정입니다!");
+            navigate("/roomSet");
           }}
         />
         <FrameOption
           name="4 Cuts"
-          gridClasses="grid-cols-1 grid-rows-4"
-          slotCount={4}
+          image={frame2}
           onClick={() => {
-            alert("추후 개발 예정입니다!");
-          }}
-        />
-        <FrameOption
-          name="4 Cuts"
-          gridClasses="grid-cols-2 grid-rows-2"
-          slotCount={4}
-          onClick={() => {
-            navigate("/backImg");
+            navigate("/roomSet");
           }}
         />
       </div>
