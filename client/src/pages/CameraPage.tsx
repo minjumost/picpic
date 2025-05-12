@@ -1,10 +1,30 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Camera from "../assets/icons/camera.png";
+import { useNavigate } from "react-router";
 
 const CameraPage: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [showVideo, setShowVideo] = useState(true);
+
+  const navigate = useNavigate();
+
+  const stopStream = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
+        track.stop();
+        track.enabled = false;
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+        setShowVideo(false);
+      }
+      console.log("비디오 스트림 중지됨");
+    }
+    streamRef.current = null; // 참조도 초기화
+  }, []);
 
   useEffect(() => {
     const initCamera = async () => {
@@ -16,6 +36,7 @@ const CameraPage: React.FC = () => {
 
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
+          streamRef.current = stream;
         }
       } catch (err) {
         console.error("카메라 접근 실패:", err);
@@ -25,9 +46,9 @@ const CameraPage: React.FC = () => {
     initCamera();
 
     return () => {
-      const tracks = (videoRef.current?.srcObject as MediaStream)?.getTracks();
-      tracks?.forEach((track) => track.stop());
+      stopStream();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCapture = () => {
@@ -58,23 +79,25 @@ const CameraPage: React.FC = () => {
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play(); // 이거 추가해주는 것도 중요함
+        videoRef.current.play();
       }
     } catch (err) {
       console.error("재촬영 시 카메라 재시작 실패:", err);
     }
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    stopStream();
+    await new Promise((r) => setTimeout(r, 100));
     console.log("이미지 확정:", capturedImage);
-    // 여기서 navigate하거나 부모로 전달 가능
+    navigate("/photo");
   };
 
   return (
-    <div className="h-screen bg-[#f9f8f4] flex flex-col items-center justify-start pt-20 px-6 text-center">
-      <h2 className="text-xl font-bold mb-8">사진을 찍어주세요</h2>
+    <div className="flex flex-col text-center justify-center w-full h-full p-16 gap-5">
+      <h2 className="text-heading1 font-bold mb-2">사진을 찍어주세요</h2>
 
-      <div className="w-[320px] h-[320px] bg-black mb-6 rounded-md overflow-hidden">
+      <div className="w-[320px] h-[320px] mx-auto bg-black mb-6 rounded-md overflow-hidden">
         {capturedImage ? (
           <img
             src={capturedImage}
@@ -82,17 +105,22 @@ const CameraPage: React.FC = () => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-full h-full object-cover"
-          />
+          <>
+            {showVideo && (
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                playsInline
+                muted
+              />
+            )}
+          </>
         )}
       </div>
 
       {capturedImage ? (
-        <div className="flex gap-4 mt-4">
+        <div className="flex gap-4 mt-4 mx-auto">
           <button
             onClick={handleRetake}
             className="px-6 py-3 rounded-lg bg-gray-400 text-white font-semibold shadow"
@@ -109,7 +137,7 @@ const CameraPage: React.FC = () => {
         </div>
       ) : (
         <button
-          className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center"
+          className="w-16 h-16 mx-auto rounded-full bg-white shadow-lg flex items-center justify-center"
           onClick={handleCapture}
         >
           <img src={Camera} alt="촬영" className="w-8 h-8" />

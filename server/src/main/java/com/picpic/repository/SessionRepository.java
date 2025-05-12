@@ -10,4 +10,7 @@ import com.picpic.entity.Session;
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Long> {
 	Optional<Session> findBySessionCode(String sessionCode);
+
+	Optional<Session> findBySessionId(Long sessionId);
+
 }
