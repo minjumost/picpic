@@ -12,8 +12,8 @@ const colors = [
   "#9C27B0",
 ];
 
-const CanvasDraw: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+const CanvasDrawOverImage: React.FC = () => {
+  const drawCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const isDrawing = useRef(false);
   const [mode, setMode] = useState<"pen" | "eraser">("pen");
   const [color, setColor] = useState("#F2552C");
@@ -34,71 +34,71 @@ const CanvasDraw: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // 드로잉 캔버스 초기화
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = drawCanvasRef.current;
     if (!canvas) return;
-
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
     }
   }, []);
 
-  const getContext = () => canvasRef.current?.getContext("2d");
+  const getCtx = () => drawCanvasRef.current?.getContext("2d");
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const ctx = getContext();
+    const ctx = getCtx();
     if (!ctx) return;
     isDrawing.current = true;
-
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing.current) return;
-    const ctx = getContext();
+    const ctx = getCtx();
     if (!ctx) return;
 
-    if (mode === "pen") {
-      ctx.globalCompositeOperation = "source-over";
-      ctx.strokeStyle = color;
-    } else {
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.strokeStyle = "rgba(0,0,0,1)"; // 색은 의미 없음
-    }
-
-    ctx.lineWidth = 6;
+    ctx.globalCompositeOperation =
+      mode === "pen" ? "source-over" : "destination-out";
+    ctx.strokeStyle = mode === "pen" ? color : "rgba(0,0,0,1)";
+    ctx.lineWidth = mode === "pen" ? 6 : 20;
     ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     ctx.stroke();
   };
 
   const handleMouseUp = () => {
     isDrawing.current = false;
-    const ctx = getContext();
-    if (ctx) ctx.globalCompositeOperation = "source-over"; // 원래대로
+    const ctx = getCtx();
+    if (ctx) ctx.globalCompositeOperation = "source-over";
   };
 
   return (
-    <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
+    <div className="flex flex-col justify-center w-full h-full p-8 gap-5">
       <div className="w-full flex justify-between">
         <h2 className="text-heading1 font-bold">사진을 꾸며주세요!</h2>
         <span className="text-heading1 text-danger font-bold">{timeLeft}s</span>
       </div>
 
-      <canvas
-        ref={canvasRef}
-        className="w-full aspect-square bg-white border-2 border-gray-300 rounded"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-      />
+      {/* 이미지 + 드로잉 캔버스를 겹쳐서 표시 */}
+      <div className="relative w-full h-full">
+        <img
+          src="https://buly.kr/3YDNlg0"
+          alt="base"
+          className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
+        />
+        <canvas
+          ref={drawCanvasRef}
+          className="absolute top-0 left-0 w-full h-full z-10"
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+        />
+      </div>
 
       <div className="flex gap-4 mb-2">
         <button
@@ -124,7 +124,9 @@ const CanvasDraw: React.FC = () => {
           <div
             key={idx}
             onClick={() => setColor(c)}
-            className="w-12 h-12 rounded-full cursor-pointer border border-gray-300"
+            className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
+              color === c ? "border-main1" : "border-gray-300"
+            }`}
             style={{ backgroundColor: c }}
           />
         ))}
@@ -137,4 +139,4 @@ const CanvasDraw: React.FC = () => {
   );
 };
 
-export default CanvasDraw;
+export default CanvasDrawOverImage;
