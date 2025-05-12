@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 import fs from "fs";
 
 const useHttps =
@@ -14,8 +15,18 @@ export default defineConfig({
       { find: "@page", replacement: "/src/page" },
     ],
   },
-  define: {
-    global: {},
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: "globalThis", // 🔥 핵심 포인트
+      },
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          process: true,
+          buffer: true,
+        }),
+      ],
+    },
   },
   plugins: [react(), tailwindcss()],
   server: {

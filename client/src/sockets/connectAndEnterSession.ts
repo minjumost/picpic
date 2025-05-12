@@ -22,7 +22,6 @@ export const connectAndEnterSession = (
       console.error("STOMP Error:", frame);
       reject(frame);
     };
-
     client.activate();
   });
 };
