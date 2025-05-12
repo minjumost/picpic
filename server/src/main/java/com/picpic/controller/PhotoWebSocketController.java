@@ -33,8 +33,8 @@ public class PhotoWebSocketController {
 
 	}
 
-	@MessageMapping("photo/submit")
-	public void submitPhoto(Principal principal, PhotoUploadRequestDTO photoUploadRequestDTO) {
+	@MessageMapping("photo/upload")
+	public void uploadPhoto(Principal principal, PhotoUploadRequestDTO photoUploadRequestDTO) {
 		Long memberId = Long.parseLong(principal.getName());
 		Long sessionId = photoUploadRequestDTO.sessionId();
 		PhotoUploadResponseDTO res =photoService.uploadPhoto(memberId, sessionId, photoUploadRequestDTO);
