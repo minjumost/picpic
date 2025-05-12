@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGetFrames } from "../api/frame";
@@ -36,7 +35,7 @@ const FrameOption: React.FC<FrameOptionProps> = ({
 
 const SelectFrameScreen: React.FC = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useGetFrames();
+  const { data, isLoading } = useGetFrames();
 
   // TODO: 스피너 컴포넌트로 교체필요
   if (isLoading) return <div>로딩 중..</div>;
