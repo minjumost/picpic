@@ -14,6 +14,9 @@ export default defineConfig({
       { find: "@page", replacement: "/src/page" },
     ],
   },
+  define: {
+    global: {},
+  },
   plugins: [react(), tailwindcss()],
   server: {
     https: useHttps
