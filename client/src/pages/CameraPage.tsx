@@ -48,6 +48,7 @@ const CameraPage: React.FC = () => {
     return () => {
       stopStream();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCapture = () => {
@@ -93,10 +94,10 @@ const CameraPage: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-[#f9f8f4] flex flex-col items-center justify-start pt-20 px-6 text-center">
-      <h2 className="text-xl font-bold mb-8">사진을 찍어주세요</h2>
+    <div className="flex flex-col text-center justify-center w-full h-full p-16 gap-5">
+      <h2 className="text-heading1 font-bold mb-2">사진을 찍어주세요</h2>
 
-      <div className="w-[320px] h-[320px] bg-black mb-6 rounded-md overflow-hidden">
+      <div className="w-[320px] h-[320px] mx-auto bg-black mb-6 rounded-md overflow-hidden">
         {capturedImage ? (
           <img
             src={capturedImage}
@@ -105,13 +106,21 @@ const CameraPage: React.FC = () => {
           />
         ) : (
           <>
-            {showVideo && <video ref={videoRef} autoPlay playsInline muted />}
+            {showVideo && (
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                autoPlay
+                playsInline
+                muted
+              />
+            )}
           </>
         )}
       </div>
 
       {capturedImage ? (
-        <div className="flex gap-4 mt-4">
+        <div className="flex gap-4 mt-4 mx-auto">
           <button
             onClick={handleRetake}
             className="px-6 py-3 rounded-lg bg-gray-400 text-white font-semibold shadow"
@@ -128,7 +137,7 @@ const CameraPage: React.FC = () => {
         </div>
       ) : (
         <button
-          className="w-16 h-16 rounded-full bg-white shadow-lg flex items-center justify-center"
+          className="w-16 h-16 mx-auto rounded-full bg-white shadow-lg flex items-center justify-center"
           onClick={handleCapture}
         >
           <img src={Camera} alt="촬영" className="w-8 h-8" />
