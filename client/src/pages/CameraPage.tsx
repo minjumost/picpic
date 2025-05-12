@@ -94,7 +94,7 @@ const CameraPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
+    <div className="flex flex-col text-center justify-center w-full h-full p-16 gap-5">
       <h2 className="text-heading1 font-bold mb-2">사진을 찍어주세요</h2>
 
       <div className="w-[320px] h-[320px] mx-auto bg-black mb-6 rounded-md overflow-hidden">

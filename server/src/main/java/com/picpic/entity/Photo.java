@@ -35,8 +35,8 @@ public class Photo {
 	private Long photoId;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "participant_id", nullable = false)
-	private Participant participant;
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "session_id", nullable = false)
@@ -45,7 +45,7 @@ public class Photo {
 	@Column(name = "slot_index", nullable = false)
 	private Integer slotIndex;
 
-	@Column(name = "photo_image_url", nullable = false)
+	@Column(name = "photo_image_url")
 	private String photoImageUrl;
 
 	@CreationTimestamp
