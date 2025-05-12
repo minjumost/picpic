@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGetBackgrounds } from "../api/backImage";
@@ -31,12 +30,10 @@ const BackImageOption: React.FC<BackImageOption> = ({
 
 const SelectBackImagePage: React.FC = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useGetBackgrounds();
+  const { isLoading } = useGetBackgrounds();
 
   // TODO: 스피너 컴포넌트로 교체필요
   if (isLoading) return <div>로딩 중..</div>;
-
-  const backimageList = data;
 
   return (
     <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
