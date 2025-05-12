@@ -14,6 +14,7 @@ import PhotoCapturePage from "../pages/PhotoCapturePage";
 import CameraPage from "../pages/CameraPage";
 import GuidePage from "../pages/GuidePage";
 import CanvasDraw from "../pages/CanvasDraw";
+import RoomCodePage from "../pages/RoomCodePage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +23,7 @@ export const router = createBrowserRouter(
       <Route path="/frame" element={<SelectFrameScreen />} />
       <Route path="/backImg" element={<SelectBackImagePage />} />
       <Route path="/roomSet" element={<RoomSetUpPage />} />
+      <Route path="/roomCode" element={<RoomCodePage />} />
       <Route path="/invite" element={<InviteRoomPage />} />
       <Route path="/waiting" element={<WaitingPage />} />
       <Route path="/photo" element={<PhotoCapturePage />} />

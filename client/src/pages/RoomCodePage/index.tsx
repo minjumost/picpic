@@ -1,7 +1,8 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import PhotoTerms from "../../components/PhotoTerms";
 
-const RoomSetUpPage: React.FC = () => {
+const RoomCodePage = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
 
@@ -38,12 +39,11 @@ const RoomSetUpPage: React.FC = () => {
   return (
     <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
       <h2 className="text-heading1 font-bold mb-2 z-10">
-        비공개로 설정할까요?
+        비밀번호를 입력해주세요.
       </h2>
-      <p className="text-body1 font-bold text-gray-500 mb-6 z-10">
-        비밀번호를 입력해야 입장할 수 있어요.
-      </p>
-
+      <div>
+        <PhotoTerms />
+      </div>
       <div className="flex gap-4 mb-10 z-10 w-full justify-center">
         {Array(4)
           .fill(0)
@@ -62,7 +62,6 @@ const RoomSetUpPage: React.FC = () => {
             />
           ))}
       </div>
-
       <button
         disabled={!isFilled}
         className={`w-full py-3 rounded-lg shadow-md mb-4 font-bold transition-colors ${
@@ -71,13 +70,13 @@ const RoomSetUpPage: React.FC = () => {
             : "bg-gray-300 text-white cursor-not-allowed"
         }`}
         onClick={() => {
-          navigate("/invite");
+          navigate("/waiting");
         }}
       >
-        비밀방으로 시작
+        동의하고 입장하기
       </button>
     </div>
   );
 };
 
-export default RoomSetUpPage;
+export default RoomCodePage;
