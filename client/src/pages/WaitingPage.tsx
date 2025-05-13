@@ -1,20 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { sendSessionStart } from "../sockets/sessionSocket";
+import { setHandlers } from "../sockets/stompClient";
 
 interface User {
-  name: string;
-  isLeader?: boolean;
+  memberId: number;
+  nickname: string;
+  color: string;
+  profileImageUrl: string;
 }
 
 const WaitingPage: React.FC = () => {
-  const [users, setUsers] = useState<User[]>([
-    { name: "즐거운 사자", isLeader: true },
-    { name: "즐거운 사자" },
-    { name: "즐거운 사자" },
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
 
-  console.log("setUsers: ", setUsers);
+  useEffect(() => {
+    const handlers = {
+      session_enter: (data: { participants: User[] }) => {
+        setUsers({ ...data.participants });
+        console.log(data);
+      },
+    };
+
+    setHandlers(handlers);
+  }, []);
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -53,18 +61,11 @@ const WaitingPage: React.FC = () => {
             className="flex items-center bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm"
           >
             <img
-              src="/emoji.png" // 사용자 이모지 (예시)
+              src={user.profileImageUrl} // 사용자 이모지 (예시)
               alt="user"
               className="w-6 h-6 mr-2"
             />
-            <span className="text-sm font-medium">{user.name}</span>
-            {user.isLeader && (
-              <img
-                src="/crown.png" // 왕관 아이콘
-                alt="방장"
-                className="w-4 h-4 ml-2"
-              />
-            )}
+            <span className="text-sm font-medium">{user.nickname}</span>
           </div>
         ))}
       </div>
