@@ -4,6 +4,7 @@ import PhotoTerms from "../../components/PhotoTerms";
 import { connectAndEnterSession } from "../../sockets/sessionSocket";
 import { useGuestLogin } from "../../api/auth";
 import { useSessionCode } from "../../hooks/useSessionCode";
+import { initStompSession } from "../../sockets/stompClient";
 
 const RoomPwdPage = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -66,6 +67,7 @@ const RoomPwdPage = () => {
       .join("");
     const password = Number(passwordStr);
 
+    await initStompSession(sessionCode);
     await connectAndEnterSession(sessionCode, password);
 
     navigate(`/waiting?r=${sessionCode}`);
