@@ -8,7 +8,7 @@ const InviteRoomPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const roomCode = searchParams.get("r");
 
-  const roomUrl = `https://localhost:5173/waiting?r=${roomCode}`;
+  const roomUrl = `https://localhost:5173/roomCode?r=${roomCode}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(roomUrl).then(() => {
