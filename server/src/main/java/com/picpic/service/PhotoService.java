@@ -52,7 +52,6 @@ public class PhotoService {
 
 		return new PhotoStartResponseDTO(
 			"photo_start",
-			session.getSessionCode(),
 			photo.getSlotIndex(),
 			member.getMemberId()
 		);
@@ -81,9 +80,7 @@ public class PhotoService {
 
 		return new PhotoUploadResponseDTO(
 			"photo_upload",
-			session.getSessionCode(),
 			photo.getSlotIndex(),
-			memberId,
 			photoUploadRequestDTO.url()
 		);
 	}
