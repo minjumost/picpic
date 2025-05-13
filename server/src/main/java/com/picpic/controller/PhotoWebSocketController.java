@@ -29,7 +29,7 @@ public class PhotoWebSocketController {
 		Long memberId = Long.parseLong(principal.getName());
 		Long sesssionId = photoStartRequestDTO.sessionId();
 		PhotoStartResponseDTO res = photoService.startPhoto(sesssionId, memberId, photoStartRequestDTO);
-		messagingTemplate.convertAndSend("/broadcast/"+res.sessionCode(), res);
+		messagingTemplate.convertAndSend("/broadcast/"+ photoStartRequestDTO.sessionCode(), res);
 
 	}
 
@@ -38,7 +38,7 @@ public class PhotoWebSocketController {
 		Long memberId = Long.parseLong(principal.getName());
 		Long sessionId = photoUploadRequestDTO.sessionId();
 		PhotoUploadResponseDTO res =photoService.uploadPhoto(memberId, sessionId, photoUploadRequestDTO);
-		messagingTemplate.convertAndSend("/broadcast/"+res.sessionCode(), res);
+		messagingTemplate.convertAndSend("/broadcast/"+photoUploadRequestDTO.sessionCode(), res);
 
 	}
 
