@@ -24,6 +24,7 @@ const InviteRoomPage: React.FC = () => {
 
     try {
       initStompSession(sessionCode);
+      initStompSession(sessionCode);
       await connectAndEnterSession(sessionCode, 1234);
 
       navigate(`/waiting?r=${sessionCode}`);
