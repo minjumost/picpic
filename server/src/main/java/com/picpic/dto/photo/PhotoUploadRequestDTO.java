@@ -6,6 +6,7 @@ import lombok.Builder;
 public record PhotoUploadRequestDTO(
 Long memberId,
 Long sessionId,
+String sessionCode,
 Integer slotIndex,
 String url
 ) {

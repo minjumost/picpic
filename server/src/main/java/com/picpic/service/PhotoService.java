@@ -52,14 +52,12 @@ public class PhotoService {
 
 		return new PhotoStartResponseDTO(
 			"photo_start",
-			session.getSessionCode(),
 			photo.getSlotIndex(),
 			member.getMemberId()
 		);
 	}
 
-	public PhotoUploadResponseDTO uploadPhoto(Long sessionId, Long memberId,
-		PhotoUploadRequestDTO photoUploadRequestDTO) {
+		public PhotoUploadResponseDTO uploadPhoto(Long sessionId, Long memberId, PhotoUploadRequestDTO photoUploadRequestDTO) {
 
 		Member member = memberRepository.findById(memberId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
@@ -82,9 +80,7 @@ public class PhotoService {
 
 		return new PhotoUploadResponseDTO(
 			"photo_upload",
-			session.getSessionCode(),
 			photo.getSlotIndex(),
-			memberId,
 			photoUploadRequestDTO.url()
 		);
 	}

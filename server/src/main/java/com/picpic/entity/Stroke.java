@@ -39,11 +39,14 @@ public class Stroke {
 	private Photo photo;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "participant_id", nullable = false)
-	private Participant participant;
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
 	@Column(nullable = false)
 	private Tool tool;
+
+	@Column(nullable = false)
+	private Integer lineWidth;
 
 	@Column(nullable = false, length = 7)
 	private String color;
@@ -63,7 +66,7 @@ public class Stroke {
 	private LocalDateTime deletedAt;
 
 	@Getter
-	enum Tool {
+	public static enum Tool {
 		ERASER(0),
 		PEN(1);
 
