@@ -47,4 +47,5 @@ public class WebSocketEventListener {
 		StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
 		log.info("❌ 구독 취소. 세션 ID: {}, destination: {}", accessor.getSessionId(), accessor.getDestination());
 	}
+	
 }
