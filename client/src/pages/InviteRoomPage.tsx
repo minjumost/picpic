@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router";
+import { initStompSession } from "../sockets/stompClient";
 import { connectAndEnterSession } from "../sockets/sessionSocket";
 
 const InviteRoomPage: React.FC = () => {
@@ -23,6 +24,7 @@ const InviteRoomPage: React.FC = () => {
     }
 
     try {
+      initStompSession(sessionCode);
       await connectAndEnterSession(sessionCode, 1234);
 
       navigate(`/waiting?r=${sessionCode}`);
