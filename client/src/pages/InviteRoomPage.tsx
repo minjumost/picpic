@@ -23,9 +23,7 @@ const InviteRoomPage: React.FC = () => {
     }
 
     try {
-      const sessionId = Number(sessionStorage.getItem("sessionId"));
-
-      await connectAndEnterSession(roomCode, sessionId);
+      await connectAndEnterSession(roomCode, 1234);
 
       navigate(`/waiting?r=${roomCode}`);
     } catch (error) {

@@ -2,15 +2,15 @@ import stompClient from "./stompClient";
 
 export const connectAndEnterSession = (
   sessionCode: string,
-  sessionId: number
+  password: number
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     stompClient.onConnect = () => {
       console.log("✅ WebSocket connected");
 
       stompClient.publish({
-        destination: "/send/session/start",
-        body: JSON.stringify({ sessionCode, sessionId }),
+        destination: "/send/session/enter",
+        body: JSON.stringify({ sessionCode, password }),
       });
 
       resolve();
