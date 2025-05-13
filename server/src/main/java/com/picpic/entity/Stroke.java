@@ -45,6 +45,9 @@ public class Stroke {
 	@Column(nullable = false)
 	private Tool tool;
 
+	@Column(nullable = false)
+	private Integer lineWidth;
+
 	@Column(nullable = false, length = 7)
 	private String color;
 
@@ -63,7 +66,7 @@ public class Stroke {
 	private LocalDateTime deletedAt;
 
 	@Getter
-	enum Tool {
+	public static enum Tool {
 		ERASER(0),
 		PEN(1);
 

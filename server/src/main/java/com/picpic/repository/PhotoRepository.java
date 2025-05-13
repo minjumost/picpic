@@ -9,4 +9,6 @@ import com.picpic.entity.Session;
 
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 	Optional<Photo> findBySessionAndSlotIndex(Session session, Integer slotIndex);
+
+	Optional<Photo> findByphotoId(Long photoId);
 }
