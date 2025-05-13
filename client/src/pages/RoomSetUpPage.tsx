@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { client } from "../api/axios";
 
 const RoomSetUpPage: React.FC = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -35,6 +36,24 @@ const RoomSetUpPage: React.FC = () => {
     }
   };
 
+  const handleCreateRoom = async () => {
+    const password = inputsRef.current.map((input) => input?.value).join("");
+
+    try {
+      const res = await client.post("/api/v1/session", {
+        frameId: 1,
+        backgroundId: 1,
+        password: Number(password),
+      });
+
+      const { sessionId, sessionCode } = res.data.result; // 백엔드 응답 형식에 따라 수정 필요
+      sessionStorage.setItem("sessionId", sessionId);
+      navigate(`/invite?r=${sessionCode}`);
+    } catch (error) {
+      console.error("방 생성 실패", error);
+      alert("방 생성에 실패했습니다.");
+    }
+  };
   return (
     <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
       <h2 className="text-heading1 font-bold mb-2 z-10">
@@ -70,9 +89,7 @@ const RoomSetUpPage: React.FC = () => {
             ? "bg-main1 text-white cursor-pointer"
             : "bg-gray-300 text-white cursor-not-allowed"
         }`}
-        onClick={() => {
-          navigate("/invite");
-        }}
+        onClick={handleCreateRoom}
       >
         비밀방으로 시작
       </button>

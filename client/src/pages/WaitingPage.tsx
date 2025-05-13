@@ -1,11 +1,16 @@
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
+
 interface User {
   name: string;
   isLeader?: boolean;
 }
 
 const WaitingPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const roomCode = searchParams.get("r");
   const navigate = useNavigate();
+
+  console.log("roomCode:", roomCode);
 
   const users: User[] = [
     { name: "즐거운 사자", isLeader: true },

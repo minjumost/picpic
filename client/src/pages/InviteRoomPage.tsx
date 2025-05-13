@@ -1,13 +1,37 @@
 import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router";
+import { connectAndEnterSession } from "../sockets/connectAndEnterSession";
 
 const InviteRoomPage: React.FC = () => {
   const navigate = useNavigate();
-  const roomUrl = "https://localhost:5173/waiting";
+
+  const [searchParams] = useSearchParams();
+  const roomCode = searchParams.get("r");
+
+  const roomUrl = `https://localhost:5173/waiting?r=${roomCode}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(roomUrl).then(() => {
       alert("링크가 복사되었습니다!");
     });
+  };
+
+  const handleEnterRoom = async () => {
+    if (!roomCode) {
+      alert("방 코드가 없습니다.");
+      return;
+    }
+
+    try {
+      const sessionId = Number(sessionStorage.getItem("sessionId"));
+
+      await connectAndEnterSession(roomCode, sessionId);
+
+      navigate(`/waiting?r=${roomCode}`);
+    } catch (error) {
+      alert("방 입장 중 오류가 발생했습니다.");
+      console.error(error);
+    }
   };
 
   return (
@@ -30,9 +54,7 @@ const InviteRoomPage: React.FC = () => {
 
       <button
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
-        onClick={() => {
-          navigate("/waiting");
-        }}
+        onClick={handleEnterRoom}
       >
         입장하기
       </button>
