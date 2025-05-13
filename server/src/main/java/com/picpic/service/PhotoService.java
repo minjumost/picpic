@@ -58,8 +58,7 @@ public class PhotoService {
 		);
 	}
 
-	public PhotoUploadResponseDTO uploadPhoto(Long sessionId, Long memberId,
-		PhotoUploadRequestDTO photoUploadRequestDTO) {
+		public PhotoUploadResponseDTO uploadPhoto(Long sessionId, Long memberId, PhotoUploadRequestDTO photoUploadRequestDTO) {
 
 		Member member = memberRepository.findById(memberId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
