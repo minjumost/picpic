@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { sendSessionStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
+import { useSessionCode } from "../hooks/useSessionCode";
 
 interface User {
   memberId: number;
@@ -12,6 +13,8 @@ interface User {
 
 const WaitingPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+
+  const sessionCode = useSessionCode();
 
   useEffect(() => {
     const handlers = {
@@ -24,12 +27,10 @@ const WaitingPage: React.FC = () => {
     setHandlers(handlers);
   }, []);
 
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const handleStartPhoto = () => {
     const sessionId = Number(sessionStorage.getItem("sessionId"));
-    const sessionCode = searchParams.get("r");
 
     if (!sessionId || !sessionCode) {
       console.error("세션 정보가 없습니다.");
@@ -37,7 +38,7 @@ const WaitingPage: React.FC = () => {
     }
 
     sendSessionStart(sessionId, sessionCode);
-    navigate("/photo");
+    navigate(`/photo?r=${sessionCode}`);
   };
 
   return (

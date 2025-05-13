@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import PhotoTerms from "../../components/PhotoTerms";
 import { connectAndEnterSession } from "../../sockets/sessionSocket";
 import { useGuestLogin } from "../../api/auth";
+import { useSessionCode } from "../../hooks/useSessionCode";
 
 const RoomPwdPage = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
 
-  const [searchParams] = useSearchParams();
-  const sessionCode = searchParams.get("r");
+  const sessionCode = useSessionCode();
 
   const guestLoginMutation = useGuestLogin();
 

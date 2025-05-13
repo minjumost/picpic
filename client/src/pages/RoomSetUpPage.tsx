@@ -46,7 +46,7 @@ const RoomSetUpPage: React.FC = () => {
         password: Number(password),
       });
 
-      const { sessionId, sessionCode } = res.data.result; // 백엔드 응답 형식에 따라 수정 필요
+      const { sessionId, sessionCode } = res.data.result;
       sessionStorage.setItem("sessionId", sessionId);
       navigate(`/invite?r=${sessionCode}`);
     } catch (error) {
