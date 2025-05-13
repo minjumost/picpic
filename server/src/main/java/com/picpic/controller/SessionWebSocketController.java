@@ -13,7 +13,9 @@ import com.picpic.dto.session.StartSessionResponseDTO;
 import com.picpic.service.SessionService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SessionWebSocketController {
@@ -24,6 +26,7 @@ public class SessionWebSocketController {
 	@MessageMapping("/session/enter")
 	public void enterSession(Principal principal, EnterSessionRequestDTO enterSessionRequestDTO) {
 		Long memberId = Long.parseLong(principal.getName());
+		log.info(enterSessionRequestDTO.sessionCode());
 		EnterSessionResponseDTO res = sessionService.enterSession(memberId, enterSessionRequestDTO);
 		messagingTemplate.convertAndSend("/broadcast/" + enterSessionRequestDTO.sessionCode(), res);
 	}

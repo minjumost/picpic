@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router";
-import { useSearchParams } from "react-router";
 import { initStompSession } from "../sockets/stompClient";
 import { connectAndEnterSession } from "../sockets/sessionSocket";
+import { useSessionCode } from "../hooks/useSessionCode";
 
 const InviteRoomPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
-  const sessionCode = searchParams.get("r");
+  const sessionCode = useSessionCode();
 
   const roomUrl = `https://localhost:5173/roomPwd?r=${sessionCode}`;
 
@@ -24,6 +23,7 @@ const InviteRoomPage: React.FC = () => {
     }
 
     try {
+      initStompSession(sessionCode);
       initStompSession(sessionCode);
       await connectAndEnterSession(sessionCode, 1234);
 

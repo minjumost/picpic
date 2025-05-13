@@ -3,6 +3,7 @@ package com.picpic.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.MDC;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +28,12 @@ import com.picpic.repository.ParticipantRepository;
 import com.picpic.repository.SessionRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class SessionService {
 
 	private final MemberRepository memberRepository;
@@ -64,10 +67,15 @@ public class SessionService {
 
 		sessionRepository.save(session);
 
-		return CreateSessionResponseDTO.builder()
+		CreateSessionResponseDTO res = CreateSessionResponseDTO.builder()
 			.sessionId(session.getSessionId())
 			.sessionCode(session.getSessionCode())
 			.build();
+
+		MDC.put("sessionId", session.getSessionId().toString());
+		log.info("세션 만들기 성공");
+
+		return res;
 
 	}
 
@@ -115,7 +123,7 @@ public class SessionService {
 
 		participants.add(participant);
 
-		return EnterSessionResponseDTO.builder()
+		EnterSessionResponseDTO res = EnterSessionResponseDTO.builder()
 			.type("session_enter")
 			.status(session.getStatus().toString())
 			.participants(
@@ -131,6 +139,9 @@ public class SessionService {
 					.toList()
 			)
 			.build();
+		MDC.put("sessionId", session.getSessionId().toString());
+		log.info("세션 입장 성공");
+		return res;
 	}
 
 	public StartSessionResponseDTO startSession(Long memberId, StartSessionRequestDTO startSessionRequestDTO) {
@@ -153,9 +164,13 @@ public class SessionService {
 
 		session.start();
 
-		return StartSessionResponseDTO.builder()
+		StartSessionResponseDTO res = StartSessionResponseDTO.builder()
 			.type("session_start")
 			.build();
+
+		MDC.put("sessionId", session.getSessionId().toString());
+		log.info("세션 시작 성공");
+		return res;
 	}
 
 }
