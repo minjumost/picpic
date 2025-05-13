@@ -98,4 +98,19 @@ public class PhotoService {
 
 		return res;
 	}
+
+	public void saveEditedPhoto(Long sessionId, Integer slotIndex, String url) {
+		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		Photo photo = photoRepository.findBySessionAndSlotIndex(session, slotIndex)
+			.orElseThrow(
+				() -> new ApiException(ErrorCode.NOT_FOUND_PHOTO)
+			);
+
+		photo.setEditedImageUrl(url);
+		photoRepository.save(photo);
+
+	}
 }
