@@ -48,6 +48,9 @@ public class Photo {
 	@Column(name = "photo_image_url")
 	private String photoImageUrl;
 
+	@Column(name = "edited_image_url")
+	private String editedImageUrl;
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private LocalDateTime createdAt;
