@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import PhotoTerms from "../../components/PhotoTerms";
 
-const RoomCodePage = () => {
+const RoomPwdPage = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
 
@@ -79,4 +79,4 @@ const RoomCodePage = () => {
   );
 };
 
-export default RoomCodePage;
+export default RoomPwdPage;
