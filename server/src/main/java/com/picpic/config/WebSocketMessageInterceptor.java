@@ -34,10 +34,8 @@ public class WebSocketMessageInterceptor implements ChannelInterceptor {
 		String destination = accessor.getDestination();
 		String sessionId = accessor.getSessionId();
 
-		if (command != null && command.equals(StompCommand.MESSAGE)) {
-			// 서버가 보낸 메시지
-			log.info("📤 [SENT] to client - [sessionId={}] [destination={}] payload={}", sessionId, destination,
-				message.getPayload());
-		}
+		log.info("📤 [SENT] to client - [sessionId={}] [destination={}] payload={}", sessionId, destination,
+			message.getPayload());
+
 	}
 }

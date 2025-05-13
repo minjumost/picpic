@@ -32,6 +32,8 @@ export const initStompSession = (sessionCode: string) => {
   if (subscribed) return;
   subscribed = true;
 
+  client.activate();
+
   client.onConnect = () => {
     client.subscribe(`/broadcast/${sessionCode}`, (message: IMessage) => {
       console.log(message);
@@ -52,8 +54,6 @@ export const initStompSession = (sessionCode: string) => {
     client.subscribe("/user/private", (message: IMessage) =>
       console.log(message)
     );
-
-    client.activate();
   };
 };
 
