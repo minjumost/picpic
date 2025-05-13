@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router";
-import { connectAndEnterSession } from "../sockets/sessionSocket";
 import { initStompSession } from "../sockets/stompClient";
+import { connectAndEnterSession } from "../sockets/sessionSocket";
 
 const InviteRoomPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
-  const roomCode = searchParams.get("r");
+  const sessionCode = searchParams.get("r");
 
-  const roomUrl = `https://localhost:5173/waiting?r=${roomCode}`;
+  const roomUrl = `https://localhost:5173/roomPwd?r=${sessionCode}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(roomUrl).then(() => {
@@ -18,18 +18,16 @@ const InviteRoomPage: React.FC = () => {
   };
 
   const handleEnterRoom = async () => {
-    if (!roomCode) {
+    if (!sessionCode) {
       alert("방 코드가 없습니다.");
       return;
     }
 
     try {
-      initStompSession(roomCode);
-      const sessionId = Number(sessionStorage.getItem("sessionId"));
+      initStompSession(sessionCode);
+      await connectAndEnterSession(sessionCode, 1234);
 
-      await connectAndEnterSession(roomCode, sessionId);
-
-      navigate(`/waiting?r=${roomCode}`);
+      navigate(`/waiting?r=${sessionCode}`);
     } catch (error) {
       alert("방 입장 중 오류가 발생했습니다.");
       console.error(error);

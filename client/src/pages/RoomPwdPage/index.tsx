@@ -1,10 +1,17 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import PhotoTerms from "../../components/PhotoTerms";
+import { connectAndEnterSession } from "../../sockets/sessionSocket";
+import { useGuestLogin } from "../../api/auth";
 
-const RoomCodePage = () => {
+const RoomPwdPage = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const sessionCode = searchParams.get("r");
+
+  const guestLoginMutation = useGuestLogin();
 
   const navigate = useNavigate();
 
@@ -34,6 +41,34 @@ const RoomCodePage = () => {
     if (e.key === "Backspace" && !e.currentTarget.value && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
+  };
+
+  const handleLogin = () => {
+    guestLoginMutation.mutate(undefined, {
+      onSuccess: () => {
+        handleEnterRoom();
+        console.log("로그인 성공");
+      },
+      onError: (error) => {
+        console.error("에러 발생:", error);
+      },
+    });
+  };
+
+  const handleEnterRoom = async () => {
+    if (!sessionCode) {
+      alert("방 코드가 없습니다.");
+      return;
+    }
+
+    const passwordStr = inputsRef.current
+      .map((input) => input?.value ?? "")
+      .join("");
+    const password = Number(passwordStr);
+
+    await connectAndEnterSession(sessionCode, password);
+
+    navigate(`/waiting?r=${sessionCode}`);
   };
 
   return (
@@ -69,9 +104,7 @@ const RoomCodePage = () => {
             ? "bg-main1 text-white cursor-pointer"
             : "bg-gray-300 text-white cursor-not-allowed"
         }`}
-        onClick={() => {
-          navigate("/waiting");
-        }}
+        onClick={handleLogin}
       >
         동의하고 입장하기
       </button>
@@ -79,4 +112,4 @@ const RoomCodePage = () => {
   );
 };
 
-export default RoomCodePage;
+export default RoomPwdPage;

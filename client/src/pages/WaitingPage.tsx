@@ -27,10 +27,6 @@ const WaitingPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const roomCode = searchParams.get("r");
-
-  console.log("roomCode:", roomCode);
-
   const handleStartPhoto = () => {
     const sessionId = Number(sessionStorage.getItem("sessionId"));
     const sessionCode = searchParams.get("r");
