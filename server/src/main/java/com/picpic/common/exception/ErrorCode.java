@@ -31,7 +31,7 @@ public enum ErrorCode {
 	ALREADY_STARTED(4006, HttpStatus.BAD_REQUEST, "이미 시작된 세션입니다."),
 	OWNER_CAN_START(4007, HttpStatus.BAD_REQUEST, "방장만 시작할 수 있습니다."),
 	ALREADY_USED(4008,HttpStatus.BAD_REQUEST, "이미 선택된 슬롯입니다."),
-
+	
 	// ⚙️ 서버 오류
 	INTERNAL_ERROR(5000, HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류입니다."),
 	

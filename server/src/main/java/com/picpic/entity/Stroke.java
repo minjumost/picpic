@@ -39,8 +39,8 @@ public class Stroke {
 	private Photo photo;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "participant_id", nullable = false)
-	private Participant participant;
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
 	@Column(nullable = false)
 	private Tool tool;
