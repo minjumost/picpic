@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router";
-import { connectAndEnterSession } from "../sockets/connectAndEnterSession";
+import { connectAndEnterSession } from "../sockets/sessionSocket";
 
 const InviteRoomPage: React.FC = () => {
   const navigate = useNavigate();
