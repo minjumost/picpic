@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.picpic.common.filter.ExceptionHandlerFilter;
+import com.picpic.common.filter.LogFilter;
 import com.picpic.common.filter.RateLimitFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, RateLimitFilter rateLimitFilter,
 		ExceptionHandlerFilter exceptionHandlerFilter,
-		JwtAuthenticationFilter jwtAuthenticationFilter) throws
+		JwtAuthenticationFilter jwtAuthenticationFilter, LogFilter logFilter) throws
 		Exception {
 		return http
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -38,6 +39,7 @@ public class SecurityConfig {
 			.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(jwtAuthenticationFilter, RateLimitFilter.class)
 			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
+			.addFilterBefore(logFilter, ExceptionHandlerFilter.class)
 
 			.authorizeHttpRequests(
 				authorizeRequests ->
@@ -52,6 +54,7 @@ public class SecurityConfig {
 		CorsConfiguration configuration = new CorsConfiguration();
 
 		configuration.setAllowedOrigins(Arrays.asList(
+			"http://127.0.0.1:5500",
 			"http://localhost:5173",
 			"https://localhost:5173",
 			"https://minipia.co.kr"
@@ -81,6 +84,11 @@ public class SecurityConfig {
 	@Bean
 	public ExceptionHandlerFilter exceptionHandlerFilter() {
 		return new ExceptionHandlerFilter();
+	}
+
+	@Bean
+	public LogFilter logFilter() {
+		return new LogFilter();
 	}
 
 }

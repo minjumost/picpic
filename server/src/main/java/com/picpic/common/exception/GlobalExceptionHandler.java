@@ -26,7 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(ApiException.class)
 	protected ResponseEntity<ApiResponse<Void>> handleApiException(ApiException e) {
 		ErrorCode code = e.getErrorCode();
-		log.warn("Handled ApiException - code: {}, message: {}", code.getCode(), code.getMessage());
+		log.warn(e.getMessage(), e);
 		return ResponseEntity
 			.status(code.getStatus())
 			.body(ApiResponse.error(code));
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				.build())
 			.toList();
 
-		log.info("Validation failed: {} errors", errors.size());
+		log.warn(ErrorCode.INVALID_INPUT_VALUE.getMessage(), errors);
 
 		ApiResponse<List<FieldErrorResponse>> response = ApiResponse.error(ErrorCode.INVALID_INPUT_VALUE, errors);
 
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	// ✅ 처리되지 않은 예외
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ApiResponse<Void>> handleUnhandled(Exception e) {
-		log.error("Unhandled exception occurred", e);
+		log.error(e.getMessage(), e);
 		return ResponseEntity
 			.status(HttpStatus.INTERNAL_SERVER_ERROR)
 			.body(ApiResponse.error(ErrorCode.INTERNAL_ERROR));

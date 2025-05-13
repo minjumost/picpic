@@ -10,6 +10,7 @@ import com.picpic.config.S3Properties;
 import com.picpic.dto.S3ImageUploadResponseDTO;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -19,6 +20,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3Service {
 
 	private final S3Properties s3Properties;
@@ -49,9 +51,13 @@ public class S3Service {
 			".s3." + s3Properties.getRegion() +
 			".amazonaws.com/" + key;
 
-		return S3ImageUploadResponseDTO.builder()
+		S3ImageUploadResponseDTO res = S3ImageUploadResponseDTO.builder()
 			.presignedUrl(presignedUrl.toString())
 			.imageUrl(fileUrl)
 			.build();
+
+		log.info("presignedUrl 발급 완료");
+
+		return res;
 	}
 }
