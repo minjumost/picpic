@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
+import { sendSessionStart } from "../sockets/sessionSocket";
 
 interface User {
   name: string;
@@ -6,17 +8,33 @@ interface User {
 }
 
 const WaitingPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
-  const roomCode = searchParams.get("r");
-  const navigate = useNavigate();
-
-  console.log("roomCode:", roomCode);
-
-  const users: User[] = [
+  const [users, setUsers] = useState<User[]>([
     { name: "즐거운 사자", isLeader: true },
     { name: "즐거운 사자" },
     { name: "즐거운 사자" },
-  ];
+  ]);
+
+  console.log("setUsers: ", setUsers);
+
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const roomCode = searchParams.get("r");
+
+  console.log("roomCode:", roomCode);
+
+  const handleStartPhoto = () => {
+    const sessionId = Number(sessionStorage.getItem("sessionId"));
+    const sessionCode = searchParams.get("r");
+
+    if (!sessionId || !sessionCode) {
+      console.error("세션 정보가 없습니다.");
+      return;
+    }
+
+    sendSessionStart(sessionId, sessionCode);
+    navigate("/photo");
+  };
 
   return (
     <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
@@ -53,9 +71,7 @@ const WaitingPage: React.FC = () => {
 
       <button
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
-        onClick={() => {
-          navigate("/photo");
-        }}
+        onClick={handleStartPhoto}
       >
         시작하기
       </button>
