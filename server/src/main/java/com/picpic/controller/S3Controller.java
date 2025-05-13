@@ -18,7 +18,7 @@ public class S3Controller {
 
 	private final S3Service s3Service;
 
-	@GetMapping("/presigned-url")
+	@GetMapping
 	public ApiResponse<S3ImageUploadResponseDTO> getPresignedUrl(
 		@RequestParam String type,
 		@RequestParam String fileName,
