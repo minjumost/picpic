@@ -10,7 +10,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
 	@Override
@@ -18,10 +20,11 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 
 		try {
-			System.out.println(1);
 			filterChain.doFilter(request, response);
 		} catch (ApiException e) {
 
+			log.error(e.getMessage(), e);
+			
 			response.setCharacterEncoding("UTF-8");
 			response.setContentType("application/json; charset=UTF-8");
 			response.setStatus(e.getErrorCode().getStatus().value());

@@ -1,5 +1,9 @@
 package com.picpic.auth.service;
 
+import java.util.List;
+
+import org.slf4j.MDC;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,8 +16,10 @@ import com.picpic.repository.NicknameRepository;
 import com.picpic.repository.ProfileRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class AuthService {
@@ -36,6 +42,14 @@ public class AuthService {
 			.build();
 
 		memberRepository.save(guest);
+
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+			guest.getMemberId(), null,
+			List.of(() -> guest.getRole().name()));
+
+		MDC.put("memberId", guest.getMemberId().toString());
+
+		log.info("게스트 로그인 완료");
 
 		return jwtTokenProvider.generateToken(guest.getMemberId(), guest.getRole());
 	}
