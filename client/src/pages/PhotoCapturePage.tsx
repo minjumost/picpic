@@ -1,8 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import { useSessionCode } from "../hooks/useSessionCode";
 
 const PhotoCapturePage: React.FC = () => {
   const navigate = useNavigate();
+
+  const sessionCode = useSessionCode();
+
   return (
     <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
       <h2 className="text-heading1 font-bold mb-2">사진을 찍어주세요</h2>
@@ -16,7 +20,7 @@ const PhotoCapturePage: React.FC = () => {
             key={i}
             className="bg-white w-full h-full rounded-sm shadow-inner cursor-pointer"
             onClick={() => {
-              navigate("/camera");
+              navigate(`/camera?r=${sessionCode}`);
             }}
           />
         ))}
@@ -24,7 +28,7 @@ const PhotoCapturePage: React.FC = () => {
       <button
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
         onClick={() => {
-          navigate("/guide");
+          navigate(`/guide?r=${sessionCode}`);
         }}
       >
         꾸미러 가기
