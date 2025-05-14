@@ -1,9 +1,8 @@
 package com.picpic.service;
 
-import java.util.Optional;
-
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.picpic.common.exception.ApiException;
 import com.picpic.common.exception.ErrorCode;
@@ -24,12 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class PhotoService {
 
 	private final PhotoRepository photoRepository;
 	private final SessionRepository sessionRepository;
 	private final MemberRepository memberRepository;
 
+	@Transactional
 	public PhotoStartResponseDTO startPhoto(Long sessionId, Long memberId, PhotoStartRequestDTO photoStartRequestDTO) {
 		Member member = memberRepository.findById(memberId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
@@ -39,10 +40,13 @@ public class PhotoService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
-		Optional<Photo> existingPhoto = photoRepository.findBySessionAndSlotIndex(session,
-			photoStartRequestDTO.slotIndex());
-		if (existingPhoto.isPresent()) {
-			new ApiException(ErrorCode.ALREADY_USED);
+		Boolean existingPhoto = photoRepository.existsBySessionAndSlotIndexAndPhotoImageUrlIsNull(
+			session,
+			photoStartRequestDTO.slotIndex()
+		);
+
+		if (existingPhoto) {
+			throw new ApiException(ErrorCode.ALREADY_USED);
 		}
 
 		Photo photo = Photo.builder()
@@ -68,6 +72,7 @@ public class PhotoService {
 		return res;
 	}
 
+	@Transactional
 	public PhotoUploadResponseDTO uploadPhoto(Long sessionId, Long memberId,
 		PhotoUploadRequestDTO photoUploadRequestDTO) {
 
@@ -102,6 +107,7 @@ public class PhotoService {
 		return res;
 	}
 
+	@Transactional
 	public void saveEditedPhoto(Long sessionId, Integer slotIndex, String url) {
 		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
