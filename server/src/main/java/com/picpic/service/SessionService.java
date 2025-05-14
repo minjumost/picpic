@@ -163,6 +163,7 @@ public class SessionService {
 		}
 
 		session.start();
+		sessionRepository.save(session);
 
 		StartSessionResponseDTO res = StartSessionResponseDTO.builder()
 			.type("session_start")

@@ -37,6 +37,15 @@ public class PhotoService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
+		Boolean existingPhoto = photoRepository.existsBySessionAndSlotIndexAndPhotoImageUrlIsNull(
+			session,
+			photoStartRequestDTO.slotIndex()
+		);
+
+		if (existingPhoto) {
+			throw new ApiException(ErrorCode.ALREADY_USED);
+		}
+
 		Photo photo = Photo.builder()
 			.session(session)
 			.member(member)
@@ -81,6 +90,8 @@ public class PhotoService {
 		}
 
 		photo.setPhotoImageUrl(photoUploadRequestDTO.url());
+
+		photoRepository.save(photo);
 
 		PhotoUploadResponseDTO res = new PhotoUploadResponseDTO(
 			"photo_upload",
