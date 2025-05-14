@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { sendSessionStart } from "../sockets/sessionSocket";
-import { setHandlers } from "../sockets/stompClient";
+import {
+  connectAndEnterSession,
+  sendSessionStart,
+} from "../sockets/sessionSocket";
+import { initStompSession, setHandlers } from "../sockets/stompClient";
 import { useSessionCode } from "../hooks/useSessionCode";
+import { useStompStatusStore } from "../sockets/useStompStore";
 
 interface User {
   memberId: number;
@@ -13,6 +17,7 @@ interface User {
 
 const WaitingPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const { isConnected } = useStompStatusStore.getState();
 
   const sessionCode = useSessionCode();
 
@@ -25,6 +30,17 @@ const WaitingPage: React.FC = () => {
 
     setHandlers(handlers);
   }, []);
+
+  useEffect(() => {
+    const reConnect = async () => {
+      await initStompSession(sessionCode);
+      await connectAndEnterSession(sessionCode, 1234);
+      // 아니면 새로고침 시 아예 다른 페이지로 이동
+    };
+    if (!isConnected) {
+      reConnect();
+    }
+  }, [isConnected, sessionCode]);
 
   const navigate = useNavigate();
 

@@ -3,6 +3,7 @@
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { type IMessage } from "@stomp/stompjs";
+import { useStompStatusStore } from "./useStompStore";
 
 type HandlerMap = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,6 +28,15 @@ const stompClient = new Client({
 
 export const initStompSession = (sessionCode: string): Promise<void> => {
   return new Promise((resolve, reject) => {
+    const { isConnected, setConnected } = useStompStatusStore.getState();
+    if (isConnected) {
+      console.log("🟡 이미 연결됨");
+      resolve();
+      return;
+    }
+
+    setConnected(true);
+
     stompClient.onConnect = () => {
       console.log("히히 나야");
 
