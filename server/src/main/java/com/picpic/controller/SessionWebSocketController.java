@@ -35,6 +35,6 @@ public class SessionWebSocketController {
 	public void startSession(Principal principal, StartSessionRequestDTO startSessionRequestDTO) {
 		Long memberId = Long.parseLong(principal.getName());
 		StartSessionResponseDTO res = sessionService.startSession(memberId, startSessionRequestDTO);
-		messagingTemplate.convertAndSend("/broadcast" + startSessionRequestDTO.sessionCode());
+		messagingTemplate.convertAndSend("/broadcast" + startSessionRequestDTO.sessionCode(), res);
 	}
 }

@@ -56,7 +56,10 @@ public class PhotoService {
 		PhotoStartResponseDTO res = new PhotoStartResponseDTO(
 			"photo_start",
 			photo.getSlotIndex(),
-			member.getMemberId()
+			member.getMemberId(),
+			member.getNickname(),
+			member.getColor(),
+			member.getProfileImageUrl()
 		);
 
 		MDC.put("sessionId", sessionId.toString());
