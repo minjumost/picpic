@@ -1,7 +1,5 @@
 package com.picpic.service;
 
-import java.util.Optional;
-
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
@@ -38,12 +36,6 @@ public class PhotoService {
 		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
-
-		Optional<Photo> existingPhoto = photoRepository.findBySessionAndSlotIndex(session,
-			photoStartRequestDTO.slotIndex());
-		if (existingPhoto.isPresent()) {
-			new ApiException(ErrorCode.ALREADY_USED);
-		}
 
 		Photo photo = Photo.builder()
 			.session(session)
