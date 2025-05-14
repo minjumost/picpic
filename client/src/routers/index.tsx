@@ -15,22 +15,25 @@ import CameraPage from "../pages/CameraPage";
 import GuidePage from "../pages/GuidePage";
 import CanvasDraw from "../pages/CanvasDraw";
 import RoomPwdPage from "../pages/RoomPwdPage";
+import GlobalStompHandler from "../providers/GlobalStompHandler";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/frame" element={<SelectFrameScreen />} />
-      <Route path="/backImg" element={<SelectBackImagePage />} />
-      <Route path="/roomSet" element={<RoomSetUpPage />} />
-      <Route path="/roomPwd" element={<RoomPwdPage />} />
-      <Route path="/invite" element={<InviteRoomPage />} />
-      <Route path="/waiting" element={<WaitingPage />} />
-      <Route path="/photo" element={<PhotoCapturePage />} />
-      <Route path="/camera" element={<CameraPage />} />
-      <Route path="/guide" element={<GuidePage />} />
-      <Route path="/decorate" element={<CanvasDraw />} />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route element={<GlobalStompHandler />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/frame" element={<SelectFrameScreen />} />
+        <Route path="/backImg" element={<SelectBackImagePage />} />
+        <Route path="/roomSet" element={<RoomSetUpPage />} />
+        <Route path="/roomPwd" element={<RoomPwdPage />} />
+        <Route path="/invite" element={<InviteRoomPage />} />
+        <Route path="/waiting" element={<WaitingPage />} />
+        <Route path="/photo" element={<PhotoCapturePage />} />
+        <Route path="/camera" element={<CameraPage />} />
+        <Route path="/guide" element={<GuidePage />} />
+        <Route path="/decorate" element={<CanvasDraw />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
     </>
   )
 );

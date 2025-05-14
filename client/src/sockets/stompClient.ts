@@ -14,6 +14,21 @@ let handlers: HandlerMap = {};
 
 export const setHandlers = (newHandlers: HandlerMap) => {
   handlers = newHandlers;
+  console.log("✅ [setHandlers] 등록됨:", Object.keys(handlers));
+};
+
+export const addHandlers = (newHandlers: Partial<HandlerMap>) => {
+  console.log("🧪 addHandlers 호출됨:", newHandlers);
+
+  Object.entries(newHandlers).forEach(([key, handler]) => {
+    if (typeof handler === "function") {
+      handlers[key] = handler;
+    } else {
+      console.warn(`⚠️ 핸들러 ${key}는 유효한 함수가 아닙니다.`);
+    }
+  });
+
+  console.log("📦 현재 handlers:", handlers);
 };
 
 const stompClient = new Client({
@@ -43,12 +58,16 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
       stompClient.subscribe(
         `/broadcast/${sessionCode}`,
         (message: IMessage) => {
-          console.log(message);
+          console.log("~~~~~~~~~message: ", message);
           try {
             const parsed = JSON.parse(message.body);
             const { type } = parsed;
 
+            console.log("~~~~~~~~~type: ", type);
+
             const handler = handlers[type];
+
+            console.log("📦 현재 handlers:", handlers);
             if (handler) {
               handler(parsed);
             } else {
