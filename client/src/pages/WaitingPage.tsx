@@ -19,8 +19,7 @@ const WaitingPage: React.FC = () => {
   useEffect(() => {
     const handlers = {
       session_enter: (data: { participants: User[] }) => {
-        setUsers({ ...data.participants });
-        console.log(data);
+        setUsers([...data.participants]);
       },
     };
 
@@ -52,19 +51,20 @@ const WaitingPage: React.FC = () => {
       </p>
 
       <div className="flex flex-col gap-3 w-full z-10 mb-6">
-        {users.map((user, index) => (
-          <div
-            key={index}
-            className="flex items-center bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm"
-          >
-            <img
-              src={user.profileImageUrl} // 사용자 이모지 (예시)
-              alt="user"
-              className="w-6 h-6 mr-2"
-            />
-            <span className="text-sm font-medium">{user.nickname}</span>
-          </div>
-        ))}
+        {users.length > 0 &&
+          users.map((user, index) => (
+            <div
+              key={index}
+              className="flex items-center bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm"
+            >
+              <img
+                src={user.profileImageUrl} // 사용자 이모지 (예시)
+                alt="user"
+                className="w-6 h-6 mr-2"
+              />
+              <span className="text-sm font-medium">{user.nickname}</span>
+            </div>
+          ))}
       </div>
 
       <button

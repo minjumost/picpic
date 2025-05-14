@@ -5,22 +5,17 @@ export const connectAndEnterSession = (
   password: number
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
-    stompClient.onConnect = () => {
-      console.log("✅ WebSocket connected");
+    stompClient.publish({
+      destination: "/send/session/enter",
+      body: JSON.stringify({ sessionCode, password }),
+    });
 
-      stompClient.publish({
-        destination: "/send/session/enter",
-        body: JSON.stringify({ sessionCode, password }),
-      });
-
-      resolve();
-    };
+    resolve();
 
     stompClient.onStompError = (frame) => {
       console.error("STOMP Error:", frame);
       reject(frame);
     };
-    stompClient.activate();
   });
 };
 
