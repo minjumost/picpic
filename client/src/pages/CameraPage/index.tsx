@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Camera from "../../assets/icons/camera.png";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { getPresignedUrl, uploadToS3 } from "./useUploadImage";
 import { useSessionCode } from "../../hooks/useSessionCode";
+import { sendPhotoUpload } from "../../sockets/sessionSocket";
 
 // 날짜+시간 파일명 생성 함수
 function getCurrentDateTimeString() {
@@ -26,8 +27,12 @@ const CameraPage: React.FC = () => {
   const [uploading, setUploading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const slotIndex = Number(params.get("slot"));
 
   const sessionCode = useSessionCode();
+  const sessionId = Number(sessionStorage.getItem("sessionId"));
 
   const stopStream = useCallback(() => {
     if (streamRef.current) {
@@ -130,15 +135,18 @@ const CameraPage: React.FC = () => {
     await new Promise((r) => setTimeout(r, 100));
     try {
       // 1. presigned-url 요청
-      const { presignedUrl } = await getPresignedUrl({
+      const { presignedUrl, imageUrl } = await getPresignedUrl({
         type: "photo",
         fileName: file.name,
         contentType: file.type,
       });
+      console.log("presignedUrl:", presignedUrl);
+      console.log("imageUrl:", imageUrl);
+
       // 2. S3 업로드
       await uploadToS3(presignedUrl, file);
       // 3. WebSocket 메시지 전송 (예시, 실제 구현 필요)
-      // sendPhotoSubmit({ imageUrl, ... });
+      sendPhotoUpload(sessionId, sessionCode, slotIndex, imageUrl);
       // 4. 화면 이동 등
       navigate(`/photo?r=${sessionCode}`);
     } catch (err) {
