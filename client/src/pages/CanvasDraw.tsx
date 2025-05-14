@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
+import { type Image } from "../api/getImage";
 
 const colors = [
   "#000000",
@@ -18,21 +19,55 @@ const CanvasDrawOverImage: React.FC = () => {
   const [mode, setMode] = useState<"pen" | "eraser">("pen");
   const [color, setColor] = useState("#F2552C");
   const [timeLeft, setTimeLeft] = useState(120);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 타이머
+  // const sessionId = Number(sessionStorage.getItem("sessionId"));
+  // const { data, isLoading } = useGetImages(sessionId);
+  const imageList: Image[] = [
+    { slotIndex: 1, photoImageUrl: "https://buly.kr/3YDNlg0" },
+    { slotIndex: 2, photoImageUrl: "https://buly.kr/3YDNlg0" },
+    // { slotIndex: 3, photoImageUrl: "https://buly.kr/3YDNlg0" },
+  ];
+
+  const currentImage = imageList[currentIndex];
+
   useEffect(() => {
+    console.log(currentImage);
+  }, [currentImage]);
+
+  const handleNext = useCallback(() => {
+    if (currentIndex >= imageList.length - 1) {
+      console.log("📸 모든 이미지 완료");
+      return;
+    }
+    setCurrentIndex((prev) => prev + 1);
+    setTimeLeft(5); // 타이머 초기화
+
+    const canvas = drawCanvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  }, [currentIndex, imageList.length]);
+
+  useEffect(() => {
+    setTimeLeft(5); // 먼저 초기화
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
           console.log("⏰ 시간 종료");
+          handleNext(); // 다음 이미지로
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-    return () => clearInterval(timer);
-  }, []);
+
+    return () => clearInterval(timer); // ✅ 정리해서 중복 타이머 방지
+  }, [currentIndex, handleNext]);
 
   // 드로잉 캔버스 초기화
   useEffect(() => {
@@ -46,7 +81,7 @@ const CanvasDrawOverImage: React.FC = () => {
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
     }
-  }, []);
+  }, [currentImage?.photoImageUrl]);
 
   const getCtx = () => drawCanvasRef.current?.getContext("2d");
 
@@ -77,6 +112,9 @@ const CanvasDrawOverImage: React.FC = () => {
     if (ctx) ctx.globalCompositeOperation = "source-over";
   };
 
+  // if (isLoading) return <div>로딩 중</div>;
+  // const imageList: Image[] = data;
+
   return (
     <div className="flex flex-col justify-center w-full h-full p-8 gap-5">
       <div className="w-full flex justify-between">
@@ -86,11 +124,21 @@ const CanvasDrawOverImage: React.FC = () => {
 
       {/* 이미지 + 드로잉 캔버스를 겹쳐서 표시 */}
       <div className="relative w-full h-full">
-        <img
-          src="https://buly.kr/3YDNlg0"
-          alt="base"
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
-        />
+        {currentImage ? (
+          <img
+            key={currentImage.slotIndex}
+            src={currentImage.photoImageUrl}
+            alt="base"
+            onLoad={() =>
+              console.log("🖼 이미지 로딩 완료", currentImage.photoImageUrl)
+            }
+            className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
+          />
+        ) : (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400">
+            이미지 없음
+          </div>
+        )}
         <canvas
           ref={drawCanvasRef}
           className="absolute top-0 left-0 w-full h-full z-10"
@@ -132,8 +180,11 @@ const CanvasDrawOverImage: React.FC = () => {
         ))}
       </div>
 
-      <button className="w-full bg-main1 text-white font-bold py-3 rounded-lg shadow-md mt-4">
-        다음
+      <button
+        onClick={handleNext}
+        className="w-full bg-main1 text-white font-bold py-3 rounded-lg shadow-md mt-4 cursor-pointer"
+      >
+        {currentIndex >= imageList.length - 1 ? "완료" : "다음"}
       </button>
     </div>
   );
