@@ -4,10 +4,9 @@ import lombok.Builder;
 
 @Builder
 public record PhotoUploadRequestDTO(
-Long memberId,
-Long sessionId,
-String sessionCode,
-Integer slotIndex,
-String url
+	Long sessionId,
+	String sessionCode,
+	Integer slotIndex,
+	String url
 ) {
 }
