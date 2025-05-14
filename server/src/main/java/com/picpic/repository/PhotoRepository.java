@@ -17,7 +17,5 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
 	List<Photo> findAllBySession(Session session);
 
-	Photo findBySessionAndSlotIndexAndPhotoImageUrlIsNull(Session session, Integer slotIndex, String photoImageUrl);
-
 	Boolean existsBySessionAndSlotIndexAndPhotoImageUrlIsNull(Session session, Integer slotIndex);
 }
