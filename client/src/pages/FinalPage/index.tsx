@@ -1,6 +1,30 @@
 import { useEffect, useState } from "react";
 import { useGetFinalImages } from "../../api/finalImages";
 import { useNavigate } from "react-router";
+import CompositeImage from "./CompositeImage";
+
+// const images = [
+//   {
+//     slot_index: 0,
+//     edited_image_url:
+//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
+//   },
+//   {
+//     slot_index: 1,
+//     edited_image_url:
+//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
+//   },
+//   {
+//     slot_index: 2,
+//     edited_image_url:
+//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
+//   },
+//   {
+//     slot_index: 3,
+//     edited_image_url:
+//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
+//   },
+// ];
 
 const FinalPage = () => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -46,20 +70,17 @@ const FinalPage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <p className="text-xl font-bold mb-4">사진이 완성되었어요 🥳</p>
-      <div className="w-64 h-80 bg-gray-400 mb-6">
-        <img
-          src={images[0]?.edited_image_url}
-          alt="완성된 사진"
-          className="w-full h-full object-cover"
-        />
+    <div className="flex flex-col items-center justify-center h-screen gap-4">
+      <p className="text-xl font-bold">사진이 완성되었어요 🥳</p>
+      <div className="w-[720px] h-[590px]">
+        {images && <CompositeImage images={images} />}
       </div>
+
       <div className="flex gap-4">
         <a
           // href={images[0]?.edited_image_url}
           download
-          className="bg-orange-500 text-white px-4 py-2 rounded"
+          className="bg-orange-500 text-white px-4 py-2 rounded cursor-pointer"
         >
           다운로드
         </a>
