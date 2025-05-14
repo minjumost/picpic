@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { type Image } from "../api/getImage";
 
 const colors = [
@@ -25,49 +25,49 @@ const CanvasDrawOverImage: React.FC = () => {
   // const { data, isLoading } = useGetImages(sessionId);
   const imageList: Image[] = [
     { slotIndex: 1, photoImageUrl: "https://buly.kr/3YDNlg0" },
-    { slotIndex: 2, photoImageUrl: "https://buly.kr/3YDNlg0" },
-    // { slotIndex: 3, photoImageUrl: "https://buly.kr/3YDNlg0" },
-  ];
-
+    { slotIndex: 1, photoImageUrl: "https://buly.kr/9MQPCPA" },
+  ] as Image[];
   const currentImage = imageList[currentIndex];
 
-  useEffect(() => {
-    console.log(currentImage);
-  }, [currentImage]);
+  // useEffect(() => {
+  //   console.log(data);
+  // }, [data]);
 
-  const handleNext = useCallback(() => {
-    if (currentIndex >= imageList.length - 1) {
-      console.log("📸 모든 이미지 완료");
-      return;
-    }
-    setCurrentIndex((prev) => prev + 1);
-    setTimeLeft(5); // 타이머 초기화
-
-    const canvas = drawCanvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const handleNext = () => {
+    setCurrentIndex((prev) => {
+      if (prev >= imageList.length - 1) {
+        console.log("📸 모든 이미지 완료");
+        return prev;
       }
-    }
-  }, [currentIndex, imageList.length]);
+
+      // 캔버스 지우기
+      const canvas = drawCanvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      setTimeLeft(5);
+      return prev + 1;
+    });
+  };
 
   useEffect(() => {
-    setTimeLeft(5); // 먼저 초기화
+    // if (!data) return;
+    setTimeLeft(5);
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          console.log("⏰ 시간 종료");
-          handleNext(); // 다음 이미지로
+          handleNext(); // 최신 함수 참조
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(timer); // ✅ 정리해서 중복 타이머 방지
-  }, [currentIndex, handleNext]);
+    return () => clearInterval(timer);
+  }, [currentIndex]);
 
   // 드로잉 캔버스 초기화
   useEffect(() => {
@@ -113,7 +113,6 @@ const CanvasDrawOverImage: React.FC = () => {
   };
 
   // if (isLoading) return <div>로딩 중</div>;
-  // const imageList: Image[] = data;
 
   return (
     <div className="flex flex-col justify-center w-full h-full p-8 gap-5">
