@@ -1,6 +1,7 @@
 package com.picpic.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class StrokeService {
 
 	private final StrokeRepository strokeRepository;
@@ -32,6 +34,7 @@ public class StrokeService {
 	private final PhotoRepository photoRepository;
 	private final ObjectMapper objectMapper;
 
+	@Transactional
 	public StrokeStartResponseDTO startStroke(Long memberId, Long sessionId) {
 		Member member = memberRepository.findById(memberId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
@@ -41,6 +44,8 @@ public class StrokeService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
+		session.draw();
+
 		StrokeStartResponseDTO res = new StrokeStartResponseDTO("stroke_start");
 
 		log.info("그리기모드 시작");
@@ -48,6 +53,7 @@ public class StrokeService {
 		return res;
 	}
 
+	@Transactional
 	public StrokeDrawResponseDTO stroke(Long memberId, StrokeDrawRequestDTO strokeDrawRequestDTO) {
 		Member member = memberRepository.findById(memberId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
