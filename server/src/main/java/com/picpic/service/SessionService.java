@@ -43,6 +43,7 @@ public class SessionService {
 	private final ParticipantRepository participantRepository;
 	private final PasswordEncoder passwordEncoder;
 
+	@Transactional
 	public CreateSessionResponseDTO createSession(Long memberId, CreateSessionRequestDTO createSessionRequestDTO) {
 		Member host = memberRepository.findById(memberId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
@@ -79,6 +80,7 @@ public class SessionService {
 
 	}
 
+	@Transactional
 	public EnterSessionResponseDTO enterSession(Long memberId, EnterSessionRequestDTO enterSessionRequestDTO) {
 
 		Member member = memberRepository.findById(memberId).orElseThrow(
@@ -144,6 +146,7 @@ public class SessionService {
 		return res;
 	}
 
+	@Transactional
 	public StartSessionResponseDTO startSession(Long memberId, StartSessionRequestDTO startSessionRequestDTO) {
 
 		Member member = memberRepository.findById(memberId).orElseThrow(
