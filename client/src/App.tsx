@@ -1,9 +1,15 @@
 import { RouterProvider } from "react-router";
 import "./App.css";
 import { router } from "./routers";
+import GlobalStompHandler from "./providers/GlobalStompHandler";
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <GlobalStompHandler />
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;
