@@ -25,10 +25,6 @@ public class PhotoWebSocketController {
 	public void startPhoto(Principal principal, PhotoStartRequestDTO photoStartRequestDTO) {
 		Long memberId = Long.parseLong(principal.getName());
 		Long sessionId = photoStartRequestDTO.sessionId();
-
-		System.out.println(memberId);
-		System.out.println(sessionId);
-
 		PhotoStartResponseDTO res = photoService.startPhoto(sessionId, memberId, photoStartRequestDTO);
 		messagingTemplate.convertAndSend("/broadcast/" + photoStartRequestDTO.sessionCode(), res);
 
@@ -38,6 +34,7 @@ public class PhotoWebSocketController {
 	public void uploadPhoto(Principal principal, PhotoUploadRequestDTO photoUploadRequestDTO) {
 		Long memberId = Long.parseLong(principal.getName());
 		Long sessionId = photoUploadRequestDTO.sessionId();
+		System.out.println(memberId + " " + sessionId);
 		PhotoUploadResponseDTO res = photoService.uploadPhoto(memberId, sessionId, photoUploadRequestDTO);
 		messagingTemplate.convertAndSend("/broadcast/" + photoUploadRequestDTO.sessionCode(), res);
 
