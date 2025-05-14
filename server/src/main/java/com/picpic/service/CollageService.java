@@ -7,23 +7,29 @@ import org.springframework.stereotype.Service;
 
 import com.picpic.common.exception.ApiException;
 import com.picpic.common.exception.ErrorCode;
+import com.picpic.dto.collage.CollageWebSocketResponseDTO;
 import com.picpic.dto.collage.GetCollageListResponseDTO;
 import com.picpic.entity.Collage;
+import com.picpic.entity.Member;
 import com.picpic.entity.Photo;
 import com.picpic.entity.Session;
 import com.picpic.repository.CollageRepository;
+import com.picpic.repository.MemberRepository;
 import com.picpic.repository.PhotoRepository;
 import com.picpic.repository.SessionRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CollageService {
 
 	private final CollageRepository collageRepository;
 	private final SessionRepository sessionRepository;
 	private final PhotoRepository photoRepository;
+	private final MemberRepository memberRepository;
 
 	public void createCollage(Long sessionId, String collageImageUrl) {
 		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
@@ -51,5 +57,21 @@ public class CollageService {
 				photo.getEditedImageUrl()
 			))
 			.collect(Collectors.toList());
+	}
+
+	public CollageWebSocketResponseDTO startCollage(Long memberId, Long sessionId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
+		);
+
+		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		CollageWebSocketResponseDTO res = new CollageWebSocketResponseDTO("collage_start");
+
+		log.info("콜라주 시작");
+
+		return res;
 	}
 }
