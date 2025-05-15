@@ -15,17 +15,20 @@ import com.picpic.dto.session.CreateSessionResponseDTO;
 import com.picpic.dto.session.EnterSessionRequestDTO;
 import com.picpic.dto.session.EnterSessionResponseDTO;
 import com.picpic.dto.session.GetSessionFrameResponseDTO;
+import com.picpic.dto.session.GetSessionPhotosResponseDTO;
 import com.picpic.dto.session.StartSessionRequestDTO;
 import com.picpic.dto.session.StartSessionResponseDTO;
 import com.picpic.entity.Background;
 import com.picpic.entity.Frame;
 import com.picpic.entity.Member;
 import com.picpic.entity.Participant;
+import com.picpic.entity.Photo;
 import com.picpic.entity.Session;
 import com.picpic.repository.BackgroundRepository;
 import com.picpic.repository.FrameRepository;
 import com.picpic.repository.MemberRepository;
 import com.picpic.repository.ParticipantRepository;
+import com.picpic.repository.PhotoRepository;
 import com.picpic.repository.SessionRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +46,7 @@ public class SessionService {
 	private final SessionRepository sessionRepository;
 	private final ParticipantRepository participantRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final PhotoRepository photoRepository;
 
 	@Transactional
 	public CreateSessionResponseDTO createSession(Long memberId, CreateSessionRequestDTO createSessionRequestDTO) {
@@ -206,6 +210,36 @@ public class SessionService {
 
 		return res;
 
+	}
+
+	public List<GetSessionPhotosResponseDTO> getSessionPhotos(Long memberId, Long sessionId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
+		);
+
+		Session session = sessionRepository.findById(sessionId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		Boolean isParticipant = participantRepository.existsBySessionAndMember(session, member);
+
+		if (!isParticipant) {
+			throw new ApiException(ErrorCode.FORBIDDEN_ACCESS);
+		}
+
+		List<Photo> photoList = photoRepository.findManyBySession(session);
+
+		List<GetSessionPhotosResponseDTO> res = photoList.stream()
+			.map(photo -> {
+				return GetSessionPhotosResponseDTO.builder()
+					.slotIndex(photo.getSlotIndex())
+					.photoImageUrl(photo.getPhotoImageUrl())
+					.build();
+			}).toList();
+
+		log.info("세션 사진 목록 반환");
+
+		return res;
 	}
 
 }
