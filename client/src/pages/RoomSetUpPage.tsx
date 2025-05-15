@@ -46,8 +46,7 @@ const RoomSetUpPage: React.FC = () => {
         password: Number(password),
       });
 
-      const { sessionId, sessionCode } = res.data.result;
-      sessionStorage.setItem("sessionId", sessionId);
+      const { sessionCode } = res.data.result;
       navigate(`/invite?r=${sessionCode}`);
     } catch (error) {
       console.error("방 생성 실패", error);
