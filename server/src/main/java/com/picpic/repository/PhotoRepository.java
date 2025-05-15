@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.picpic.entity.Photo;
 import com.picpic.entity.Session;
 
+@Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
 	Optional<Photo> findBySessionAndSlotIndex(Session session, Integer slotIndex);
 
@@ -15,4 +17,5 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
 	List<Photo> findAllBySession(Session session);
 
+	Boolean existsBySessionAndSlotIndexAndPhotoImageUrlIsNull(Session session, Integer slotIndex);
 }

@@ -20,19 +20,21 @@ import FinalPage from "../pages/FinalPage";
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/frame" element={<SelectFrameScreen />} />
-      <Route path="/backImg" element={<SelectBackImagePage />} />
-      <Route path="/roomSet" element={<RoomSetUpPage />} />
-      <Route path="/roomPwd" element={<RoomPwdPage />} />
-      <Route path="/invite" element={<InviteRoomPage />} />
-      <Route path="/waiting" element={<WaitingPage />} />
-      <Route path="/photo" element={<PhotoCapturePage />} />
-      <Route path="/camera" element={<CameraPage />} />
-      <Route path="/guide" element={<GuidePage />} />
-      <Route path="/decorate" element={<CanvasDraw />} />
-      <Route path="/final" element={<FinalPage />} />
-      <Route path="*" element={<NotFoundPage />} />
+      <Route>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/frame" element={<SelectFrameScreen />} />
+        <Route path="/backImg" element={<SelectBackImagePage />} />
+        <Route path="/roomSet" element={<RoomSetUpPage />} />
+        <Route path="/roomPwd" element={<RoomPwdPage />} />
+        <Route path="/invite" element={<InviteRoomPage />} />
+        <Route path="/waiting" element={<WaitingPage />} />
+        <Route path="/photo" element={<PhotoCapturePage />} />
+        <Route path="/camera" element={<CameraPage />} />
+        <Route path="/guide" element={<GuidePage />} />
+        <Route path="/decorate" element={<CanvasDraw />} />
+        <Route path="/final" element={<FinalPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
     </>
   )
 );

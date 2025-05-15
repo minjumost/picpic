@@ -26,6 +26,19 @@
         </encoder>
     </appender>
 
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/log.%d{yyyy-MM-dd}.json</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>logstash-logstash.logging.svc.cluster.local:5044</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+
     <springProfile name="prod, dev">
         <root level="INFO">
             <appender-ref ref="REQ_CONSOLE"/>
@@ -34,22 +47,11 @@
     </springProfile>
 
     <springProfile name="default">
-        <!-- JSON 로그 파일 -->
-        <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>logs/log.%d{yyyy-MM-dd}.json</fileNamePattern>
-                <maxHistory>30</maxHistory>
-            </rollingPolicy>
-            <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-        </appender>
-
-        <!-- 콘솔: 전체 로그를 INFO 이상 출력 -->
         <root level="INFO">
             <appender-ref ref="REQ_CONSOLE"/>
             <appender-ref ref="INTERNAL_CONSOLE"/>
-            <appender-ref ref="JSON_FILE"/>
+            <appender-ref ref="LOGSTASH"/>
         </root>
-
     </springProfile>
 
 </configuration>

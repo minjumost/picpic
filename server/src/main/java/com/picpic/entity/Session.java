@@ -84,4 +84,16 @@ public class Session {
 	public void start() {
 		this.status = SessionStatus.PHOTO;
 	}
+
+	public void draw() {
+		this.status = SessionStatus.DECORATE;
+	}
+
+	public void collage() {
+		this.status = SessionStatus.RESULT;
+	}
+
+	public void finish() {
+		this.status = SessionStatus.FINISHED;
+	}
 }
