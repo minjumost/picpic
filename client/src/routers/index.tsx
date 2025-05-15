@@ -15,6 +15,7 @@ import CameraPage from "../pages/CameraPage";
 import GuidePage from "../pages/GuidePage";
 import CanvasDraw from "../pages/CanvasDraw";
 import RoomPwdPage from "../pages/RoomPwdPage";
+import FinalPage from "../pages/FinalPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,6 +32,7 @@ export const router = createBrowserRouter(
         <Route path="/camera" element={<CameraPage />} />
         <Route path="/guide" element={<GuidePage />} />
         <Route path="/decorate" element={<CanvasDraw />} />
+        <Route path="/final" element={<FinalPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </>
