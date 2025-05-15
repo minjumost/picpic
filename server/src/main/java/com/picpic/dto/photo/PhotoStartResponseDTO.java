@@ -4,7 +4,7 @@ public record PhotoStartResponseDTO(
 	String type,
 	Integer slotIndex,
 	Long memberId,
-	String nikename,
+	String nickname,
 	String color,
 	String profileImageUrl
 
