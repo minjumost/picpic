@@ -61,21 +61,18 @@ const PreviewPage = () => {
     });
 
     await uploadToS3(presignedUrl, file);
-
-    postImage.mutate(
-      {
-        sessionId: sessionId,
-        collageImageUrl: imageUrl,
-      },
-      {
-        onSuccess: () => {
-          console.log("성공");
-        },
-        onError: (error) => {
-          console.error("에러 발생:", error);
-        },
-      }
-    );
+    try {
+      await postImage.mutateAsync(
+        await postImage.mutateAsync({
+          sessionId: sessionId,
+          collageImageUrl: imageUrl,
+        })
+      );
+      console.log("성공");
+      navigate(`/guide?r=${sessionCode}`);
+    } catch (error) {
+      console.error("에러 발생:", error);
+    }
   };
 
   return (
