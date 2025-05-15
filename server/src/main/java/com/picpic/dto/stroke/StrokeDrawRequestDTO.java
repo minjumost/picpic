@@ -7,7 +7,6 @@ import com.picpic.entity.Stroke.Tool;
 public record StrokeDrawRequestDTO(
 	Long sessionId,
 	String sessionCode,
-	Long collageId,
 	String color,
 	Integer lineWidth,
 	List<Point> points,
