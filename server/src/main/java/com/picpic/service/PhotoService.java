@@ -1,11 +1,14 @@
 package com.picpic.service;
 
+import java.util.List;
+
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.picpic.common.exception.ApiException;
 import com.picpic.common.exception.ErrorCode;
+import com.picpic.dto.photo.PhotoInfoDTO;
 import com.picpic.dto.photo.PhotoStartRequestDTO;
 import com.picpic.dto.photo.PhotoStartResponseDTO;
 import com.picpic.dto.photo.PhotoUploadRequestDTO;
@@ -40,7 +43,7 @@ public class PhotoService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
-		Boolean existingPhoto = photoRepository.existsBySessionAndSlotIndexAndPhotoImageUrlIsNull(
+		Boolean existingPhoto = photoRepository.existsBySessionAndSlotIndex(
 			session,
 			photoStartRequestDTO.slotIndex()
 		);
@@ -95,11 +98,15 @@ public class PhotoService {
 
 		photo.setPhotoImageUrl(photoUploadRequestDTO.url());
 
-		PhotoUploadResponseDTO res = new PhotoUploadResponseDTO(
-			"photo_upload",
-			photo.getSlotIndex(),
-			photoUploadRequestDTO.url()
-		);
+		// 모든 슬롯의 포토 조회
+		List<Photo> photos = photoRepository.findAllBySession(session);
+
+		// 각 photo를 PhotoInfoDTO로 매핑
+		List<PhotoInfoDTO> photoList = photos.stream()
+			.map(p -> new PhotoInfoDTO(p.getSlotIndex(), p.getPhotoImageUrl()))
+			.toList();
+
+		PhotoUploadResponseDTO res = new PhotoUploadResponseDTO("photo_upload", photoList);
 
 		MDC.put("sessionId", sessionId.toString());
 		log.info("사진 업로드 완료");
