@@ -15,12 +15,11 @@ import CameraPage from "../pages/CameraPage";
 import GuidePage from "../pages/GuidePage";
 import CanvasDraw from "../pages/CanvasDraw";
 import RoomPwdPage from "../pages/RoomPwdPage";
-import GlobalStompHandler from "../providers/GlobalStompHandler";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route element={<GlobalStompHandler />}>
+      <Route>
         <Route path="/" element={<LandingPage />} />
         <Route path="/frame" element={<SelectFrameScreen />} />
         <Route path="/backImg" element={<SelectBackImagePage />} />

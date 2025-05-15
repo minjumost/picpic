@@ -26,16 +26,18 @@ const WaitingPage: React.FC = () => {
       session_enter: (data: { participants: User[] }) => {
         setUsers([...data.participants]);
       },
+      session_start: () => navigate(`/photo?r=${sessionCode}`),
+      stroke_start: () => navigate(`/decorate?r=${sessionCode}`),
+      collage_start: () => navigate(`/final?r=${sessionCode}`),
     };
 
     setHandlers(handlers);
-  }, []);
+  }, [sessionCode]);
 
   useEffect(() => {
     const reConnect = async () => {
       await initStompSession(sessionCode);
       await connectAndEnterSession(sessionCode, 1234);
-      // 아니면 새로고침 시 아예 다른 페이지로 이동
     };
     if (!isConnected) {
       reConnect();
