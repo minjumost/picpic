@@ -1,8 +1,9 @@
 package com.picpic.dto.photo;
 
+import java.util.List;
+
 public record PhotoUploadResponseDTO(
 	String type,
-	Integer slotIndex,
-	String url
+	List<PhotoInfoDTO> photoList
 ) {
 }
