@@ -48,6 +48,9 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
             const parsed = JSON.parse(message.body);
             const { type } = parsed;
 
+            console.log("💌 받은 메시지 type:", type);
+            console.log("📦 현재 handlers:", Object.keys(handlers));
+
             const handler = handlers[type];
             if (handler) {
               handler(parsed);
