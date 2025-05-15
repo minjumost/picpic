@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { sendPhotoStart } from "../sockets/sessionSocket";
@@ -12,6 +12,12 @@ interface SlotInfo {
   color?: string;
   profileImageUrl?: string;
   url?: string;
+  isOccupied?: boolean;
+}
+
+interface PhotoInfo {
+  slotIndex: number;
+  url: string;
 }
 
 const PhotoCapturePage: React.FC = () => {
@@ -19,61 +25,70 @@ const PhotoCapturePage: React.FC = () => {
   const sessionCode = useSessionCode();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
 
-  // slot별 상태 관리
-  const [slots, setSlots] = useState<SlotInfo[]>(Array(SLOT_COUNT).fill({}));
-  const pendingSlot = useRef<number | null>(null);
+  const [slots, setSlots] = useState<SlotInfo[]>(() =>
+    Array.from({ length: SLOT_COUNT }, () => ({}))
+  );
 
   useEffect(() => {
     console.log("setHandlers 등록됨, sessionCode:", sessionCode);
     setHandlers({
       photo_start: (data) => {
-        console.log("photo_start received:", data);
+        const slotIdx = Number(data.slotIndex);
+        console.log("[photo_start] data:", data, "slotIdx:", slotIdx);
+        if (isNaN(slotIdx) || slotIdx < 1 || slotIdx > SLOT_COUNT) return;
         setSlots((prev) => {
           const updated = [...prev];
-          updated[data.slot_index - 1] = {
+          updated[slotIdx - 1] = {
+            ...updated[slotIdx - 1],
             memberId: data.memberId,
             nickname: data.nickname,
             color: data.color,
-            profileImageUrl: data.profilImageUrl,
-            url: undefined,
+            profileImageUrl: data.profileImageUrl,
+            isOccupied: true,
           };
+          console.log("[photo_start] updated slots:", updated);
           return updated;
         });
-        console.log(
-          "pendingSlot.current:",
-          pendingSlot.current,
-          "data.slot_index:",
-          data.slot_index
-        );
       },
-      photo_upload: (data) => {
+      photo_upload: (data: { type: string; photoList: PhotoInfo[] }) => {
+        console.log("[photo_upload] data:", data.photoList);
+        console.log(data.type);
+        if (!data.photoList || !Array.isArray(data.photoList)) return;
         setSlots((prev) => {
-          const updated = [...prev];
-          updated[data.slot_index - 1] = {
-            url: data.url,
-          };
-          console.log("updated:", updated);
-          console.log("data.url:", data.url);
-          return updated;
+          const newSlots = [...prev];
+          data.photoList.forEach((photo) => {
+            const slotIdx = Number(photo.slotIndex - 1);
+            if (!isNaN(slotIdx) && slotIdx >= 0 && slotIdx < SLOT_COUNT) {
+              newSlots[slotIdx] = {
+                ...newSlots[slotIdx],
+                url: photo.url,
+                isOccupied: false,
+              };
+            }
+          });
+          console.log("[photo_upload] updated slots:", newSlots);
+          return newSlots;
         });
       },
     });
-    // cleanup: 핸들러 초기화(필요시)
-    return () => {
-      console.log("setHandlers 해제");
-      setHandlers({});
-    };
   }, []);
 
   const handleSlotClick = (i: number) => {
-    pendingSlot.current = i;
-    console.log("handleSlotClick: pendingSlot.current set to", i);
-    // 요청이 잘 와졌을 경우에 이동하도록 구현하려면
-    sendPhotoStart(sessionId, sessionCode, i);
+    console.log(
+      "[handleSlotClick] slot:",
+      i,
+      "isOccupied:",
+      slots[i - 1].isOccupied
+    );
+    if (slots[i - 1].isOccupied) {
+      console.log("[handleSlotClick] slot is occupied, cannot click");
+      return;
+    }
 
-    console.log("Navigating to camera page!");
+    console.log("[handleSlotClick] sending photo_start for slot:", i);
+    sendPhotoStart(sessionId, sessionCode, i);
+    console.log("[handleSlotClick] Navigating to camera page!");
     navigate(`/camera?r=${sessionCode}&slot=${i}`);
-    pendingSlot.current = null;
   };
 
   return (
@@ -86,30 +101,42 @@ const PhotoCapturePage: React.FC = () => {
       <div className="w-full h-full bg-gray-600 p-4 grid grid-cols-2 gap-4">
         {Array(SLOT_COUNT)
           .fill(0)
-          .map((_, i) => (
-            <div
-              key={i}
-              className={`bg-white w-full h-full rounded-sm shadow-inner cursor-pointer flex items-center justify-center border-4 ${
-                slots[i].color ? "" : "border-transparent"
-              }`}
-              style={slots[i].color ? { borderColor: slots[i].color } : {}}
-              onClick={() => handleSlotClick(i + 1)} // slot_index: 1~4
-            >
-              {slots[i].url ? (
-                <img
-                  src={slots[i].url}
-                  alt="uploaded"
-                  className="object-cover w-full h-full rounded-sm"
-                />
-              ) : slots[i].profileImageUrl ? (
-                <img
-                  src={slots[i].profileImageUrl}
-                  alt={`profile-${i + 1}`}
-                  className="object-cover w-20 h-20 rounded-full"
-                />
-              ) : null}
-            </div>
-          ))}
+          .map((_, i) => {
+            return (
+              <div
+                key={i}
+                className={`bg-white w-full h-full rounded-sm shadow-inner flex items-center justify-center border-4 ${
+                  slots[i].color ? "" : "border-transparent"
+                } ${
+                  slots[i].isOccupied
+                    ? "opacity-50 cursor-not-allowed"
+                    : "cursor-pointer"
+                }`}
+                style={slots[i].color ? { borderColor: slots[i].color } : {}}
+                onClick={() => handleSlotClick(i + 1)}
+              >
+                {slots[i].url ? (
+                  <img
+                    src={slots[i].url}
+                    alt="uploaded"
+                    className="object-cover w-full h-full rounded-sm"
+                    style={{ transform: "scaleX(-1)" }}
+                  />
+                ) : slots[i].profileImageUrl ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <img
+                      src={slots[i].profileImageUrl}
+                      alt={`profile-${i + 1}`}
+                      className="object-cover w-20 h-20 rounded-full"
+                    />
+                    <span className="text-sm text-gray-600">
+                      {slots[i].nickname}님이 찍는 중...
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
       </div>
       <button
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"

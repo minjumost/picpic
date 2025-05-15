@@ -98,7 +98,11 @@ const CameraPage: React.FC = () => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
 
+      // 미러링 적용
+      context.translate(canvas.width, 0);
+      context.scale(-1, 1);
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
       const imageData = canvas.toDataURL("image/png");
       setCapturedImage(imageData);
       // 원하는 파일명으로 File 객체 생성
@@ -167,7 +171,7 @@ const CameraPage: React.FC = () => {
             <img
               src={capturedImage}
               alt="캡처된 이미지"
-              className="w-full h-full object-cover -scale-x-100"
+              className="w-full h-full object-cover"
             />
           ) : (
             <>
