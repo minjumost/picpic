@@ -1,5 +1,5 @@
 import type { FinalImageResponse } from "../api/finalImages";
-import frameSrc from "../../assets/frames/frame1.png";
+import frameSrc from "../assets/frames/frame1.png";
 
 const SLOT_POSITIONS = [
   { top: 158, left: 11, width: 338, height: 204 },
