@@ -65,7 +65,7 @@ public class StrokeService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
-		Collage collage = collageRepository.findByCollageId(strokeDrawRequestDTO.collageId()).orElseThrow(
+		Collage collage = collageRepository.findBySession(session).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_COLLAGE)
 		);
 
