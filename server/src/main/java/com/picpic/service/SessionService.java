@@ -14,6 +14,7 @@ import com.picpic.dto.session.CreateSessionRequestDTO;
 import com.picpic.dto.session.CreateSessionResponseDTO;
 import com.picpic.dto.session.EnterSessionRequestDTO;
 import com.picpic.dto.session.EnterSessionResponseDTO;
+import com.picpic.dto.session.GetSessionFrameResponseDTO;
 import com.picpic.dto.session.StartSessionRequestDTO;
 import com.picpic.dto.session.StartSessionResponseDTO;
 import com.picpic.entity.Background;
@@ -175,6 +176,36 @@ public class SessionService {
 		MDC.put("sessionId", session.getSessionId().toString());
 		log.info("세션 시작 성공");
 		return res;
+	}
+
+	@Transactional
+	public GetSessionFrameResponseDTO getSessionFrame(Long memberId, Long sessionId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
+		);
+
+		Session session = sessionRepository.findById(sessionId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		Boolean isParticipant = participantRepository.existsBySessionAndMember(session, member);
+
+		if (!isParticipant) {
+			throw new ApiException(ErrorCode.FORBIDDEN_ACCESS);
+		}
+
+		Frame frame = session.getFrame();
+
+		GetSessionFrameResponseDTO res = GetSessionFrameResponseDTO.builder()
+			.frameId(frame.getFrameId())
+			.frameImageUrl(frame.getFrameImageUrl())
+			.slotCount(frame.getSlotCount())
+			.build();
+
+		log.info("세션 프레임 정보 반환");
+
+		return res;
+
 	}
 
 }
