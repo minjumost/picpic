@@ -1,7 +1,5 @@
 package com.picpic.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.picpic.common.response.ApiResponse;
 import com.picpic.dto.collage.CollageRequestDTO;
-import com.picpic.dto.collage.GetCollageListResponseDTO;
+import com.picpic.dto.collage.GetCollageResponseDTO;
 import com.picpic.service.CollageService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,11 +35,11 @@ public class CollageController {
 	}
 
 	@GetMapping("/collages/{sessionId}")
-	public ResponseEntity<ApiResponse<List<GetCollageListResponseDTO>>> getCollage(
+	public ResponseEntity<ApiResponse<GetCollageResponseDTO>> getCollage(
 		@PathVariable Long sessionId) {
 
-		List<GetCollageListResponseDTO> collageList = collageService.getCollages(sessionId);
+		GetCollageResponseDTO collage = collageService.getCollages(sessionId);
 
-		return ResponseEntity.ok(ApiResponse.success(collageList));
+		return ResponseEntity.ok(ApiResponse.success(collage));
 	}
 }

@@ -123,21 +123,11 @@ const CanvasDrawOverImage: React.FC = () => {
 
       {/* 이미지 + 드로잉 캔버스를 겹쳐서 표시 */}
       <div className="relative w-full h-full">
-        {currentImage ? (
-          <img
-            key={currentImage.slotIndex}
-            src={currentImage.photoImageUrl}
-            alt="base"
-            onLoad={() =>
-              console.log("🖼 이미지 로딩 완료", currentImage.photoImageUrl)
-            }
-            className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
-          />
-        ) : (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-gray-400">
-            이미지 없음
-          </div>
-        )}
+        <img
+          src="https://sojoong.joins.com/wp-content/uploads/sites/4/2024/12/01.jpg"
+          alt="base"
+          className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
+        />
         <canvas
           ref={drawCanvasRef}
           className="absolute top-0 left-0 w-full h-full z-10"

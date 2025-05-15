@@ -7,6 +7,7 @@ import lombok.Builder;
 @Builder
 public record EnterSessionResponseDTO(
 	String type,
+	Long sessionId,
 	String status,
 	List<ParticipantListDTO> participants
 ) {

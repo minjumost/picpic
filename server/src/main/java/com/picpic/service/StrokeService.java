@@ -10,10 +10,11 @@ import com.picpic.common.exception.ErrorCode;
 import com.picpic.dto.stroke.StrokeDrawRequestDTO;
 import com.picpic.dto.stroke.StrokeDrawResponseDTO;
 import com.picpic.dto.stroke.StrokeStartResponseDTO;
+import com.picpic.entity.Collage;
 import com.picpic.entity.Member;
-import com.picpic.entity.Photo;
 import com.picpic.entity.Session;
 import com.picpic.entity.Stroke;
+import com.picpic.repository.CollageRepository;
 import com.picpic.repository.MemberRepository;
 import com.picpic.repository.PhotoRepository;
 import com.picpic.repository.SessionRepository;
@@ -33,6 +34,7 @@ public class StrokeService {
 	private final MemberRepository memberRepository;
 	private final PhotoRepository photoRepository;
 	private final ObjectMapper objectMapper;
+	private final CollageRepository collageRepository;
 
 	@Transactional
 	public StrokeStartResponseDTO startStroke(Long memberId, Long sessionId) {
@@ -63,8 +65,8 @@ public class StrokeService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
-		Photo photo = photoRepository.findByphotoId(strokeDrawRequestDTO.photoId()).orElseThrow(
-			() -> new ApiException(ErrorCode.NOT_FOUND_PHOTO)
+		Collage collage = collageRepository.findBySession(session).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_COLLAGE)
 		);
 
 		String pointsJson;
@@ -76,7 +78,7 @@ public class StrokeService {
 
 		Stroke stroke = Stroke.builder()
 			.member(member)
-			.photo(photo)
+			.collage(collage)
 			.tool(strokeDrawRequestDTO.tool())
 			.color(strokeDrawRequestDTO.color())
 			.lineWidth(strokeDrawRequestDTO.lineWidth())
