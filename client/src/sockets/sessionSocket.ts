@@ -1,5 +1,19 @@
 import stompClient from "./stompClient";
 
+type Point = {
+  x: number;
+  y: number;
+};
+
+export type DrawStrokePayload = {
+  sessionId: number;
+  sessionCode: string;
+  color: string;
+  lineWidth: number;
+  points: Point[];
+  tool: string;
+};
+
 export const connectAndEnterSession = (
   sessionCode: string,
   password: number
@@ -31,6 +45,22 @@ export const sendSessionStart = (sessionId: number, sessionCode: string) => {
   });
 
   console.log("📨 세션 시작 요청 전송 완료");
+};
+
+export const sendDrawStroke = (payload: DrawStrokePayload) => {
+  if (!stompClient || !stompClient.connected) {
+    console.warn("❌ STOMP 연결되지 않음. 메시지를 보낼 수 없습니다.");
+    return;
+  }
+
+  stompClient.publish({
+    destination: "/send/stroke",
+    body: JSON.stringify({
+      ...payload,
+    }),
+  });
+
+  console.log("📤 stroke 메시지 전송:", payload);
 };
 
 export const sendPhotoStart = (

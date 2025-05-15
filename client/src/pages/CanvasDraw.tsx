@@ -1,5 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
-import { type Image } from "../api/getImage";
+import { useGetImages, type Image } from "../api/getImage";
+import { setHandlers } from "../sockets/stompClient";
+import {
+  sendDrawStroke,
+  type DrawStrokePayload,
+} from "../sockets/sessionSocket";
+import { useSessionCode } from "../hooks/useSessionCode";
 
 const colors = [
   "#000000",
@@ -18,59 +24,17 @@ const CanvasDrawOverImage: React.FC = () => {
   const isDrawing = useRef(false);
   const [mode, setMode] = useState<"pen" | "eraser">("pen");
   const [color, setColor] = useState("#F2552C");
-  const [timeLeft, setTimeLeft] = useState(120);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [strokePoints, setStrokePoints] = useState<{ x: number; y: number }[]>(
+    []
+  );
+  const sessionCode = useSessionCode();
 
-  // const sessionId = Number(sessionStorage.getItem("sessionId"));
-  // const { data, isLoading } = useGetImages(sessionId);
-  const imageList: Image[] = [
-    { slotIndex: 1, photoImageUrl: "https://buly.kr/3YDNlg0" },
-    { slotIndex: 1, photoImageUrl: "https://buly.kr/9MQPCPA" },
-  ] as Image[];
-  const currentImage = imageList[currentIndex];
-
-  // useEffect(() => {
-  //   console.log(data);
-  // }, [data]);
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => {
-      if (prev >= imageList.length - 1) {
-        console.log("📸 모든 이미지 완료");
-        return prev;
-      }
-
-      // 캔버스 지우기
-      const canvas = drawCanvasRef.current;
-      if (canvas) {
-        const ctx = canvas.getContext("2d");
-        if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-
-      setTimeLeft(5);
-      return prev + 1;
-    });
-  };
-
-  useEffect(() => {
-    // if (!data) return;
-    setTimeLeft(5);
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleNext(); // 최신 함수 참조
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [currentIndex]);
+  const sessionId = Number(sessionStorage.getItem("sessionId"));
+  const { data, isLoading } = useGetImages(sessionId);
 
   // 드로잉 캔버스 초기화
   useEffect(() => {
+    if (!data) return;
     const canvas = drawCanvasRef.current;
     if (!canvas) return;
     canvas.width = canvas.offsetWidth;
@@ -81,7 +45,82 @@ const CanvasDrawOverImage: React.FC = () => {
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
     }
-  }, [currentImage?.photoImageUrl]);
+  }, [data]);
+
+  useEffect(() => {
+    setHandlers({
+      stroke: (data: {
+        type: string;
+        color: string;
+        lineWidth: number;
+        points: { x: number; y: number }[];
+        tool: string;
+      }) => {
+        const canvas = drawCanvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx || data.points.length < 2) return;
+
+        ctx.strokeStyle = data.color;
+        ctx.lineWidth = data.lineWidth;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.globalCompositeOperation =
+          data.tool === "eraser" ? "destination-out" : "source-over";
+
+        ctx.beginPath();
+        ctx.moveTo(data.points[0].x, data.points[0].y);
+        for (let i = 1; i < data.points.length; i++) {
+          ctx.lineTo(data.points[i].x, data.points[i].y);
+        }
+        ctx.stroke();
+        ctx.globalCompositeOperation = "source-over"; // 되돌려놓기
+      },
+    });
+  }, []);
+
+  if (isLoading) return <div>로딩 중</div>;
+
+  const handleComplete = async () => {
+    const captured = await captureCanvas();
+    if (captured) {
+      console.log("저장된 이미지 url: ", captured);
+    }
+  };
+
+  const captureCanvas = () => {
+    const drawCanvas = drawCanvasRef.current;
+    if (!drawCanvas || !data) return null;
+
+    const finalCanvas = document.createElement("canvas");
+    finalCanvas.width = drawCanvas.width;
+    finalCanvas.height = drawCanvas.height;
+    const ctx = finalCanvas.getContext("2d");
+    if (!ctx) return null;
+
+    // 1. 배경 이미지 로드
+    const image = new Image();
+    image.crossOrigin = "anonymous"; // CORS 문제 방지
+    image.src = data.collageImageUrl;
+
+    return new Promise<string | null>((resolve) => {
+      image.onload = () => {
+        // 배경 그리기
+        ctx.drawImage(image, 0, 0, finalCanvas.width, finalCanvas.height);
+        // 드로잉 내용 합성
+        ctx.drawImage(drawCanvas, 0, 0);
+
+        // base64로 캡처
+        const dataURL = finalCanvas.toDataURL("image/png");
+        resolve(dataURL);
+      };
+
+      image.onerror = () => {
+        console.error("이미지 로드 실패");
+        resolve(null);
+      };
+    });
+  };
 
   const getCtx = () => drawCanvasRef.current?.getContext("2d");
 
@@ -91,43 +130,69 @@ const CanvasDrawOverImage: React.FC = () => {
     isDrawing.current = true;
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+
+    setStrokePoints([{ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY }]);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing.current) return;
     const ctx = getCtx();
     if (!ctx) return;
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
 
     ctx.globalCompositeOperation =
       mode === "pen" ? "source-over" : "destination-out";
     ctx.strokeStyle = mode === "pen" ? color : "rgba(0,0,0,1)";
     ctx.lineWidth = mode === "pen" ? 6 : 20;
     ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    ctx.lineTo(x, y);
     ctx.stroke();
+
+    setStrokePoints((prev) => [...prev, { x, y }]);
   };
 
   const handleMouseUp = () => {
     isDrawing.current = false;
     const ctx = getCtx();
     if (ctx) ctx.globalCompositeOperation = "source-over";
-  };
+    if (!ctx) return;
 
-  // if (isLoading) return <div>로딩 중</div>;
+    const sessionId = Number(sessionStorage.getItem("sessionId"));
+    const lineWidth = (ctx.lineWidth = mode === "pen" ? 6 : 20);
+    const payload: DrawStrokePayload = {
+      sessionId: sessionId,
+      sessionCode: sessionCode,
+      color: color,
+      lineWidth: lineWidth,
+      points: strokePoints,
+      tool: mode,
+    };
+
+    if (strokePoints.length > 1) {
+      sendDrawStroke(payload);
+    }
+    setStrokePoints([]); // 초기화
+  };
 
   return (
     <div className="flex flex-col justify-center w-full h-full p-8 gap-5">
       <div className="w-full flex justify-between">
         <h2 className="text-heading1 font-bold">사진을 꾸며주세요!</h2>
-        <span className="text-heading1 text-danger font-bold">{timeLeft}s</span>
       </div>
 
       {/* 이미지 + 드로잉 캔버스를 겹쳐서 표시 */}
       <div className="relative w-full h-full">
-        <img
-          src="https://sojoong.joins.com/wp-content/uploads/sites/4/2024/12/01.jpg"
-          alt="base"
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
-        />
+        {data && (
+          <img
+            src={data.collageImageUrl}
+            alt="base"
+            onLoad={() =>
+              console.log("🖼 이미지 로딩 완료", data.collageImageUrl)
+            }
+            className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
+          />
+        )}
         <canvas
           ref={drawCanvasRef}
           className="absolute top-0 left-0 w-full h-full z-10"
@@ -170,10 +235,10 @@ const CanvasDrawOverImage: React.FC = () => {
       </div>
 
       <button
-        onClick={handleNext}
+        onClick={handleComplete}
         className="w-full bg-main1 text-white font-bold py-3 rounded-lg shadow-md mt-4 cursor-pointer"
       >
-        {currentIndex >= imageList.length - 1 ? "완료" : "다음"}
+        완료
       </button>
     </div>
   );
