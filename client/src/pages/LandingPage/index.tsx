@@ -25,6 +25,23 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <button
+        className="w-full bg-main1 text-text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
+        onClick={() => {
+          guestLoginMutation.mutate(undefined, {
+            onSuccess: (data) => {
+              navigate("/frame");
+              sessionStorage.setItem("isOwner", "1");
+              console.log("로그인 성공:", data);
+            },
+            onError: (error) => {
+              console.error("에러 발생:", error);
+            },
+          });
+        }}
+      >
+        시작하기
+      </button>
       <LoginButtons />
     </div>
   );
