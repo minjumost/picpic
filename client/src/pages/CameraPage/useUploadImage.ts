@@ -14,8 +14,7 @@ export async function getPresignedUrl({
       import.meta.env.VITE_BASE_URL
     }/api/v1/presigned-url?type=${type}&fileName=${fileName}&contentType=${contentType}`
   );
-  console.log(import.meta.env.VITE_BASE_URL);
-  console.log(contentType);
+  console.log(res.data.result);
 
   return res.data.result; // { presignedUrl, imageUrl }
 }

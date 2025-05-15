@@ -5,9 +5,9 @@ export const handleError = (error: unknown) => {
     const status = error.response?.status;
 
     switch (status) {
-      case 404:
-        window.location.href = "/404";
-        break;
+      // case 404:
+      //   window.location.href = "/404";
+      //   break;
       default:
         console.error("Unexpected error:", error);
         break;

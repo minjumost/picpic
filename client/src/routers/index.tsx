@@ -16,6 +16,7 @@ import GuidePage from "../pages/GuidePage";
 import CanvasDraw from "../pages/CanvasDraw";
 import RoomPwdPage from "../pages/RoomPwdPage";
 import FinalPage from "../pages/FinalPage";
+import PreviewPage from "../pages/PreviewPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -33,6 +34,7 @@ export const router = createBrowserRouter(
         <Route path="/guide" element={<GuidePage />} />
         <Route path="/decorate" element={<CanvasDraw />} />
         <Route path="/final" element={<FinalPage />} />
+        <Route path="/preview" element={<PreviewPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </>
