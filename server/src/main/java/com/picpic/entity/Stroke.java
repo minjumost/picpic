@@ -35,8 +35,8 @@ public class Stroke {
 	private Long strokeId;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "photo_id", nullable = false)
-	private Photo photo;
+	@JoinColumn(name = "collage_id", nullable = false)
+	private Collage collage;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "member_id", nullable = false)
