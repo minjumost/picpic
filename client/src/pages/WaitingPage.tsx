@@ -23,7 +23,8 @@ const WaitingPage: React.FC = () => {
 
   useEffect(() => {
     const handlers = {
-      session_enter: (data: { participants: User[] }) => {
+      session_enter: (data: { participants: User[]; sessionId: number }) => {
+        sessionStorage.setItem("sessionId", `${data.sessionId}`);
         setUsers([...data.participants]);
       },
       session_start: () => navigate(`/photo?r=${sessionCode}`),
