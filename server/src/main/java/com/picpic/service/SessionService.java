@@ -133,6 +133,7 @@ public class SessionService {
 		EnterSessionResponseDTO res = EnterSessionResponseDTO.builder()
 			.type("session_enter")
 			.status(session.getStatus().toString())
+			.sessionId(session.getSessionId())
 			.participants(
 				participants.stream()
 					.map(p -> {
