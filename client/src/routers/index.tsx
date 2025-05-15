@@ -3,7 +3,7 @@ import {
   createRoutesFromElements,
   Route,
 } from "react-router";
-import LandingPage from "../pages/landingPage";
+import LandingPage from "../pages/LandingPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import SelectFrameScreen from "../pages/SelectFramePage";
 import SelectBackImagePage from "../pages/SelectBackImagePage";

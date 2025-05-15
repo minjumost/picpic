@@ -87,7 +87,7 @@ const CanvasDrawOverImage: React.FC = () => {
       {/* 이미지 + 드로잉 캔버스를 겹쳐서 표시 */}
       <div className="relative w-full h-full">
         <img
-          src="https://buly.kr/3YDNlg0"
+          src="https://sojoong.joins.com/wp-content/uploads/sites/4/2024/12/01.jpg"
           alt="base"
           className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
         />

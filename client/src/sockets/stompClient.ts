@@ -1,3 +1,5 @@
+// stompClient
+
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { type IMessage } from "@stomp/stompjs";
@@ -11,8 +13,7 @@ type HandlerMap = {
 let handlers: HandlerMap = {};
 
 export const setHandlers = (newHandlers: HandlerMap) => {
-  handlers = { ...handlers, ...newHandlers };
-  console.log("✅ [setHandlers] 등록됨:", Object.keys(handlers));
+  handlers = newHandlers;
 };
 
 const stompClient = new Client({
@@ -28,7 +29,6 @@ const stompClient = new Client({
 export const initStompSession = (sessionCode: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const { isConnected, setConnected } = useStompStatusStore.getState();
-
     if (isConnected) {
       console.log("🟡 이미 연결됨");
       resolve();
@@ -38,17 +38,15 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
     setConnected(true);
 
     stompClient.onConnect = () => {
-      console.log("✅ STOMP 연결 완료");
+      console.log("히히 나야");
 
       stompClient.subscribe(
         `/broadcast/${sessionCode}`,
         (message: IMessage) => {
+          console.log(message.body);
           try {
             const parsed = JSON.parse(message.body);
             const { type } = parsed;
-
-            console.log("💌 받은 메시지 type:", type);
-            console.log("📦 현재 handlers:", Object.keys(handlers));
 
             const handler = handlers[type];
             if (handler) {
@@ -62,18 +60,17 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
         }
       );
 
-      stompClient.subscribe("/user/private", (message: IMessage) => {
-        console.log("📨 [개인 메시지 수신]", message.body);
-      });
+      stompClient.subscribe("/user/private", (message: IMessage) =>
+        console.log(message)
+      );
 
       resolve();
     };
 
     stompClient.onStompError = (frame) => {
-      console.error("❌ STOMP Error:", frame);
+      console.error("STOMP Error:", frame);
       reject(frame);
     };
-
     stompClient.activate();
   });
 };
