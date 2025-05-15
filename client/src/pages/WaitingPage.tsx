@@ -86,12 +86,14 @@ const WaitingPage: React.FC = () => {
           ))}
       </div>
 
-      <button
-        className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
-        onClick={handleStartPhoto}
-      >
-        시작하기
-      </button>
+      {sessionStorage.getItem("isOwner") === "1" && (
+        <button
+          className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
+          onClick={handleStartPhoto}
+        >
+          시작하기
+        </button>
+      )}
     </div>
   );
 };
