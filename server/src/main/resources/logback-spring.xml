@@ -35,7 +35,7 @@
     </appender>
 
     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>logstash.logging.svc.cluster.local:5044</destination>
+        <destination>logstash.logging.svc:5044</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
