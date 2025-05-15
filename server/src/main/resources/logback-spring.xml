@@ -39,14 +39,14 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
 
-    <springProfile name="default, dev">
+    <springProfile name="prod, dev">
         <root level="INFO">
             <appender-ref ref="REQ_CONSOLE"/>
             <appender-ref ref="INTERNAL_CONSOLE"/>
         </root>
     </springProfile>
 
-    <springProfile name="prod">
+    <springProfile name="default">
         <root level="INFO">
             <appender-ref ref="REQ_CONSOLE"/>
             <appender-ref ref="INTERNAL_CONSOLE"/>
