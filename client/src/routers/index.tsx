@@ -17,11 +17,12 @@ import CanvasDraw from "../pages/CanvasDraw";
 import RoomPwdPage from "../pages/RoomPwdPage";
 import FinalPage from "../pages/FinalPage";
 import PreviewPage from "../pages/PreviewPage";
+import AppLayout from "../components/Layouts/AppLayout";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route>
+      <Route element={<AppLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/frame" element={<SelectFrameScreen />} />
         <Route path="/backImg" element={<SelectBackImagePage />} />
