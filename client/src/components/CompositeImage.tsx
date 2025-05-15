@@ -1,10 +1,11 @@
-import type { FinalImageResponse } from "../../api/finalImages";
+import type { FinalImageResponse } from "../api/finalImages";
 import frameSrc from "../../assets/frames/frame1.png";
+
 const SLOT_POSITIONS = [
-  { top: 158, left: 11, width: 338, height: 204 }, // top-left
-  { top: 12, left: 371, width: 338, height: 204 }, // top-right
-  { top: 374, left: 11, width: 338, height: 204 }, // bottom-left
-  { top: 228, left: 371, width: 338, height: 204 }, // bottom-right
+  { top: 158, left: 11, width: 338, height: 204 },
+  { top: 12, left: 371, width: 338, height: 204 },
+  { top: 374, left: 11, width: 338, height: 204 },
+  { top: 228, left: 371, width: 338, height: 204 },
 ];
 
 const CompositeImage = ({ images }: { images: FinalImageResponse[] }) => {

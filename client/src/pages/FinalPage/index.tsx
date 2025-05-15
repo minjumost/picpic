@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useGetFinalImages } from "../../api/finalImages";
 import { useNavigate } from "react-router";
-import CompositeImage from "./CompositeImage";
+import CompositeImage from "../../components/CompositeImage";
 
 // const images = [
 //   {
