@@ -13,6 +13,8 @@ interface User {
   nickname: string;
   color: string;
   profileImageUrl: string;
+  isOwner: boolean;
+  isMe: boolean;
 }
 
 const WaitingPage: React.FC = () => {
@@ -42,6 +44,12 @@ const WaitingPage: React.FC = () => {
       session_start: () => navigate(`/photo?r=${sessionCode}`),
       stroke_start: () => navigate(`/decorate?r=${sessionCode}`),
       collage_start: () => navigate(`/final?r=${sessionCode}`),
+      session_exit: (data: { isOwner: boolean; memberId: number }) => {
+        if (data.isOwner) navigate("/");
+        setUsers(
+          users.filter((value: User) => value.memberId !== data.memberId)
+        );
+      },
     };
 
     setHandlers(handlers);
@@ -88,10 +96,28 @@ const WaitingPage: React.FC = () => {
           users.map((user, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 bg-white border border-gray-200 rounded-lg px-4 py-3"
+              className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3"
             >
-              <img src={user.profileImageUrl} alt="user" className="w-8 h-8" />
-              <span className="text-lg font-medium">{user.nickname}</span>
+              <div className="flex items-center gap-2">
+                <img
+                  src={user.profileImageUrl}
+                  alt="user"
+                  className="w-8 h-8"
+                />
+                <span className="text-lg font-medium">{user.nickname}</span>
+              </div>
+              <div className="flex gap-1">
+                {user.isOwner && (
+                  <div className="w-12 h-7 bg-main2 rounded-2xl text-white flex items-center justify-center">
+                    방장
+                  </div>
+                )}
+                {user.isMe && (
+                  <div className="w-12 h-7 bg-main1 rounded-2xl text-white flex items-center justify-center">
+                    나
+                  </div>
+                )}
+              </div>
             </div>
           ))}
       </div>
