@@ -42,4 +42,14 @@ public class CollageController {
 
 		return ResponseEntity.ok(ApiResponse.success(collage));
 	}
+
+	@PostMapping("/collages/update")
+	public ResponseEntity<ApiResponse<Void>> updateCollage(
+		@RequestBody CollageRequestDTO collageRequestDTO) {
+
+		collageService.updateCollages(collageRequestDTO.sessionId(),
+			collageRequestDTO.collageImageUrl());
+
+		return ResponseEntity.ok(ApiResponse.success());
+	}
 }
