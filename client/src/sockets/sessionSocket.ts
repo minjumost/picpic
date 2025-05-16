@@ -120,3 +120,15 @@ export const sendDrawStart = (sessionId: number, sessionCode: string) => {
     body: JSON.stringify({ sessionId, sessionCode }),
   });
 };
+
+export const sendDrawReady = (sessionId: number, sessionCode: string) => {
+  if (!stompClient.connected) {
+    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
+    return;
+  }
+
+  stompClient.publish({
+    destination: "/send/stroke/ready",
+    body: JSON.stringify({ sessionId, sessionCode }),
+  });
+};
