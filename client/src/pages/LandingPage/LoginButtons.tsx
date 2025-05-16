@@ -28,6 +28,7 @@ const LoginButtons: React.FC = () => {
       onSuccess: (data) => {
         navigate("/frame");
         sessionStorage.setItem("isOwner", "1");
+        sessionStorage.setItem("memberId", `${data.memberId}`);
         console.log("로그인 성공:", data);
       },
       onError: (error) => {

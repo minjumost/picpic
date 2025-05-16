@@ -19,4 +19,8 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 	List<Participant> findManyBySession(Session session);
 
 	Optional<Participant> findBySessionAndMember(Session session, Member member);
+
+	void deleteByMemberAndSession(Member member, Session session);
+
+	void deleteByMember_MemberIdAndSession_SessionId(Long memberId, Long sessionId);
 }
