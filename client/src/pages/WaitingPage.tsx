@@ -103,7 +103,6 @@ const WaitingPage: React.FC = () => {
       <div className="flex flex-col gap-3 w-full z-10 mb-6">
         {users.length > 0 &&
           users.map((user, index) => {
-            console.log("user::::", user);
             return (
               <div
                 key={index}
