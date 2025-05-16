@@ -75,13 +75,11 @@ const RoomPwdPage = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
-      <h2 className="text-heading1 font-bold mb-2 z-10">
+    <div className="flex flex-col justify-center items-center w-full h-full p-4 gap-8">
+      <h2 className="text-[24px] font-bold text-gray-800">
         비밀번호를 입력해주세요.
       </h2>
-      <div>
-        <PhotoTerms />
-      </div>
+
       <div className="flex gap-4 mb-10 z-10 w-full justify-center">
         {Array(4)
           .fill(0)
@@ -96,13 +94,14 @@ const RoomPwdPage = () => {
               maxLength={1}
               onChange={(e) => handleChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
-              className="w-[100px] h-[100px] text-center text-lg font-bold border border-gray-300 bg-white rounded-md focus:outline-none"
+              className="w-[80px] h-[80px] text-center text-3xl font-medium border border-gray-300 bg-white rounded-md focus:outline-none"
             />
           ))}
       </div>
+      <PhotoTerms />
       <button
         disabled={!isFilled}
-        className={`w-full py-3 rounded-lg shadow-md mb-4 font-bold transition-colors ${
+        className={`w-full py-3 text-lg rounded-lg font-semibold transition-colors ${
           isFilled
             ? "bg-main1 text-white cursor-pointer"
             : "bg-gray-300 text-white cursor-not-allowed"

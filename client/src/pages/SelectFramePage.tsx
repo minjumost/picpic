@@ -12,7 +12,7 @@ const FrameOption: React.FC<FrameOptionProps> = ({ name, image, onClick }) => (
   <div
     onClick={onClick}
     className="
-      flex flex-col items-center cursor-pointer p-3 border gap-2 bg-black/20 border-gray-300 rounded-lg 
+      flex flex-col items-center cursor-pointer p-3 border gap-6 bg-black/10 border-gray-300 rounded-lg 
       flex-1 min-w-[90px]
       hover:bg-secondary1
       active:scale-98 transition-transform duration-100 ease-in-out
