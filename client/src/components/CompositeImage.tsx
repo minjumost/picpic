@@ -1,5 +1,4 @@
-import type { FinalImageResponse } from "../api/finalImages";
-import frameSrc from "../assets/frames/frame1.png";
+import type { Image } from "../api/getImage";
 
 const SLOT_POSITIONS = [
   { top: 158, left: 11, width: 338, height: 204 },
@@ -8,15 +7,20 @@ const SLOT_POSITIONS = [
   { top: 228, left: 371, width: 338, height: 204 },
 ];
 
-const CompositeImage = ({ images }: { images: FinalImageResponse[] }) => {
+interface CompositeImage {
+  images: Image[];
+  frameSrc: string;
+}
+
+const CompositeImage = ({ images, frameSrc }: CompositeImage) => {
   return (
     <div className="relative w-[720px] h-[590px]">
       {images.map((img, idx) => {
         const { top, left, width, height } = SLOT_POSITIONS[idx];
         return (
           <img
-            key={img.slot_index}
-            src={img.edited_image_url}
+            key={img.slotIndex}
+            src={img.photoImageUrl}
             alt={`photo-${idx}`}
             style={{
               position: "absolute",

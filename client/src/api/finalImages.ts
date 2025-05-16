@@ -1,15 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { type ApiResponse, client } from "./axios";
+import type { Image } from "./getImage";
 
 export interface FinalImageResponse {
-  slot_index: number;
-  edited_image_url: string;
+  slotIndex: number;
+  editedImageUrl: string;
 }
 
-const getFinalImages = async (
-  sessionId: number
-): Promise<FinalImageResponse[]> => {
-  const response = await client.get<ApiResponse<FinalImageResponse[]>>(
+const getFinalImages = async (sessionId: number): Promise<Image[]> => {
+  const response = await client.get<ApiResponse<Image[]>>(
     `api/v1/collage/${sessionId}`
   );
   console.log(response);
