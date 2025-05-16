@@ -1,30 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGetFinalImages } from "../../api/finalImages";
 import { useNavigate } from "react-router";
-import CompositeImage from "../../components/CompositeImage";
-
-// const images = [
-//   {
-//     slot_index: 0,
-//     edited_image_url:
-//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
-//   },
-//   {
-//     slot_index: 1,
-//     edited_image_url:
-//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
-//   },
-//   {
-//     slot_index: 2,
-//     edited_image_url:
-//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
-//   },
-//   {
-//     slot_index: 3,
-//     edited_image_url:
-//       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
-//   },
-// ];
 
 const FinalPage = () => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -73,7 +49,7 @@ const FinalPage = () => {
     <div className="flex flex-col items-center justify-center h-screen gap-4">
       <p className="text-xl font-bold">사진이 완성되었어요 🥳</p>
       <div className="w-[720px] h-[590px]">
-        {images && <CompositeImage images={images} />}
+        {/* {images && <CompositeImage images={images} />} */}
       </div>
 
       <div className="flex gap-4">

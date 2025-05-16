@@ -141,7 +141,7 @@ const PhotoCapturePage: React.FC = () => {
       <button
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
         onClick={() => {
-          navigate(`/guide?r=${sessionCode}`);
+          navigate(`/preview?r=${sessionCode}`);
         }}
       >
         꾸미러 가기
