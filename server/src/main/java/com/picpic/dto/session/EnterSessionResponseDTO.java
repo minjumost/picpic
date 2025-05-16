@@ -17,8 +17,7 @@ public record EnterSessionResponseDTO(
 		String nickname,
 		String profileImageUrl,
 		String color,
-		Boolean isOwner,
-		Boolean isMe
+		Boolean isOwner
 	) {
 	}
 }
