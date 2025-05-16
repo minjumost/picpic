@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.picpic.auth.JwtTokenProvider;
+import com.picpic.auth.dto.GuestLoginResultDTO;
 import com.picpic.entity.Member;
 import com.picpic.entity.Nickname;
 import com.picpic.entity.Profile;
@@ -29,8 +30,7 @@ public class AuthService {
 	private final NicknameRepository nicknameRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public String loginAsGuest() {
-
+	public GuestLoginResultDTO loginAsGuest() {
 		Profile profile = profileRepository.findRandom();
 		Nickname nickname = nicknameRepository.findRandom();
 
@@ -43,15 +43,18 @@ public class AuthService {
 
 		memberRepository.save(guest);
 
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-			guest.getMemberId(), null,
-			List.of(() -> guest.getRole().name()));
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+			new UsernamePasswordAuthenticationToken(
+				guest.getMemberId(), null,
+				List.of(() -> guest.getRole().name()));
 
 		MDC.put("memberId", guest.getMemberId().toString());
 
 		log.info("게스트 로그인 완료");
 
-		return jwtTokenProvider.generateToken(guest.getMemberId(), guest.getRole());
+		String token = jwtTokenProvider.generateToken(guest.getMemberId(), guest.getRole());
+
+		return new GuestLoginResultDTO(guest.getMemberId(), token);
 	}
 
 }
