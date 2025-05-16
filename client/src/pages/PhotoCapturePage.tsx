@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSessionCode } from "../hooks/useSessionCode";
-import { sendPhotoStart } from "../sockets/sessionSocket";
+import { sendDrawReady, sendPhotoStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
 
 const SLOT_COUNT = 4;
@@ -70,6 +70,7 @@ const PhotoCapturePage: React.FC = () => {
           return newSlots;
         });
       },
+      stroke_ready: () => navigate(`/preview?r=${sessionCode}`),
     });
   }, []);
 
@@ -141,6 +142,7 @@ const PhotoCapturePage: React.FC = () => {
       <button
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
         onClick={() => {
+          sendDrawReady(sessionId, sessionCode);
           navigate(`/preview?r=${sessionCode}`);
         }}
       >
