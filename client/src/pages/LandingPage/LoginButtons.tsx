@@ -11,7 +11,7 @@ interface ButtonProps {
 const Button: React.FC<ButtonProps> = ({ text, bgColor, onClick }) => {
   return (
     <button
-      className={`w-full ${bgColor} text-text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer`}
+      className={`w-full ${bgColor} text-text-white font-semibold py-3 px-6 rounded-lg cursor-pointer`}
       onClick={onClick}
     >
       {text}
@@ -38,10 +38,10 @@ const LoginButtons: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-full">
       {/* <Button text="SSAFY 로그인" bgColor="bg-main2" onClick={handleLogin} />
       <Button text="카카오톡 로그인" bgColor="bg-kakao" onClick={handleLogin} /> */}
-      <Button text="빠른 시작하기" bgColor="bg-main1" onClick={handleLogin} />
+      <Button text="시작하기" bgColor="bg-main1" onClick={handleLogin} />
     </div>
   );
 };
