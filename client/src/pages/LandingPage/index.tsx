@@ -13,15 +13,15 @@ const LandingPage: React.FC = () => {
   const images = [소개1, 소개2, 소개3, 소개4];
 
   const settings = {
-    dots: true,
+    dots: false, // 점 네비게이션 숨김
+    arrows: true,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
-    centerMode: true,
-    centerPadding: "60px",
+    centerMode: false,
   };
 
   return (
@@ -38,11 +38,8 @@ const LandingPage: React.FC = () => {
       <div className="w-[400px] max-w-xl mx-auto h-[350px]">
         <Slider {...settings}>
           {images.map((image, idx) => (
-            <div
-              key={idx}
-              className="h-[350px] flex items-center justify-center"
-            >
-              <div className="w-full h-full rounded-2xl shadow-xl bg-white overflow-hidden flex items-center justify-center transition-all duration-300">
+            <div key={idx} className="flex items-center justify-center">
+              <div className="w-full h-full rounded-2xl shadow-lg bg-white overflow-hidden flex items-center justify-center transition-all duration-300">
                 <img
                   src={image}
                   alt={`소개 ${idx + 1}`}
