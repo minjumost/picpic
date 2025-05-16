@@ -145,6 +145,8 @@ public class SessionService {
 							.nickname(p.getMember().getNickname())
 							.color(p.getMember().getColor())
 							.profileImageUrl(p.getMember().getProfileImageUrl())
+							.isOwner(session.getMember().getMemberId().equals(p.getMember().getMemberId()))
+							.isMe(p.getMember().getMemberId().equals(member.getMemberId()))
 							.build();
 					})
 					.toList()
