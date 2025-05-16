@@ -16,7 +16,8 @@ public record EnterSessionResponseDTO(
 		Long memeberId,
 		String nickname,
 		String profileImageUrl,
-		String color
+		String color,
+		Boolean isOwner
 	) {
 	}
 }

@@ -14,6 +14,8 @@ import com.picpic.dto.session.CreateSessionRequestDTO;
 import com.picpic.dto.session.CreateSessionResponseDTO;
 import com.picpic.dto.session.EnterSessionRequestDTO;
 import com.picpic.dto.session.EnterSessionResponseDTO;
+import com.picpic.dto.session.ExitSessionRequestDTO;
+import com.picpic.dto.session.ExitSessionResponseDTO;
 import com.picpic.dto.session.GetSessionFrameResponseDTO;
 import com.picpic.dto.session.GetSessionPhotosResponseDTO;
 import com.picpic.dto.session.StartSessionRequestDTO;
@@ -79,6 +81,7 @@ public class SessionService {
 			.build();
 
 		MDC.put("sessionId", session.getSessionId().toString());
+		MDC.put("memberId", memberId.toString());
 		log.info("세션 만들기 성공");
 
 		return res;
@@ -96,8 +99,8 @@ public class SessionService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
-		if (session.getStatus() == Session.SessionStatus.FINISHED) {
-			throw new ApiException(ErrorCode.FINISHED_SESSION);
+		if (session.getStatus() != Session.SessionStatus.WAITING) {
+			throw new ApiException(ErrorCode.ALREADY_STARTED);
 		}
 
 		if (
@@ -142,12 +145,15 @@ public class SessionService {
 							.nickname(p.getMember().getNickname())
 							.color(p.getMember().getColor())
 							.profileImageUrl(p.getMember().getProfileImageUrl())
+							.isOwner(session.getMember().getMemberId().equals(p.getMember().getMemberId()))
 							.build();
 					})
 					.toList()
 			)
 			.build();
+
 		MDC.put("sessionId", session.getSessionId().toString());
+		MDC.put("memberId", member.getMemberId().toString());
 		log.info("세션 입장 성공");
 		return res;
 	}
@@ -179,6 +185,7 @@ public class SessionService {
 			.build();
 
 		MDC.put("sessionId", session.getSessionId().toString());
+		MDC.put("memerId", member.getMemberId().toString());
 		log.info("세션 시작 성공");
 		return res;
 	}
@@ -239,6 +246,36 @@ public class SessionService {
 			}).toList();
 
 		log.info("세션 사진 목록 반환");
+
+		return res;
+	}
+
+	@Transactional
+	public ExitSessionResponseDTO exitSession(Long memberId, ExitSessionRequestDTO exitSessionRequestDTO) {
+		Long sessionId = exitSessionRequestDTO.sessionId();
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER));
+
+		Session session = sessionRepository.findById(sessionId)
+			.orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND_SESSION));
+
+		Participant participant = participantRepository.findBySessionAndMember(session, member)
+			.orElseThrow(() -> new ApiException(ErrorCode.NOT_PARTICIPANT));
+
+		participantRepository.delete(participant);
+
+		MDC.put("sessionId", session.getSessionId().toString());
+
+		ExitSessionResponseDTO res = ExitSessionResponseDTO.builder()
+			.type("session_exit")
+			.memberId(memberId)
+			.isOwner(Long.compare(session.getMember().getMemberId(), memberId) == 0)
+			.build();
+
+		MDC.put("sessionId", session.getSessionId().toString());
+		MDC.put("memberId", memberId.toString());
+		log.info("세션 나가기 성공");
 
 		return res;
 	}

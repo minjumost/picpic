@@ -1,6 +1,7 @@
 package com.picpic.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 	boolean findBySession(Session session);
 
 	List<Participant> findManyBySession(Session session);
+
+	Optional<Participant> findBySessionAndMember(Session session, Member member);
 }
