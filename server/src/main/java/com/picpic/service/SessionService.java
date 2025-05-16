@@ -146,7 +146,6 @@ public class SessionService {
 							.color(p.getMember().getColor())
 							.profileImageUrl(p.getMember().getProfileImageUrl())
 							.isOwner(session.getMember().getMemberId().equals(p.getMember().getMemberId()))
-							.isMe(p.getMember().getMemberId().equals(member.getMemberId()))
 							.build();
 					})
 					.toList()
@@ -254,7 +253,7 @@ public class SessionService {
 	@Transactional
 	public ExitSessionResponseDTO exitSession(Long memberId, ExitSessionRequestDTO exitSessionRequestDTO) {
 		Long sessionId = exitSessionRequestDTO.sessionId();
-		
+
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER));
 
