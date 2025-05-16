@@ -1,19 +1,33 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import html2canvas from "html2canvas";
-import { useNavigate } from "react-router";
-import CompositeImage from "../../components/CompositeImage";
-import { useSessionCode } from "../../hooks/useSessionCode";
+
 import { useGetSelectedFrames } from "../../api/frame";
 import { useGetSessionImages } from "../../api/getImage";
 import { getCurrentDateTimeString } from "../CameraPage";
 import { getPresignedUrl } from "../CameraPage/useUploadImage";
-import { usePostCollageImage } from "../../api/sendCompImg";
+import { usePostCollageImage } from "../../api/CompImg";
+import { useNavigate } from "react-router";
+import { useSessionCode } from "../../hooks/useSessionCode";
+import { setHandlers } from "../../sockets/stompClient";
+import { sendDrawStart } from "../../sockets/sessionSocket";
+
+const SLOT_POSITIONS = [
+  { top: 158, left: 11, width: 338, height: 204 },
+  { top: 12, left: 371, width: 338, height: 204 },
+  { top: 374, left: 11, width: 338, height: 204 },
+  { top: 228, left: 371, width: 338, height: 204 },
+];
 
 const PreviewPage = () => {
-  const captureRef = useRef<HTMLDivElement | null>(null);
+  const captureRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
+
+  useEffect(() => {
+    setHandlers({ stroke_start: () => navigate(`/decorate?r=${sessionCode}`) });
+  }, []);
+
   const postImage = usePostCollageImage();
 
   const { data: frame, isLoading: frameLoading } =
@@ -48,8 +62,13 @@ const PreviewPage = () => {
 
   const handleCapture = async () => {
     if (!captureRef.current) return;
-
-    const canvas = await html2canvas(captureRef.current);
+    const canvas = await html2canvas(captureRef.current, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null,
+      logging: false,
+    });
     const dataUrl = canvas.toDataURL("image/png");
     const fileName = `${getCurrentDateTimeString()}.png`;
     const file = dataURLtoFile(dataUrl, fileName);
@@ -61,15 +80,14 @@ const PreviewPage = () => {
     });
 
     await uploadToS3(presignedUrl, file);
+
     try {
-      await postImage.mutateAsync(
-        await postImage.mutateAsync({
-          sessionId: sessionId,
-          collageImageUrl: imageUrl,
-        })
-      );
+      await postImage.mutateAsync({
+        sessionId: sessionId,
+        collageImageUrl: imageUrl,
+      });
+
       console.log("성공");
-      navigate(`/guide?r=${sessionCode}`);
     } catch (error) {
       console.error("에러 발생:", error);
     }
@@ -78,23 +96,56 @@ const PreviewPage = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
       <p className="text-xl font-bold">사진이 완성되었어요 🥳</p>
-      <div className="w-[720px] h-[590px]" ref={captureRef}>
+      <p className="text-heading3 font-bold text-gray-500 mb-6">
+        🎨 한 컷씩 같이 꾸밀 수 있어요.
+      </p>
+
+      <p className="text-heading3 font-bold text-gray-500 mb-6">
+        ⏰ 2분 안에 꾸미기를 완료해주세요.
+      </p>
+
+      <p className="text-heading3 font-bold text-gray-500 mb-6">
+        ❌ 되돌릴 수 없으니 신중하게 꾸며주세요.
+      </p>
+      <div ref={captureRef} className="relative w-[720px] h-[590px]">
         {imageList && frame && (
-          <CompositeImage images={imageList} frameSrc={frame?.frameImageUrl} />
+          <>
+            {imageList.map((img, idx) => {
+              const { top, left, width, height } = SLOT_POSITIONS[idx];
+              return (
+                <img
+                  key={img.slotIndex}
+                  src={img.photoImageUrl}
+                  alt={`photo-${idx}`}
+                  style={{
+                    position: "absolute",
+                    top,
+                    left,
+                    width,
+                    height,
+                    objectFit: "cover",
+                  }}
+                />
+              );
+            })}
+            <img
+              src={frame.frameImageUrl}
+              alt="frame"
+              className="absolute top-0 left-0 w-full h-full pointer-events-none"
+            />
+          </>
         )}
       </div>
 
-      <div className="flex gap-4">
-        <button
-          className="bg-orange-500 text-white px-4 py-2 rounded cursor-pointer"
-          onClick={async () => {
-            await handleCapture();
-            navigate(`/guide?r=${sessionCode}`);
-          }}
-        >
-          꾸미기 시작
-        </button>
-      </div>
+      <button
+        className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
+        onClick={async () => {
+          await handleCapture();
+          sendDrawStart(sessionId, sessionCode);
+        }}
+      >
+        꾸미러 가기
+      </button>
     </div>
   );
 };

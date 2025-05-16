@@ -144,8 +144,6 @@ const CameraPage: React.FC = () => {
         fileName: file.name,
         contentType: file.type,
       });
-      console.log("presignedUrl:", presignedUrl);
-      console.log("imageUrl:", imageUrl);
 
       // 2. S3 업로드
       await uploadToS3(presignedUrl, file);

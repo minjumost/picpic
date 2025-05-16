@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
-import { useGetImages, type Image } from "../api/getImage";
 import { setHandlers } from "../sockets/stompClient";
 import {
   sendDrawStroke,
   type DrawStrokePayload,
 } from "../sockets/sessionSocket";
 import { useSessionCode } from "../hooks/useSessionCode";
+import { useGetCollageImage } from "../api/CompImg";
 
 const colors = [
   "#000000",
@@ -30,7 +30,7 @@ const CanvasDrawOverImage: React.FC = () => {
   const sessionCode = useSessionCode();
 
   const sessionId = Number(sessionStorage.getItem("sessionId"));
-  const { data, isLoading } = useGetImages(sessionId);
+  const { data, isLoading } = useGetCollageImage(sessionId);
 
   // 드로잉 캔버스 초기화
   useEffect(() => {
@@ -80,6 +80,7 @@ const CanvasDrawOverImage: React.FC = () => {
   }, []);
 
   if (isLoading) return <div>로딩 중</div>;
+  console.log(data);
 
   const handleComplete = async () => {
     const captured = await captureCanvas();

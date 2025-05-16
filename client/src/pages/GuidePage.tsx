@@ -1,9 +1,17 @@
 import { useNavigate } from "react-router";
 import { useSessionCode } from "../hooks/useSessionCode";
+import { useEffect } from "react";
+import { setHandlers } from "../sockets/stompClient";
+import { sendDrawStart } from "../sockets/sessionSocket";
 
 const GuidePage: React.FC = () => {
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
+  const sessionId = Number(sessionStorage.getItem("sessionId"));
+
+  useEffect(() => {
+    setHandlers({ stroke_start: () => navigate(`/decorate?r=${sessionCode}`) });
+  }, []);
 
   return (
     <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
@@ -24,8 +32,7 @@ const GuidePage: React.FC = () => {
       <button
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
         onClick={() => {
-          console.log("asdfjdskfj");
-          navigate(`/decorate?r=${sessionCode}`);
+          sendDrawStart(sessionId, sessionCode);
         }}
       >
         꾸미러 가기

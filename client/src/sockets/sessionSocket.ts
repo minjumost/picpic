@@ -108,3 +108,15 @@ export const sendPhotoUpload = (
 
   console.log("📨 사진 업로드 완료 메시지 전송");
 };
+
+export const sendDrawStart = (sessionId: number, sessionCode: string) => {
+  if (!stompClient.connected) {
+    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
+    return;
+  }
+
+  stompClient.publish({
+    destination: "/send/stroke/start",
+    body: JSON.stringify({ sessionId, sessionCode }),
+  });
+};
