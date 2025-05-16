@@ -185,7 +185,7 @@ public class SessionService {
 			.build();
 
 		MDC.put("sessionId", session.getSessionId().toString());
-		MDC.put("memerId", member.getMemberId().toString());
+		MDC.put("memberId", member.getMemberId().toString());
 		log.info("세션 시작 성공");
 		return res;
 	}

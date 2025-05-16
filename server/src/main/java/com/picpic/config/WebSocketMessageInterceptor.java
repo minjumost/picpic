@@ -18,12 +18,6 @@ public class WebSocketMessageInterceptor implements ChannelInterceptor {
 		String destination = accessor.getDestination();
 		String sessionId = accessor.getSessionId();
 
-		if (command != null && command.equals(StompCommand.SEND)) {
-			// 클라이언트가 보낸 메시지
-			log.info("📥 [RECEIVED] from client - [sessionId={}] [destination={}] payload={}", sessionId, destination,
-				message.getPayload());
-		}
-
 		return message;
 	}
 
@@ -33,9 +27,6 @@ public class WebSocketMessageInterceptor implements ChannelInterceptor {
 		StompCommand command = accessor.getCommand();
 		String destination = accessor.getDestination();
 		String sessionId = accessor.getSessionId();
-
-		log.info("📤 [SENT] to client - [sessionId={}] [destination={}] payload={}", sessionId, destination,
-			message.getPayload());
 
 	}
 }
