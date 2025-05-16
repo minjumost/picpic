@@ -7,8 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.picpic.auth.GuestLoginResultDTO;
 import com.picpic.auth.JwtTokenProvider;
+import com.picpic.auth.dto.GuestLoginResultDTO;
 import com.picpic.entity.Member;
 import com.picpic.entity.Nickname;
 import com.picpic.entity.Profile;

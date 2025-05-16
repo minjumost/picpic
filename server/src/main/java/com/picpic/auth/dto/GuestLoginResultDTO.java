@@ -1,4 +1,4 @@
-package com.picpic.auth;
+package com.picpic.auth.dto;
 
 public record GuestLoginResultDTO(
 	Long memberId,
