@@ -61,6 +61,20 @@ public class CollageService {
 	}
 
 	@Transactional
+	public void updateCollages(Long sessionId, String collageImageUrl) {
+		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		Collage collage = collageRepository.findBySession(session).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_COLLAGE)
+		);
+
+		collage.setCollageImageUrl(collageImageUrl);
+
+	}
+
+	@Transactional
 	public CollageWebSocketResponseDTO startCollage(Long memberId, Long sessionId) {
 		Member member = memberRepository.findById(memberId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
