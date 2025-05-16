@@ -4,7 +4,10 @@ import {
   connectAndEnterSession,
   sendSessionStart,
 } from "../sockets/sessionSocket";
-import { initStompSession, setHandlers } from "../sockets/stompClient";
+import stompClient, {
+  initStompSession,
+  setHandlers,
+} from "../sockets/stompClient";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { useStompStatusStore } from "../sockets/useStompStore";
 
@@ -21,6 +24,8 @@ const WaitingPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [dots, setDots] = useState(".."); // ← 점 상태 관리
 
+  const mId = Number(sessionStorage.getItem("memberId"));
+
   const { isConnected } = useStompStatusStore.getState();
   const sessionCode = useSessionCode();
   const navigate = useNavigate();
@@ -34,26 +39,30 @@ const WaitingPage: React.FC = () => {
     return () => clearInterval(interval); // 컴포넌트 언마운트 시 정리
   }, []);
 
-  // STOMP 핸들러 등록
   useEffect(() => {
     const handlers = {
       session_enter: (data: { participants: User[]; sessionId: number }) => {
         sessionStorage.setItem("sessionId", `${data.sessionId}`);
-        setUsers([...data.participants]);
+        setUsers(data.participants);
       },
       session_start: () => navigate(`/photo?r=${sessionCode}`),
       stroke_start: () => navigate(`/decorate?r=${sessionCode}`),
       collage_start: () => navigate(`/final?r=${sessionCode}`),
       session_exit: (data: { isOwner: boolean; memberId: number }) => {
-        if (data.isOwner) navigate("/");
-        setUsers(
-          users.filter((value: User) => value.memberId !== data.memberId)
+        if (data.isOwner) {
+          stompClient.deactivate();
+          sessionStorage.clear();
+          navigate("/");
+          alert("방장이 나가서 세션이 종료되었습니다.");
+        }
+        setUsers((prev) =>
+          prev.filter((value: User) => value.memberId !== data.memberId)
         );
       },
     };
 
     setHandlers(handlers);
-  }, [sessionCode]);
+  }, [sessionCode, navigate]);
 
   // 재접속 로직
   useEffect(() => {
@@ -93,33 +102,36 @@ const WaitingPage: React.FC = () => {
       {/* 참가자 목록 */}
       <div className="flex flex-col gap-3 w-full z-10 mb-6">
         {users.length > 0 &&
-          users.map((user, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3"
-            >
-              <div className="flex items-center gap-2">
-                <img
-                  src={user.profileImageUrl}
-                  alt="user"
-                  className="w-8 h-8"
-                />
-                <span className="text-lg font-medium">{user.nickname}</span>
+          users.map((user, index) => {
+            console.log("user::::", user);
+            return (
+              <div
+                key={index}
+                className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-4 py-3"
+              >
+                <div className="flex items-center gap-2">
+                  <img
+                    src={user.profileImageUrl}
+                    alt="user"
+                    className="w-8 h-8"
+                  />
+                  <span className="text-lg font-medium">{user.nickname}</span>
+                </div>
+                <div className="flex gap-1">
+                  {user.isOwner && (
+                    <div className="w-12 h-7 bg-main2 rounded-2xl text-white flex items-center justify-center">
+                      방장
+                    </div>
+                  )}
+                  {user.memberId === mId && (
+                    <div className="w-12 h-7 bg-main1 rounded-2xl text-white flex items-center justify-center">
+                      나
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex gap-1">
-                {user.isOwner && (
-                  <div className="w-12 h-7 bg-main2 rounded-2xl text-white flex items-center justify-center">
-                    방장
-                  </div>
-                )}
-                {user.isMe && (
-                  <div className="w-12 h-7 bg-main1 rounded-2xl text-white flex items-center justify-center">
-                    나
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
       </div>
 
       {/* 시작하기 버튼 */}
