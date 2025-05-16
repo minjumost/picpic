@@ -120,7 +120,7 @@ const PhotoCapturePage: React.FC = () => {
                   <img
                     src={slots[i].url}
                     alt="uploaded"
-                    className="object-cover w-full h-full rounded-sm"
+                    className="object-cover w-full h-full rounded-sm -scale-x-100"
                     style={{ transform: "scaleX(-1)" }}
                   />
                 ) : slots[i].profileImageUrl ? (

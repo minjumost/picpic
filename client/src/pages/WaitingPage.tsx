@@ -31,7 +31,7 @@ const WaitingPage: React.FC = () => {
   const sessionCode = useSessionCode();
   const navigate = useNavigate();
 
-  const roomUrl = `https://localhost:5173/roomPwd?r=${sessionCode}`;
+  const roomUrl = `https://minipia.co.kr/roomPwd?r=${sessionCode}`;
 
   // 점 애니메이션 useEffect
   useEffect(() => {
