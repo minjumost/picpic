@@ -13,7 +13,7 @@ type HandlerMap = {
 let handlers: HandlerMap = {};
 
 export const setHandlers = (newHandlers: HandlerMap) => {
-  handlers = newHandlers;
+  handlers = { ...handlers, ...newHandlers };
 };
 
 const stompClient = new Client({
