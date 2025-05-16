@@ -50,7 +50,6 @@ const WaitingPage: React.FC = () => {
       },
       session_start: () => navigate(`/photo?r=${sessionCode}`),
       stroke_start: () => navigate(`/decorate?r=${sessionCode}`),
-      collage_start: () => navigate(`/final?r=${sessionCode}`),
       session_exit: (data: { isOwner: boolean; memberId: number }) => {
         if (data.isOwner) {
           stompClient.deactivate();

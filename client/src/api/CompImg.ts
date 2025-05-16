@@ -11,6 +11,11 @@ const postCollageImage = async (payload: CollagePayload) => {
   return response.data;
 };
 
+const postCollageLastImage = async (payload: CollagePayload) => {
+  const response = await client.post("/api/v1/collages/update", payload);
+  return response.data;
+};
+
 const getCollageImage = async (sessionId: number) => {
   const response = await client.get(`/api/v1/collages/${sessionId}`);
   return response.data.result;
@@ -26,5 +31,11 @@ export const useGetCollageImage = (sessionId: number) => {
 export const usePostCollageImage = () => {
   return useMutation({
     mutationFn: postCollageImage,
+  });
+};
+
+export const usePostCollageLastImage = () => {
+  return useMutation({
+    mutationFn: postCollageLastImage,
   });
 };

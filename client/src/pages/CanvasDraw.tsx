@@ -1,11 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import { setHandlers } from "../sockets/stompClient";
 import {
+  sendCollageStart,
   sendDrawStroke,
   type DrawStrokePayload,
 } from "../sockets/sessionSocket";
 import { useSessionCode } from "../hooks/useSessionCode";
-import { useGetCollageImage } from "../api/CompImg";
+import { useGetCollageImage, usePostCollageLastImage } from "../api/CompImg";
+import { useNavigate } from "react-router";
+import { getCurrentDateTimeString } from "./CameraPage";
+import { dataURLtoFile } from "../utils/dataURLtoFile";
+import { getPresignedUrl } from "./CameraPage/useUploadImage";
+import { uploadToS3 } from "../utils/uploadToS3";
 
 const colors = [
   "#000000",
@@ -28,6 +34,8 @@ const CanvasDrawOverImage: React.FC = () => {
     []
   );
   const sessionCode = useSessionCode();
+  const navigate = useNavigate();
+  const postImage = usePostCollageLastImage();
 
   const sessionId = Number(sessionStorage.getItem("sessionId"));
   const { data, isLoading } = useGetCollageImage(sessionId);
@@ -46,48 +54,6 @@ const CanvasDrawOverImage: React.FC = () => {
       ctx.lineCap = "round";
     }
   }, [data]);
-
-  useEffect(() => {
-    setHandlers({
-      stroke: (data: {
-        type: string;
-        color: string;
-        lineWidth: number;
-        points: { x: number; y: number }[];
-        tool: string;
-      }) => {
-        const canvas = drawCanvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        if (!ctx || data.points.length < 2) return;
-
-        ctx.strokeStyle = data.color;
-        ctx.lineWidth = data.lineWidth;
-        ctx.lineJoin = "round";
-        ctx.lineCap = "round";
-        ctx.globalCompositeOperation =
-          data.tool === "ERASER" ? "destination-out" : "source-over";
-
-        ctx.beginPath();
-        ctx.moveTo(data.points[0].x, data.points[0].y);
-        for (let i = 1; i < data.points.length; i++) {
-          ctx.lineTo(data.points[i].x, data.points[i].y);
-        }
-        ctx.stroke();
-        ctx.globalCompositeOperation = "source-over"; // 되돌려놓기
-      },
-    });
-  }, []);
-
-  if (isLoading) return <div>로딩 중</div>;
-  console.log(data);
-
-  const handleComplete = async () => {
-    const captured = await captureCanvas();
-    if (captured) {
-      console.log("저장된 이미지 url: ", captured);
-    }
-  };
 
   const captureCanvas = () => {
     const drawCanvas = drawCanvasRef.current;
@@ -122,6 +88,75 @@ const CanvasDrawOverImage: React.FC = () => {
       };
     });
   };
+
+  const handleComplete = async () => {
+    console.log("완료");
+    const captured = await captureCanvas();
+    if (!captured) return;
+
+    const fileName = `${getCurrentDateTimeString()}.png`;
+    const file = dataURLtoFile(captured, fileName);
+
+    const { presignedUrl, imageUrl } = await getPresignedUrl({
+      type: "collage",
+      fileName: file.name,
+      contentType: file.type,
+    });
+
+    await uploadToS3(presignedUrl, file);
+
+    try {
+      await postImage.mutateAsync({
+        sessionId: sessionId,
+        collageImageUrl: imageUrl,
+      });
+
+      console.log("성공");
+      sendCollageStart(sessionId, sessionCode);
+      navigate(`/final?r=${sessionCode}`);
+    } catch (error) {
+      console.error("에러 발생:", error);
+    }
+  };
+
+  useEffect(() => {
+    setHandlers({
+      stroke: (data: {
+        type: string;
+        color: string;
+        lineWidth: number;
+        points: { x: number; y: number }[];
+        tool: string;
+      }) => {
+        const canvas = drawCanvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx || data.points.length < 2) return;
+
+        ctx.strokeStyle = data.color;
+        ctx.lineWidth = data.lineWidth;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.globalCompositeOperation =
+          data.tool === "ERASER" ? "destination-out" : "source-over";
+
+        ctx.beginPath();
+        ctx.moveTo(data.points[0].x, data.points[0].y);
+        for (let i = 1; i < data.points.length; i++) {
+          ctx.lineTo(data.points[i].x, data.points[i].y);
+        }
+        ctx.stroke();
+        ctx.globalCompositeOperation = "source-over"; // 되돌려놓기
+      },
+      collage_start: async () => {
+        await handleComplete();
+        navigate(`/final?r=${sessionCode}`);
+      },
+    });
+  }, []);
+
+  if (isLoading) return <div>로딩 중</div>;
+  console.log(data);
 
   const getCtx = () => drawCanvasRef.current?.getContext("2d");
 

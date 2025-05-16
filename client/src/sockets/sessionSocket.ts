@@ -132,3 +132,15 @@ export const sendDrawReady = (sessionId: number, sessionCode: string) => {
     body: JSON.stringify({ sessionId, sessionCode }),
   });
 };
+
+export const sendCollageStart = (sessionId: number, sessionCode: string) => {
+  if (!stompClient.connected) {
+    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
+    return;
+  }
+
+  stompClient.publish({
+    destination: "/send/collage/start",
+    body: JSON.stringify({ sessionId, sessionCode }),
+  });
+};
