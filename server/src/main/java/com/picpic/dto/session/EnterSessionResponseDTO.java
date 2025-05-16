@@ -13,7 +13,7 @@ public record EnterSessionResponseDTO(
 ) {
 	@Builder
 	public record ParticipantListDTO(
-		Long memeberId,
+		Long memberId,
 		String nickname,
 		String profileImageUrl,
 		String color,
