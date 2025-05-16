@@ -22,7 +22,7 @@ const colors = [
 const CanvasDrawOverImage: React.FC = () => {
   const drawCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const isDrawing = useRef(false);
-  const [mode, setMode] = useState<"pen" | "eraser">("pen");
+  const [mode, setMode] = useState<"PEN" | "ERASER">("PEN");
   const [color, setColor] = useState("#F2552C");
   const [strokePoints, setStrokePoints] = useState<{ x: number; y: number }[]>(
     []
@@ -66,7 +66,7 @@ const CanvasDrawOverImage: React.FC = () => {
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
         ctx.globalCompositeOperation =
-          data.tool === "eraser" ? "destination-out" : "source-over";
+          data.tool === "ERASER" ? "destination-out" : "source-over";
 
         ctx.beginPath();
         ctx.moveTo(data.points[0].x, data.points[0].y);
@@ -143,9 +143,9 @@ const CanvasDrawOverImage: React.FC = () => {
     const y = e.nativeEvent.offsetY;
 
     ctx.globalCompositeOperation =
-      mode === "pen" ? "source-over" : "destination-out";
-    ctx.strokeStyle = mode === "pen" ? color : "rgba(0,0,0,1)";
-    ctx.lineWidth = mode === "pen" ? 6 : 20;
+      mode === "PEN" ? "source-over" : "destination-out";
+    ctx.strokeStyle = mode === "PEN" ? color : "rgba(0,0,0,1)";
+    ctx.lineWidth = mode === "PEN" ? 6 : 20;
     ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     ctx.lineTo(x, y);
     ctx.stroke();
@@ -160,7 +160,7 @@ const CanvasDrawOverImage: React.FC = () => {
     if (!ctx) return;
 
     const sessionId = Number(sessionStorage.getItem("sessionId"));
-    const lineWidth = (ctx.lineWidth = mode === "pen" ? 6 : 20);
+    const lineWidth = (ctx.lineWidth = mode === "PEN" ? 6 : 20);
     const payload: DrawStrokePayload = {
       sessionId: sessionId,
       sessionCode: sessionCode,
@@ -177,62 +177,78 @@ const CanvasDrawOverImage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full h-full p-8 gap-5">
+    <div className="flex flex-col w-full h-full p-8 gap-5 overflow-y-auto">
+      {/* 제목 */}
       <div className="w-full flex justify-between">
         <h2 className="text-heading1 font-bold">사진을 꾸며주세요!</h2>
       </div>
 
       {/* 이미지 + 드로잉 캔버스를 겹쳐서 표시 */}
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-full flex-shrink-0">
         {data && (
           <img
             src={data.collageImageUrl}
             alt="base"
-            onLoad={() =>
-              console.log("🖼 이미지 로딩 완료", data.collageImageUrl)
-            }
-            className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded border border-gray-300"
+            onLoad={(e) => {
+              const img = e.target as HTMLImageElement;
+              const rect = img.getBoundingClientRect();
+              console.log("이미지 실제 크기:", {
+                width: rect.width,
+                height: rect.height,
+              });
+
+              // 캔버스 크기도 이미지 크기에 맞춤
+              const canvas = drawCanvasRef.current;
+              if (canvas) {
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+              }
+            }}
+            className="absolute top-0 left-0 w-full object-contain z-0 rounded border border-gray-300"
           />
         )}
         <canvas
           ref={drawCanvasRef}
-          className="absolute top-0 left-0 w-full h-full z-10"
+          className="absolute top-0 left-0 w-full object-contain z-10"
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
         />
       </div>
 
-      <div className="flex gap-4 mb-2">
-        <button
-          className={`px-6 py-2 rounded font-bold ${
-            mode === "pen" ? "bg-main1 text-white" : "bg-gray-100 text-black"
-          }`}
-          onClick={() => setMode("pen")}
-        >
-          펜
-        </button>
-        <button
-          className={`px-6 py-2 rounded font-bold ${
-            mode === "eraser" ? "bg-main1 text-white" : "bg-black text-white"
-          }`}
-          onClick={() => setMode("eraser")}
-        >
-          지우개
-        </button>
-      </div>
-
-      <div className="flex gap-2 flex-wrap justify-center">
-        {colors.map((c, idx) => (
-          <div
-            key={idx}
-            onClick={() => setColor(c)}
-            className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
-              color === c ? "border-main1" : "border-gray-300"
+      {/* 그리기 툴 */}
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-4 mb-2">
+          <button
+            className={`px-6 py-2 rounded font-bold ${
+              mode === "PEN" ? "bg-main1 text-white" : "bg-gray-100 text-black"
             }`}
-            style={{ backgroundColor: c }}
-          />
-        ))}
+            onClick={() => setMode("PEN")}
+          >
+            펜
+          </button>
+          <button
+            className={`px-6 py-2 rounded font-bold ${
+              mode === "ERASER" ? "bg-main1 text-white" : "bg-black text-white"
+            }`}
+            onClick={() => setMode("ERASER")}
+          >
+            지우개
+          </button>
+        </div>
+
+        <div className="flex gap-2 flex-wrap justify-center">
+          {colors.map((c, idx) => (
+            <div
+              key={idx}
+              onClick={() => setColor(c)}
+              className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
+                color === c ? "border-main1" : "border-gray-300"
+              }`}
+              style={{ backgroundColor: c }}
+            />
+          ))}
+        </div>
       </div>
 
       <button

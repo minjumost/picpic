@@ -94,20 +94,25 @@ const PreviewPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4">
+    <div className="flex flex-col justify-center w-full gap-3 p-4">
       <p className="text-xl font-bold">사진이 완성되었어요 🥳</p>
-      <p className="text-heading3 font-bold text-gray-500 mb-6">
+      <p className="text-heading4 font-bold text-gray-500">
         🎨 한 컷씩 같이 꾸밀 수 있어요.
       </p>
 
-      <p className="text-heading3 font-bold text-gray-500 mb-6">
+      <p className="text-heading4 font-bold text-gray-500">
         ⏰ 2분 안에 꾸미기를 완료해주세요.
       </p>
 
-      <p className="text-heading3 font-bold text-gray-500 mb-6">
+      <p className="text-heading4 font-bold text-gray-500">
         ❌ 되돌릴 수 없으니 신중하게 꾸며주세요.
       </p>
-      <div ref={captureRef} className="relative w-[720px] h-[590px]">
+
+      <div
+        ref={captureRef}
+        className="relative"
+        style={{ width: "720px", height: "590px" }}
+      >
         {imageList && frame && (
           <>
             {imageList.map((img, idx) => {
@@ -142,6 +147,7 @@ const PreviewPage = () => {
         onClick={async () => {
           await handleCapture();
           sendDrawStart(sessionId, sessionCode);
+          navigate(`/decorate?r=${sessionCode}`);
         }}
       >
         꾸미러 가기
