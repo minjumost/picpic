@@ -21,7 +21,7 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/guest")
-	public ResponseEntity<ApiResponse<GuestLoginResultDTO>> guestLogin(HttpServletResponse response) {
+	public ResponseEntity<ApiResponse<Long>> guestLogin(HttpServletResponse response) {
 		GuestLoginResultDTO result = authService.loginAsGuest();
 
 		ResponseCookie cookie = ResponseCookie.from("access-token", result.accessToken())
@@ -34,7 +34,7 @@ public class AuthController {
 
 		response.addHeader("Set-Cookie", cookie.toString());
 
-		return ResponseEntity.ok(ApiResponse.success(result));
+		return ResponseEntity.ok(ApiResponse.success(result.memberId()));
 	}
 
 }
