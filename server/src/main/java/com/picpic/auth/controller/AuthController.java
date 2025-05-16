@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.picpic.auth.GuestLoginResultDTO;
 import com.picpic.auth.service.AuthService;
 import com.picpic.common.response.ApiResponse;
 
@@ -20,10 +21,10 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/guest")
-	public ResponseEntity<ApiResponse<Void>> guestLogin(HttpServletResponse response) {
-		String accessToken = authService.loginAsGuest();
+	public ResponseEntity<ApiResponse<GuestLoginResultDTO>> guestLogin(HttpServletResponse response) {
+		GuestLoginResultDTO result = authService.loginAsGuest();
 
-		ResponseCookie cookie = ResponseCookie.from("access-token", accessToken)
+		ResponseCookie cookie = ResponseCookie.from("access-token", result.accessToken())
 			.httpOnly(true)
 			.secure(true) // 개발 중일 경우 false
 			.path("/")
@@ -33,6 +34,7 @@ public class AuthController {
 
 		response.addHeader("Set-Cookie", cookie.toString());
 
-		return ResponseEntity.ok(ApiResponse.success());
+		return ResponseEntity.ok(ApiResponse.success(result));
 	}
+
 }
