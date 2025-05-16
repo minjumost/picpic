@@ -6,7 +6,7 @@ import { useSessionCode } from "../../hooks/useSessionCode";
 import { sendPhotoUpload } from "../../sockets/sessionSocket";
 
 // 날짜+시간 파일명 생성 함수
-function getCurrentDateTimeString() {
+export function getCurrentDateTimeString() {
   const now = new Date();
   const yyyy = now.getFullYear();
   const mm = String(now.getMonth() + 1).padStart(2, "0");
@@ -144,8 +144,6 @@ const CameraPage: React.FC = () => {
         fileName: file.name,
         contentType: file.type,
       });
-      console.log("presignedUrl:", presignedUrl);
-      console.log("imageUrl:", imageUrl);
 
       // 2. S3 업로드
       await uploadToS3(presignedUrl, file);
