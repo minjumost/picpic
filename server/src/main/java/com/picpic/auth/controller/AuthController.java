@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.picpic.auth.GuestLoginResultDTO;
+import com.picpic.auth.MemberIdDTO;
 import com.picpic.auth.service.AuthService;
 import com.picpic.common.response.ApiResponse;
 
@@ -21,7 +22,7 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/guest")
-	public ResponseEntity<ApiResponse<Long>> guestLogin(HttpServletResponse response) {
+	public ResponseEntity<ApiResponse<MemberIdDTO>> guestLogin(HttpServletResponse response) {
 		GuestLoginResultDTO result = authService.loginAsGuest();
 
 		ResponseCookie cookie = ResponseCookie.from("access-token", result.accessToken())
@@ -34,7 +35,8 @@ public class AuthController {
 
 		response.addHeader("Set-Cookie", cookie.toString());
 
-		return ResponseEntity.ok(ApiResponse.success(result.memberId()));
-	}
+		MemberIdDTO memberIdDTO = new MemberIdDTO(result.memberId());
 
+		return ResponseEntity.ok(ApiResponse.success(memberIdDTO));
+	}
 }
