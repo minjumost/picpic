@@ -1,10 +1,14 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { client } from "../api/axios";
 
 const RoomSetUpPage: React.FC = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
+
+  const [searchParams] = useSearchParams();
+
+  const frameId = searchParams.get("f");
 
   const navigate = useNavigate();
 
@@ -41,7 +45,7 @@ const RoomSetUpPage: React.FC = () => {
 
     try {
       const res = await client.post("/api/v1/session", {
-        frameId: 1,
+        frameId: Number(frameId),
         backgroundId: 1,
         password: Number(password),
       });
@@ -55,7 +59,6 @@ const RoomSetUpPage: React.FC = () => {
   };
   return (
     <div className="flex flex-col justify-center w-full h-full p-4 gap-8">
-      {/* 제목 */}
       <div className="flex flex-col gap-2">
         <h2 className="text-[24px] font-bold text-gray-800">
           비밀번호를 입력해주세요.
