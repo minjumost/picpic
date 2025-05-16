@@ -1,8 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { useGetFrames } from "../api/frame";
-import frame1 from "../assets/frames/frame1.png";
-import frame2 from "../assets/frames/frame2.png";
+import { useGetFrames, type FrameResponse } from "../api/frame";
 
 interface FrameOptionProps {
   name: string;
@@ -33,14 +31,12 @@ const SelectFrameScreen: React.FC = () => {
   const navigate = useNavigate();
   const { data, isLoading } = useGetFrames();
 
-  // TODO: 스피너 컴포넌트로 교체필요
   if (isLoading) return <div>로딩 중..</div>;
 
   console.log(data);
 
   return (
     <div className="flex flex-col justify-center w-full h-full p-4 gap-8">
-      {/* 제목 */}
       <div className="flex flex-col gap-2">
         <h2 className="text-[24px] font-bold text-gray-800">
           프레임을 선택해주세요.
@@ -49,27 +45,20 @@ const SelectFrameScreen: React.FC = () => {
           추후에 프레임을 추가할게요.
         </p>
       </div>
-
-      {/* 프레임 목록 */}
       <div className="flex overflow-x-auto w-full justify-center gap-2">
-        <FrameOption
-          name="4 Cuts"
-          image={frame1}
-          onClick={() => {
-            setTimeout(() => {
-              navigate("/roomSet");
-            }, 200);
-          }}
-        />
-        <FrameOption
-          name="4 Cuts"
-          image={frame2}
-          onClick={() => {
-            setTimeout(() => {
-              navigate("/roomSet");
-            }, 200);
-          }}
-        />
+        {data &&
+          data.map((frame: FrameResponse) => (
+            <FrameOption
+              key={frame.frameId}
+              name={frame.name}
+              image={frame.frameImageUrl}
+              onClick={() => {
+                setTimeout(() => {
+                  navigate(`/roomSet?f=${frame.frameId}`);
+                }, 200);
+              }}
+            />
+          ))}
       </div>
     </div>
   );
