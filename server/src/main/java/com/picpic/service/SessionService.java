@@ -141,7 +141,7 @@ public class SessionService {
 				participants.stream()
 					.map(p -> {
 						return EnterSessionResponseDTO.ParticipantListDTO.builder()
-							.memeberId(p.getMember().getMemberId())
+							.memberId(p.getMember().getMemberId())
 							.nickname(p.getMember().getNickname())
 							.color(p.getMember().getColor())
 							.profileImageUrl(p.getMember().getProfileImageUrl())
