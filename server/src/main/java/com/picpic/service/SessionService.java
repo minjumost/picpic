@@ -96,8 +96,8 @@ public class SessionService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
-		if (session.getStatus() == Session.SessionStatus.FINISHED) {
-			throw new ApiException(ErrorCode.FINISHED_SESSION);
+		if (session.getStatus() != Session.SessionStatus.WAITING) {
+			throw new ApiException(ErrorCode.ALREADY_STARTED);
 		}
 
 		if (
