@@ -43,6 +43,8 @@ public class PhotoService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
+		session.start();
+
 		Boolean existingPhoto = photoRepository.existsBySessionAndSlotIndex(
 			session,
 			photoStartRequestDTO.slotIndex()
