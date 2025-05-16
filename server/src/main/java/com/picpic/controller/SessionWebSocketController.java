@@ -2,14 +2,15 @@ package com.picpic.controller;
 
 import java.security.Principal;
 
+import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
+import com.picpic.config.WebSocketContext;
 import com.picpic.dto.session.EnterSessionRequestDTO;
 import com.picpic.dto.session.EnterSessionResponseDTO;
-import com.picpic.dto.session.ExitSessionRequestDTO;
-import com.picpic.dto.session.ExitSessionResponseDTO;
 import com.picpic.dto.session.StartSessionRequestDTO;
 import com.picpic.dto.session.StartSessionResponseDTO;
 import com.picpic.service.SessionService;
@@ -24,12 +25,18 @@ public class SessionWebSocketController {
 
 	private final SessionService sessionService;
 	private final SimpMessagingTemplate messagingTemplate;
+	private final WebSocketContext webSocketContext;
 
 	@MessageMapping("/session/enter")
-	public void enterSession(Principal principal, EnterSessionRequestDTO enterSessionRequestDTO) {
+	public void enterSession(Message<?> message, Principal principal, EnterSessionRequestDTO enterSessionRequestDTO) {
 		Long memberId = Long.parseLong(principal.getName());
-		log.info(enterSessionRequestDTO.sessionCode());
 		EnterSessionResponseDTO res = sessionService.enterSession(memberId, enterSessionRequestDTO);
+
+		// redis 입장정보 기록
+		String stompSessionId = StompHeaderAccessor.wrap(message).getSessionId();
+		Long sessionId = res.sessionId();
+		webSocketContext.register(stompSessionId, memberId, sessionId);
+
 		messagingTemplate.convertAndSend("/broadcast/" + enterSessionRequestDTO.sessionCode(), res);
 	}
 
@@ -38,12 +45,5 @@ public class SessionWebSocketController {
 		Long memberId = Long.parseLong(principal.getName());
 		StartSessionResponseDTO res = sessionService.startSession(memberId, startSessionRequestDTO);
 		messagingTemplate.convertAndSend("/broadcast/" + startSessionRequestDTO.sessionCode(), res);
-	}
-
-	@MessageMapping("/session/exit")
-	public void exitSession(Principal principal, ExitSessionRequestDTO exitSessionRequestDTO) {
-		Long memberId = Long.parseLong(principal.getName());
-		ExitSessionResponseDTO res = sessionService.exitSession(memberId, exitSessionRequestDTO);
-		messagingTemplate.convertAndSend("/broadcast/" + exitSessionRequestDTO.sessionCode(), res);
 	}
 }

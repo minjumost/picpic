@@ -16,6 +16,7 @@ import com.picpic.common.exception.ErrorCode;
 import com.picpic.dto.collage.CollageWebSocketResponseDTO;
 import com.picpic.dto.stroke.StrokeDrawRequestDTO;
 import com.picpic.dto.stroke.StrokeDrawResponseDTO;
+import com.picpic.dto.stroke.StrokeReadyResponseDTO;
 import com.picpic.dto.stroke.StrokeStartResponseDTO;
 import com.picpic.entity.Collage;
 import com.picpic.entity.Member;
@@ -121,4 +122,21 @@ public class StrokeService {
 
 		return res;
 	}
+
+	public StrokeReadyResponseDTO ready(Long memberId, Long sessionId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
+		);
+
+		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		StrokeReadyResponseDTO res = new StrokeReadyResponseDTO("stroke_ready");
+
+		log.info("Stroke 대기 완료");
+
+		return res;
+	}
+
 }

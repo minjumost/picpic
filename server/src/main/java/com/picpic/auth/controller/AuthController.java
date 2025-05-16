@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.picpic.auth.GuestLoginResultDTO;
-import com.picpic.auth.MemberIdDTO;
+import com.picpic.auth.dto.GuestLoginResultDTO;
+import com.picpic.auth.dto.MemberIdDTO;
 import com.picpic.auth.service.AuthService;
 import com.picpic.common.response.ApiResponse;
 
