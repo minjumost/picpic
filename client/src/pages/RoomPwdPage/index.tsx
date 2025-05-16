@@ -46,8 +46,9 @@ const RoomPwdPage = () => {
 
   const handleLogin = () => {
     guestLoginMutation.mutate(undefined, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         sessionStorage.setItem("isOwner", "0");
+        sessionStorage.setItem("memberId", `${data.memberId}`);
         handleEnterRoom();
         console.log("로그인 성공");
       },
