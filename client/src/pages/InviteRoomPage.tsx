@@ -16,7 +16,7 @@ const InviteRoomPage: React.FC = () => {
     try {
       await initStompSession(sessionCode);
       await connectAndEnterSession(sessionCode, 1234);
-      navigate(`/waiting?r=${sessionCode}`);
+      navigate(`/waiting?r=${sessionCode}`, { replace: true });
     } catch (error) {
       alert("방 입장 중 오류가 발생했습니다.");
       console.error(error);

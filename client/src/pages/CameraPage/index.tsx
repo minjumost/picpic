@@ -148,7 +148,7 @@ const CameraPage: React.FC = () => {
       // 3. WebSocket 메시지 전송 (예시, 실제 구현 필요)
       sendPhotoUpload(sessionId, sessionCode, slotIndex, imageUrl);
       // 4. 화면 이동 등
-      navigate(`/photo?r=${sessionCode}`);
+      navigate(`/photo?r=${sessionCode}`, { replace: true });
     } catch (err) {
       alert("업로드 실패");
       console.error(err);

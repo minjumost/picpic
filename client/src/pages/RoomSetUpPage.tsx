@@ -51,7 +51,7 @@ const RoomSetUpPage: React.FC = () => {
       });
 
       const { sessionCode } = res.data.result;
-      navigate(`/invite?r=${sessionCode}`);
+      navigate(`/invite?r=${sessionCode}`, { replace: true });
     } catch (error) {
       console.error("방 생성 실패", error);
       alert("방 생성에 실패했습니다.");

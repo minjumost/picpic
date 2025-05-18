@@ -48,13 +48,15 @@ const WaitingPage: React.FC = () => {
         sessionStorage.setItem("sessionId", `${data.sessionId}`);
         setUsers(data.participants);
       },
-      session_start: () => navigate(`/photo?r=${sessionCode}`),
-      stroke_start: () => navigate(`/decorate?r=${sessionCode}`),
+      session_start: () =>
+        navigate(`/photo?r=${sessionCode}`, { replace: true }),
+      stroke_start: () =>
+        navigate(`/decorate?r=${sessionCode}`, { replace: true }),
       session_exit: (data: { isOwner: boolean; memberId: number }) => {
         if (data.isOwner) {
           stompClient.deactivate();
           sessionStorage.clear();
-          navigate("/");
+          navigate("/", { replace: true });
           alert("방장이 나가서 세션이 종료되었습니다.");
         }
         setUsers((prev) =>

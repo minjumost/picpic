@@ -50,7 +50,7 @@ const SelectBackImagePage: React.FC = () => {
           name="배경1"
           backgroundImageUrl="https://buly.kr/1n3nusF"
           onClick={() => {
-            navigate("/roomSet");
+            navigate("/roomSet", { replace: true });
           }}
         />
         <BackImageOption
@@ -58,7 +58,7 @@ const SelectBackImagePage: React.FC = () => {
           name="배경2"
           backgroundImageUrl="https://buly.kr/1n3nusF"
           onClick={() => {
-            navigate("/roomSet");
+            navigate("/roomSet", { replace: true });
           }}
         />
       </div>

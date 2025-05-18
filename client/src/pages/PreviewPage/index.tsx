@@ -25,7 +25,16 @@ const PreviewPage = () => {
   const sessionId = Number(sessionStorage.getItem("sessionId"));
 
   useEffect(() => {
-    setHandlers({ stroke_start: () => navigate(`/decorate?r=${sessionCode}`) });
+    setHandlers({
+      stroke_start: (data: { startTime: string; duration: number }) =>
+        navigate(`/decorate?r=${sessionCode}`, {
+          state: {
+            startTime: data.startTime,
+            duration: data.duration,
+          },
+          replace: true,
+        }),
+    });
   }, []);
 
   const postImage = usePostCollageImage();
@@ -70,6 +79,7 @@ const PreviewPage = () => {
       logging: false,
     });
     const dataUrl = canvas.toDataURL("image/png");
+    console.log("캡쳐본: ", dataUrl);
     const fileName = `${getCurrentDateTimeString()}.png`;
     const file = dataURLtoFile(dataUrl, fileName);
 
@@ -120,7 +130,7 @@ const PreviewPage = () => {
               return (
                 <img
                   key={img.slotIndex}
-                  src={img.photoImageUrl}
+                  src={img.photoImageUrl + "?" + new Date().getTime()}
                   alt={`photo-${idx}`}
                   style={{
                     position: "absolute",
@@ -134,7 +144,7 @@ const PreviewPage = () => {
               );
             })}
             <img
-              src={frame.frameImageUrl}
+              src={frame.frameImageUrl + "?" + new Date().getTime()}
               alt="frame"
               className="absolute top-0 left-0 w-full h-full pointer-events-none"
             />
@@ -147,7 +157,6 @@ const PreviewPage = () => {
         onClick={async () => {
           await handleCapture();
           sendDrawStart(sessionId, sessionCode);
-          navigate(`/decorate?r=${sessionCode}`);
         }}
       >
         꾸미러 가기

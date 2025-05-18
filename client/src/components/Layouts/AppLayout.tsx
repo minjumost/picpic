@@ -1,30 +1,19 @@
-// src/layouts/AppLayout.tsx
 import { useEffect } from "react";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import stompClient from "../../sockets/stompClient";
 
 const AppLayout = () => {
+  const navigate = useNavigate();
   useEffect(() => {
-    const handlePopState = () => {
-      const current = window.location.pathname;
-      console.log(window.location.pathname);
-      if (current === "/") {
-        window.location.replace("/");
-        return;
-      }
-
-      const confirmed = window.confirm("그만하고 나가시겠습니까?");
-      if (confirmed) {
-        stompClient.deactivate();
-        sessionStorage.clear();
-        window.location.replace("/");
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
+    if (window.sessionStorage.getItem("firstLoadDone") === null) {
+      console.log("첫 로드");
+      window.sessionStorage.setItem("firstLoadDone", "1");
+    } else {
+      console.log("리로드");
+      stompClient.deactivate();
+      window.sessionStorage.clear();
+      navigate("/", { replace: true });
+    }
   }, []);
 
   return <Outlet />;

@@ -10,7 +10,10 @@ const GuidePage: React.FC = () => {
   const sessionId = Number(sessionStorage.getItem("sessionId"));
 
   useEffect(() => {
-    setHandlers({ stroke_start: () => navigate(`/decorate?r=${sessionCode}`) });
+    setHandlers({
+      stroke_start: () =>
+        navigate(`/decorate?r=${sessionCode}`, { replace: true }),
+    });
   }, []);
 
   return (
