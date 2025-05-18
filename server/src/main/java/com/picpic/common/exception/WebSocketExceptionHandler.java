@@ -6,12 +6,13 @@ import org.slf4j.MDC;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import com.picpic.common.response.ApiResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@ControllerAdvice
 @Slf4j
 public class WebSocketExceptionHandler {
 
@@ -23,8 +24,7 @@ public class WebSocketExceptionHandler {
 		} else {
 			MDC.put("memberId", "anonymous");
 		}
-
-		log.info("예외 발생");
+		
 		log.warn(e.getMessage(), e);
 
 		return ApiResponse.error(e.getErrorCode());
