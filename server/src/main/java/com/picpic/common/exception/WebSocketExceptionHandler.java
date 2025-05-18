@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketExceptionHandler {
 
 	@MessageExceptionHandler(ApiException.class)
-	@SendToUser("/private")
+	@SendToUser("/private/error")
 	public ApiResponse<Void> handleApiException(ApiException e, Principal principal) {
 		if (principal != null) {
 			MDC.put("memberId", principal.getName());
@@ -31,7 +31,7 @@ public class WebSocketExceptionHandler {
 	}
 
 	@MessageExceptionHandler(Exception.class)
-	@SendToUser("/private")
+	@SendToUser("/private/error")
 	public ApiResponse<Void> handleException(Exception e) {
 		return ApiResponse.error(ErrorCode.INTERNAL_ERROR);
 	}
