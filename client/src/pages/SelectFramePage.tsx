@@ -54,7 +54,7 @@ const SelectFrameScreen: React.FC = () => {
               image={frame.frameImageUrl}
               onClick={() => {
                 setTimeout(() => {
-                  navigate(`/roomSet?f=${frame.frameId}`);
+                  navigate(`/roomSet?f=${frame.frameId}`, { replace: true });
                 }, 200);
               }}
             />

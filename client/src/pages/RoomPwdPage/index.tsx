@@ -72,7 +72,7 @@ const RoomPwdPage = () => {
     await initStompSession(sessionCode);
     await connectAndEnterSession(sessionCode, password);
 
-    navigate(`/waiting?r=${sessionCode}`);
+    navigate(`/waiting?r=${sessionCode}`, { replace: true });
   };
 
   return (

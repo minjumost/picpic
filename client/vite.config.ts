@@ -36,5 +36,14 @@ export default defineConfig({
           cert: fs.readFileSync("localhost+2.pem"),
         }
       : undefined, // 파일이 없으면 HTTPS 사용 안함
+    proxy: {
+      // S3 버킷에 대한 프록시 설정 추가
+      "/s3-bucket": {
+        target: "https://minipia.s3.ap-northeast-2.amazonaws.com",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/s3-bucket/, ""),
+      },
+    },
   },
 });

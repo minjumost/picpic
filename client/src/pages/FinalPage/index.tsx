@@ -86,7 +86,7 @@ const FinalPage = () => {
           onClick={() => {
             sessionStorage.clear();
             stompClient.deactivate();
-            navigate("/");
+            navigate("/", { replace: true });
           }}
         >
           홈으로 가기

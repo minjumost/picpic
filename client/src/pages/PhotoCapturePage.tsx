@@ -70,7 +70,8 @@ const PhotoCapturePage: React.FC = () => {
           return newSlots;
         });
       },
-      stroke_ready: () => navigate(`/preview?r=${sessionCode}`),
+      stroke_ready: () =>
+        navigate(`/preview?r=${sessionCode}`, { replace: true }),
     });
   }, []);
 
@@ -89,7 +90,7 @@ const PhotoCapturePage: React.FC = () => {
     console.log("[handleSlotClick] sending photo_start for slot:", i);
     sendPhotoStart(sessionId, sessionCode, i);
     console.log("[handleSlotClick] Navigating to camera page!");
-    navigate(`/camera?r=${sessionCode}&slot=${i}`);
+    navigate(`/camera?r=${sessionCode}&slot=${i}`, { replace: true });
   };
 
   return (
@@ -143,7 +144,7 @@ const PhotoCapturePage: React.FC = () => {
         className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
         onClick={() => {
           sendDrawReady(sessionId, sessionCode);
-          navigate(`/preview?r=${sessionCode}`);
+          navigate(`/preview?r=${sessionCode}`, { replace: true });
         }}
       >
         꾸미러 가기

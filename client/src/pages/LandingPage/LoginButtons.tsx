@@ -26,7 +26,7 @@ const LoginButtons: React.FC = () => {
   const handleLogin = () => {
     guestLoginMutation.mutate(undefined, {
       onSuccess: (data) => {
-        navigate("/frame");
+        navigate("/frame", { replace: true });
         sessionStorage.setItem("isOwner", "1");
         sessionStorage.setItem("memberId", `${data.memberId}`);
         console.log("로그인 성공:", data);

@@ -7,7 +7,7 @@ import {
 } from "../sockets/sessionSocket";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { useGetCollageImage, usePostCollageLastImage } from "../api/CompImg";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { getCurrentDateTimeString } from "./CameraPage";
 import { dataURLtoFile } from "../utils/dataURLtoFile";
 import { getPresignedUrl } from "./CameraPage/useUploadImage";
@@ -39,6 +39,29 @@ const CanvasDrawOverImage: React.FC = () => {
 
   const sessionId = Number(sessionStorage.getItem("sessionId"));
   const { data, isLoading } = useGetCollageImage(sessionId);
+
+  const location = useLocation();
+  const { startTime, duration } = location.state as {
+    startTime: string;
+    duration: number;
+  };
+  const [remainingTime, setRemainingTime] = useState<number>(0);
+
+  useEffect(() => {
+    const start = new Date(startTime).getTime(); // 시작 시간 (ms)
+    const end = start + duration * 1000; // 종료 시간 (ms)
+
+    const updateRemainingTime = () => {
+      const now = Date.now();
+      const diff = Math.max(0, Math.floor((end - now) / 1000)); // 남은 시간 (초)
+      setRemainingTime(diff);
+    };
+
+    updateRemainingTime(); // 첫 실행
+    const interval = setInterval(updateRemainingTime, 1000); // 1초마다 갱신
+
+    return () => clearInterval(interval);
+  }, [startTime, duration]);
 
   // 드로잉 캔버스 초기화
   useEffect(() => {
@@ -113,7 +136,7 @@ const CanvasDrawOverImage: React.FC = () => {
 
       console.log("성공");
       sendCollageStart(sessionId, sessionCode);
-      navigate(`/final?r=${sessionCode}`);
+      navigate(`/final?r=${sessionCode}`, { replace: true });
     } catch (error) {
       console.error("에러 발생:", error);
     }
@@ -150,7 +173,7 @@ const CanvasDrawOverImage: React.FC = () => {
       },
       collage_start: async () => {
         await handleComplete();
-        navigate(`/final?r=${sessionCode}`);
+        navigate(`/final?r=${sessionCode}`, { replace: true });
       },
     });
   }, []);
@@ -212,43 +235,42 @@ const CanvasDrawOverImage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full h-full p-8 gap-5 overflow-y-auto">
-      {/* 제목 */}
-      <div className="w-full flex justify-between">
+    <div className="flex flex-col w-full h-[100dvh] p-8 gap-5 overflow-y-auto">
+      <div className="w-full flex justify-between items-center">
         <h2 className="text-heading1 font-bold">사진을 꾸며주세요!</h2>
+        <span className="text-main1 text-heading1 font-bold">
+          {remainingTime}s
+        </span>
       </div>
 
       {/* 이미지 + 드로잉 캔버스를 겹쳐서 표시 */}
-      <div className="relative w-full h-full flex-shrink-0">
-        {data && (
-          <img
-            src={data.collageImageUrl}
-            alt="base"
-            onLoad={(e) => {
-              const img = e.target as HTMLImageElement;
-              const rect = img.getBoundingClientRect();
-              console.log("이미지 실제 크기:", {
-                width: rect.width,
-                height: rect.height,
-              });
+      <div className="w-full h-full flex justify-center">
+        <div className="relative w-full h-full">
+          {data && (
+            <img
+              src={data.collageImageUrl}
+              alt="base"
+              onLoad={(e) => {
+                const img = e.target as HTMLImageElement;
+                const rect = img.getBoundingClientRect();
 
-              // 캔버스 크기도 이미지 크기에 맞춤
-              const canvas = drawCanvasRef.current;
-              if (canvas) {
-                canvas.width = rect.width;
-                canvas.height = rect.height;
-              }
-            }}
-            className="absolute top-0 left-0 w-full object-contain z-0 rounded border border-gray-300"
+                const canvas = drawCanvasRef.current;
+                if (canvas) {
+                  canvas.width = rect.width;
+                  canvas.height = rect.height;
+                }
+              }}
+              className="absolute top-0 left-0 w-full object-contain z-0 rounded border border-gray-300"
+            />
+          )}
+          <canvas
+            ref={drawCanvasRef}
+            className="absolute top-0 left-0 w-full object-contain z-10"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
           />
-        )}
-        <canvas
-          ref={drawCanvasRef}
-          className="absolute top-0 left-0 w-full object-contain z-10"
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-        />
+        </div>
       </div>
 
       {/* 그리기 툴 */}
