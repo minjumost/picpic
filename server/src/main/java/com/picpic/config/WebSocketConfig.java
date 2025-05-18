@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.enableSimpleBroker("/broadcast", "private")
+		registry.enableSimpleBroker("/broadcast", "/private")
 			.setHeartbeatValue(new long[] {4000, 4000})
 			.setTaskScheduler(heartBeatScheduler());
 		registry.setApplicationDestinationPrefixes("/send");
