@@ -57,7 +57,8 @@ public class SecurityConfig {
 			"http://127.0.0.1:5500",
 			"http://localhost:5173",
 			"https://localhost:5173",
-			"https://minipia.co.kr"
+			"https://minipia.co.kr",
+			"https://172.30.1.20:5173"
 		));
 
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
