@@ -24,6 +24,7 @@ public class WebSocketExceptionHandler {
 			MDC.put("memberId", "anonymous");
 		}
 
+		log.info("예외 발생");
 		log.warn(e.getMessage(), e);
 
 		return ApiResponse.error(e.getErrorCode());
