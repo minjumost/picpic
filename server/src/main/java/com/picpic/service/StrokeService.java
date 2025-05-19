@@ -62,7 +62,7 @@ public class StrokeService {
 		String sessionCode = session.getSessionCode();
 		Long ownerId = session.getMember().getMemberId();
 
-		StrokeStartResponseDTO res = new StrokeStartResponseDTO("stroke_start", now, 60 * 60);
+		StrokeStartResponseDTO res = new StrokeStartResponseDTO("stroke_start", now, 300);
 
 		log.info("그리기모드 시작");
 
@@ -71,7 +71,7 @@ public class StrokeService {
 			CollageWebSocketResponseDTO response = collageService.startCollage(ownerId, sessionId);
 			messagingTemplate.convertAndSend("/broadcast/" + sessionCode, response);
 			log.info("그리기 모드 자동 종료");
-		}, 60 * 60, TimeUnit.SECONDS);
+		}, 300, TimeUnit.SECONDS);
 
 		return res;
 	}
