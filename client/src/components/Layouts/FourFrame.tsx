@@ -1,9 +1,10 @@
 import type { Ref } from "react";
+import none from "../../assets/frames/none.jpg";
 import logo from "../../assets/logo.png";
 
 export interface FramePhoto {
   slotIndex: number;
-  photoImageUrl: string;
+  photoImageUrl?: string;
 }
 
 interface FrameProps {
@@ -28,7 +29,11 @@ const FourFrame: React.FC<FrameProps> = ({ photos, captureRef }) => {
               className="w-full h-full flex items-center justify-center overflow-hidden bg-gray-200"
             >
               <img
-                src={photoImageUrl + "?" + new Date().getTime()}
+                src={
+                  photoImageUrl
+                    ? photoImageUrl + "?" + new Date().getTime()
+                    : none
+                }
                 alt={`slot-${slotIndex}`}
                 crossOrigin="anonymous"
                 className="w-full h-full object-cover"

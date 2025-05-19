@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { useGetFinalImages } from "../../api/finalImages";
-import { useNavigate } from "react-router";
-import stompClient from "../../sockets/stompClient";
 import { usePageExitEvent } from "../../hooks/usePageExitEvent";
+import stompClient from "../../sockets/stompClient";
 
 const FinalPage = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const [delayPassed, setDelayPassed] = useState(false);
-  const navigate = useNavigate();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
 
   const { data: images, isLoading, isError } = useGetFinalImages(sessionId);
@@ -88,7 +86,7 @@ const FinalPage = () => {
           onClick={() => {
             sessionStorage.clear();
             stompClient.deactivate();
-            navigate("/", { replace: true });
+            window.location.href = "/";
           }}
         >
           홈으로 가기
