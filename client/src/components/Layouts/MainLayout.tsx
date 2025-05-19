@@ -7,6 +7,7 @@ interface MainLayoutProps {
   description?: string[];
   children?: React.ReactNode;
   footer?: React.ReactNode;
+  className?: string;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({
@@ -22,7 +23,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   };
 
   return (
-    <div className="flex flex-col justify-between w-full h-full p-4 gap-8 relative overflow-hidden">
+    <div
+      className={`flex flex-col justify-between w-full h-full p-4 gap-8 relative `}
+    >
       {/* top: logo */}
       <div>
         <img

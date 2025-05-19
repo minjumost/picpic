@@ -13,6 +13,8 @@ import { setHandlers } from "../../sockets/stompClient";
 import { getCurrentDateTimeString } from "../CameraPage";
 import { getPresignedUrl } from "../CameraPage/useUploadImage";
 import { usePageExitEvent } from "../../hooks/usePageExitEvent";
+import { useFrameStore } from "../../store/store";
+import SixFrame from "../../components/Layouts/SixFrame";
 
 const PreviewPage = () => {
   usePageExitEvent("PreviewPage");
@@ -20,6 +22,7 @@ const PreviewPage = () => {
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
+  const selectedFrame = useFrameStore((state) => state.selectedFrame);
 
   useEffect(() => {
     setHandlers({
@@ -109,11 +112,19 @@ const PreviewPage = () => {
         />
       }
     >
-      {imageList && (
+      {imageList && selectedFrame === "four" && (
         <Frame1
           photos={imageList.map((img) => ({
             slotIndex: img.slotIndex,
             photoImageUrl: img.photoImageUrl ?? "",
+          }))}
+        />
+      )}
+      {imageList && selectedFrame === "six" && (
+        <SixFrame
+          photos={imageList?.map((img) => ({
+            slotIndex: img.slotIndex,
+            photoImageUrl: img.photoImageUrl,
           }))}
         />
       )}
@@ -129,11 +140,19 @@ const PreviewPage = () => {
           opacity: 1,
         }}
       >
-        {imageList && (
+        {imageList && selectedFrame === "four" && (
           <Frame1
             photos={imageList.map((img) => ({
               slotIndex: img.slotIndex,
               photoImageUrl: img.photoImageUrl ?? "",
+            }))}
+          />
+        )}
+        {imageList && selectedFrame === "six" && (
+          <SixFrame
+            photos={imageList?.map((img) => ({
+              slotIndex: img.slotIndex,
+              photoImageUrl: img.photoImageUrl,
             }))}
           />
         )}
