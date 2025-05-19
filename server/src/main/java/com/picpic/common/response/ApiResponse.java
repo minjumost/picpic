@@ -12,7 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ApiResponse<T> {
 	private final boolean success;
-	private final int code;
+	private final String type;
 	private final String message;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -21,7 +21,7 @@ public class ApiResponse<T> {
 	public static <T> ApiResponse<T> success(T result) {
 		return ApiResponse.<T>builder()
 			.success(true)
-			.code(200)
+			.type("200")
 			.message("요청이 성공적으로 처리되었습니다.")
 			.result(result)
 			.build();
@@ -30,7 +30,7 @@ public class ApiResponse<T> {
 	public static ApiResponse<Void> success() {
 		return ApiResponse.<Void>builder()
 			.success(true)
-			.code(200)
+			.type("200")
 			.message("요청이 성공적으로 처리되었습니다.")
 			.result(null)
 			.build();
@@ -39,7 +39,7 @@ public class ApiResponse<T> {
 	public static ApiResponse<Void> error(ErrorCode errorCode) {
 		return ApiResponse.<Void>builder()
 			.success(false)
-			.code(errorCode.getCode())
+			.type(errorCode.getCode())
 			.message(errorCode.getMessage())
 			.result(null)
 			.build();
@@ -48,7 +48,7 @@ public class ApiResponse<T> {
 	public static <T> ApiResponse<T> error(ErrorCode errorCode, T result) {
 		return ApiResponse.<T>builder()
 			.success(false)
-			.code(errorCode.getCode())
+			.type(errorCode.getCode())
 			.message(errorCode.getMessage())
 			.result(result)
 			.build();
