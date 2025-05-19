@@ -4,7 +4,7 @@ import logo from "../../assets/logo.png";
 
 export interface FramePhoto {
   slotIndex: number;
-  photoImageUrl: string;
+  photoImageUrl?: string;
 }
 
 interface FrameProps {
