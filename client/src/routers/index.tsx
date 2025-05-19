@@ -22,12 +22,12 @@ import AppLayout from "../components/Layouts/AppLayout";
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/roomPwd" element={<RoomPwdPage />} />
       <Route element={<AppLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/frame" element={<SelectFrameScreen />} />
         <Route path="/backImg" element={<SelectBackImagePage />} />
         <Route path="/roomSet" element={<RoomSetUpPage />} />
+        <Route path="/roomPwd" element={<RoomPwdPage />} />
         <Route path="/invite" element={<InviteRoomPage />} />
         <Route path="/waiting" element={<WaitingPage />} />
         <Route path="/photo" element={<PhotoCapturePage />} />

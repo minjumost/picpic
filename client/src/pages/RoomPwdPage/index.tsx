@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import PhotoTerms from "../../components/PhotoTerms";
 import { connectAndEnterSession } from "../../sockets/sessionSocket";
-import { useGuestLogin } from "../../api/auth";
+import { useGuestLogin, useRoomEnter } from "../../api/auth";
 import { useSessionCode } from "../../hooks/useSessionCode";
 import { initStompSession } from "../../sockets/stompClient";
 
@@ -44,35 +45,46 @@ const RoomPwdPage = () => {
     }
   };
 
-  const handleLogin = () => {
-    guestLoginMutation.mutate(undefined, {
-      onSuccess: (data) => {
-        sessionStorage.setItem("isOwner", "0");
-        sessionStorage.setItem("memberId", `${data.memberId}`);
-        handleEnterRoom();
-        console.log("로그인 성공");
-      },
-      onError: (error) => {
-        console.error("에러 발생:", error);
-      },
-    });
-  };
+  const roomEnterMutation = useRoomEnter();
 
-  const handleEnterRoom = async () => {
-    if (!sessionCode) {
-      alert("방 코드가 없습니다.");
-      return;
-    }
-
+  const handleRoomEnter = async () => {
     const passwordStr = inputsRef.current
       .map((input) => input?.value ?? "")
       .join("");
     const password = Number(passwordStr);
 
-    await initStompSession(sessionCode);
-    await connectAndEnterSession(sessionCode, password);
+    roomEnterMutation.mutate(
+      { sessionCode, password: passwordStr },
+      {
+        onSuccess: async () => {
+          try {
+            await initStompSession(sessionCode);
+            await connectAndEnterSession(sessionCode, password);
+            navigate(`/waiting?r=${sessionCode}`, { replace: true });
+          } catch (error) {
+            alert("소켓 연결 중 오류가 발생했습니다.");
+          }
+        },
+        onError: (error) => {
+          console.error(error);
+          alert("비밀번호가 일치하지 않습니다.");
+        },
+      }
+    );
+  };
 
-    navigate(`/waiting?r=${sessionCode}`, { replace: true });
+  const handleLogin = async () => {
+    guestLoginMutation.mutate(undefined, {
+      onSuccess: async (data) => {
+        sessionStorage.setItem("isOwner", "0");
+        sessionStorage.setItem("memberId", `${data.memberId}`);
+        await handleRoomEnter();
+      },
+      onError: (error) => {
+        console.error(error);
+        alert("로그인 중 오류가 발생했습니다.");
+      },
+    });
   };
 
   return (
