@@ -1,38 +1,40 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { useGetFrames, type FrameResponse } from "../api/frame";
+import { useGetFrames } from "../api/frame";
 import MainLayout from "../components/Layouts/MainLayout";
-
+import type { FramePhoto } from "../components/Layouts/FourFrame";
+import FourFrame from "../components/Layouts/FourFrame";
+import SixFrame from "../components/Layouts/SixFrame";
+import { useFrameStore } from "../store/store";
 import { usePageExitEvent } from "../hooks/usePageExitEvent";
-interface FrameOptionProps {
-  name: string;
-  image: string;
-  onClick: () => void;
-}
 
-const FrameOption: React.FC<FrameOptionProps> = ({ name, image, onClick }) => (
-  <div
-    onClick={onClick}
-    className="
-      flex flex-col items-center cursor-pointer p-3 border gap-6 bg-black/10 border-gray-300 rounded-lg 
-      flex-1 min-w-[90px]
-      hover:bg-secondary1
-      active:scale-98 transition-transform duration-100 ease-in-out
-    "
-  >
-    <div className="h-full">
-      <img src={image} />
-    </div>
-    <span className="bg-main1 text-text-white py-1 px-3 rounded-full">
-      {name}
-    </span>
-  </div>
-);
+const fourFrameId = 1;
+const sixFrameId = 2;
+
+const fourFrame: FramePhoto[] = [
+  {
+    slotIndex: 0,
+    photoImageUrl: "/src/assets/frames/none.jpg",
+  },
+  {
+    slotIndex: 1,
+    photoImageUrl: "/src/assets/frames/none.jpg",
+  },
+  {
+    slotIndex: 2,
+    photoImageUrl: "/src/assets/frames/none.jpg",
+  },
+  {
+    slotIndex: 3,
+    photoImageUrl: "/src/assets/frames/none.jpg",
+  },
+];
 
 const SelectFrameScreen: React.FC = () => {
   usePageExitEvent("SelectFramePage");
   const navigate = useNavigate();
   const { data } = useGetFrames();
+  const setSelectedFrame = useFrameStore((state) => state.setSelectedFrame);
 
   console.log(data);
 
@@ -41,18 +43,27 @@ const SelectFrameScreen: React.FC = () => {
       title="프레임을 선택해주세요"
       description={["추후에 프레임을 추가할게요"]}
     >
-      <div className="flex overflow-x-auto w-full justify-center gap-2">
-        {data &&
-          data.map((frame: FrameResponse) => (
-            <FrameOption
-              key={frame.frameId}
-              name={frame.name}
-              image={frame.frameImageUrl}
-              onClick={() => {
-                navigate(`/roomSet?f=${frame.frameId}`, { replace: true });
-              }}
-            />
-          ))}
+      <div className="flex w-full gap-2">
+        <div className="flex flex-row gap-5 w-full h-[500px]">
+          <div
+            className="w-1/2 h-[300px] relative cursor-pointer"
+            onClick={() => {
+              setSelectedFrame("four");
+              navigate(`/roomSet?f=${fourFrameId}`, { replace: true });
+            }}
+          >
+            <FourFrame photos={fourFrame} />
+          </div>
+          <div
+            className="w-1/2 h-[300px] relative cursor-pointer"
+            onClick={() => {
+              setSelectedFrame("six");
+              navigate(`/roomSet?f=${sixFrameId}`, { replace: true });
+            }}
+          >
+            <SixFrame />
+          </div>
+        </div>
       </div>
     </MainLayout>
   );

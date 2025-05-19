@@ -1,22 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Outlet, useNavigate } from "react-router";
 import stompClient from "../../sockets/stompClient";
+import GA4Initializer from "../../GA4Initializer";
 
 const AppLayout = () => {
   const navigate = useNavigate();
+  const didRun = useRef(false);
+
   useEffect(() => {
-    if (window.sessionStorage.getItem("firstLoadDone") === null) {
+    if (didRun.current) return;
+    didRun.current = true;
+
+    const flag = sessionStorage.getItem("firstLoadDone");
+    if (flag === null) {
       console.log("첫 로드");
-      window.sessionStorage.setItem("firstLoadDone", "1");
+      sessionStorage.setItem("firstLoadDone", "1");
     } else {
       console.log("리로드");
       stompClient.deactivate();
-      window.sessionStorage.clear();
+      sessionStorage.clear();
       navigate("/", { replace: true });
     }
   }, []);
 
-  return <Outlet />;
+  return (
+    <>
+      <GA4Initializer />
+      <Outlet />
+    </>
+  );
 };
 
 export default AppLayout;

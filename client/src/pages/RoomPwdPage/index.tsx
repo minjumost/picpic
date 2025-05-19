@@ -5,7 +5,7 @@ import { connectAndEnterSession } from "../../sockets/sessionSocket";
 import { useGuestLogin } from "../../api/auth";
 import { useSessionCode } from "../../hooks/useSessionCode";
 import { initStompSession } from "../../sockets/stompClient";
-import { usePageExitEvent } from "../../hooks/usePageExitEvent";
+
 const RoomPwdPage = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
@@ -13,8 +13,6 @@ const RoomPwdPage = () => {
   const sessionCode = useSessionCode();
 
   const guestLoginMutation = useGuestLogin();
-
-  usePageExitEvent("RoomPwdPage");
 
   const navigate = useNavigate();
 
@@ -78,42 +76,44 @@ const RoomPwdPage = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-full p-4 gap-8">
-      <h2 className="text-[24px] font-bold text-gray-800">
-        비밀번호를 입력해주세요.
-      </h2>
+    <>
+      <div className="flex flex-col justify-center items-center w-full h-full p-4 gap-8">
+        <h2 className="text-[24px] font-bold text-gray-800">
+          비밀번호를 입력해주세요.
+        </h2>
 
-      <div className="flex gap-4 mb-10 z-10 w-full justify-center">
-        {Array(4)
-          .fill(0)
-          .map((_, idx) => (
-            <input
-              key={idx}
-              ref={(el) => {
-                inputsRef.current[idx] = el;
-              }}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              onChange={(e) => handleChange(idx, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(idx, e)}
-              className="w-[80px] h-[80px] text-center text-3xl font-medium border border-gray-300 bg-white rounded-md focus:outline-none"
-            />
-          ))}
+        <div className="flex gap-4 mb-10 z-10 w-full justify-center">
+          {Array(4)
+            .fill(0)
+            .map((_, idx) => (
+              <input
+                key={idx}
+                ref={(el) => {
+                  inputsRef.current[idx] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                onChange={(e) => handleChange(idx, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(idx, e)}
+                className="w-[80px] h-[80px] text-center text-3xl font-medium border border-gray-300 bg-white rounded-md focus:outline-none"
+              />
+            ))}
+        </div>
+        <PhotoTerms />
+        <button
+          disabled={!isFilled}
+          className={`w-full py-3 text-lg rounded-lg font-semibold transition-colors ${
+            isFilled
+              ? "bg-main1 text-white cursor-pointer"
+              : "bg-gray-300 text-white cursor-not-allowed"
+          }`}
+          onClick={handleLogin}
+        >
+          동의하고 입장하기
+        </button>
       </div>
-      <PhotoTerms />
-      <button
-        disabled={!isFilled}
-        className={`w-full py-3 text-lg rounded-lg font-semibold transition-colors ${
-          isFilled
-            ? "bg-main1 text-white cursor-pointer"
-            : "bg-gray-300 text-white cursor-not-allowed"
-        }`}
-        onClick={handleLogin}
-      >
-        동의하고 입장하기
-      </button>
-    </div>
+    </>
   );
 };
 
