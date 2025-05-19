@@ -1,61 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGetFrames } from "../api/frame";
-import MainLayout from "../components/Layouts/MainLayout";
-import type { FramePhoto } from "../components/Layouts/FourFrame";
 import FourFrame from "../components/Layouts/FourFrame";
+import MainLayout from "../components/Layouts/MainLayout";
 import SixFrame from "../components/Layouts/SixFrame";
-import { useFrameStore } from "../store/store";
 import { usePageExitEvent } from "../hooks/usePageExitEvent";
+import { useFrameStore } from "../store/store";
 
 const fourFrameId = 1;
 const sixFrameId = 2;
-
-const fourFrame: FramePhoto[] = [
-  {
-    slotIndex: 0,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 1,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 2,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 3,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-];
-
-const sixFrame: FramePhoto[] = [
-  {
-    slotIndex: 0,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 1,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 2,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 3,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 4,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-  {
-    slotIndex: 5,
-    photoImageUrl: "../src/assets/frames/none.jpg",
-  },
-];
 
 const SelectFrameScreen: React.FC = () => {
   usePageExitEvent("SelectFramePage");
@@ -79,7 +32,7 @@ const SelectFrameScreen: React.FC = () => {
               navigate(`/roomSet?f=${fourFrameId}`, { replace: true });
             }}
           >
-            <FourFrame photos={fourFrame} />
+            <FourFrame photos={[]} />
           </div>
           <div
             className="w-1/2 h-[300px] relative cursor-pointer"
@@ -88,7 +41,7 @@ const SelectFrameScreen: React.FC = () => {
               navigate(`/roomSet?f=${sixFrameId}`, { replace: true });
             }}
           >
-            <SixFrame photos={sixFrame} />
+            <SixFrame photos={[]} />
           </div>
         </div>
       </div>

@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useGetSelectedFrames } from "../api/frame";
 import Button from "../components/Button";
+import FourFrame from "../components/Layouts/FourFrame";
 import MainLayout from "../components/Layouts/MainLayout";
+import SixFrame from "../components/Layouts/SixFrame";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { sendDrawReady, sendPhotoStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
 import { useFrameStore } from "../store/store";
-import { usePageExitEvent } from "../hooks/usePageExitEvent";
 
 interface SlotInfo {
-  memberId?: number;
-  nickname?: string;
-  color?: string;
-  profileImageUrl?: string;
-  url?: string;
-  isOccupied?: boolean;
+  slotIndex: number;
+  url: string;
+  memberId: number;
+  nickname: string;
+  color: string;
+  profileImageUrl: string;
 }
 
 interface PhotoInfo {
@@ -23,80 +25,91 @@ interface PhotoInfo {
 }
 
 const PhotoCapturePage: React.FC = () => {
-  usePageExitEvent("PhotoCapturePage");
   const navigate = useNavigate();
-  const sessionCode = useSessionCode();
-  const sessionId = Number(sessionStorage.getItem("sessionId"));
-  const selectedFrame = useFrameStore((state) => state.selectedFrame);
-  const SLOT_COUNT = selectedFrame === "six" ? 6 : 4;
 
-  const [slots, setSlots] = useState<SlotInfo[]>(() =>
-    Array.from({ length: SLOT_COUNT }, () => ({}))
+  const sessionId = Number(sessionStorage.getItem("sessionId"));
+  const sessionCode = useSessionCode();
+  const { data: sessionFrame } = useGetSelectedFrames(sessionId);
+  const isOwner = Number(sessionStorage.getItem("isOwner"));
+  const expectedSlotCount = sessionFrame?.frameId === 1 ? 4 : 6;
+  const frameStore = useFrameStore();
+
+  const [slots, setSlots] = useState<SlotInfo[]>(
+    Array.from({ length: 6 }, (_, i) => ({
+      slotIndex: i,
+      memberId: 0,
+      nickname: "",
+      color: "",
+      profileImageUrl: "",
+      url: "",
+    }))
   );
 
-  useEffect(() => {
-    console.log("setHandlers 등록됨, sessionCode:", sessionCode);
-    setHandlers({
-      photo_start: (data) => {
-        const slotIdx = Number(data.slotIndex);
-        console.log("[photo_start] data:", data, "slotIdx:", slotIdx);
-        if (isNaN(slotIdx) || slotIdx < 1 || slotIdx > SLOT_COUNT) return;
-        setSlots((prev) => {
-          const updated = [...prev];
-          updated[slotIdx - 1] = {
-            ...updated[slotIdx - 1],
-            memberId: data.memberId,
-            nickname: data.nickname,
-            color: data.color,
-            profileImageUrl: data.profileImageUrl,
-            isOccupied: true,
-          };
-          console.log("[photo_start] updated slots:", updated);
-          return updated;
-        });
-      },
-      photo_upload: (data: { type: string; photoList: PhotoInfo[] }) => {
-        console.log("[photo_upload] data:", data.photoList);
-        console.log(data.type);
-        if (!data.photoList || !Array.isArray(data.photoList)) return;
-        setSlots((prev) => {
-          const newSlots = [...prev];
-          data.photoList.forEach((photo) => {
-            const slotIdx = Number(photo.slotIndex - 1);
-            if (!isNaN(slotIdx) && slotIdx >= 0 && slotIdx < SLOT_COUNT) {
-              newSlots[slotIdx] = {
-                ...newSlots[slotIdx],
-                url: photo.url,
-                isOccupied: false,
-              };
-            }
-          });
-          console.log("[photo_upload] updated slots:", newSlots);
-          return newSlots;
-        });
-      },
-      stroke_ready: () =>
-        navigate(`/preview?r=${sessionCode}`, { replace: true }),
-    });
-  }, [SLOT_COUNT]);
+  const allPhotosUploaded =
+    sessionFrame != null &&
+    slots.filter((slot) => !!slot.url).length === expectedSlotCount;
 
-  const handleSlotClick = (i: number) => {
-    console.log(
-      "[handleSlotClick] slot:",
-      i,
-      "isOccupied:",
-      slots[i - 1].isOccupied
-    );
-    if (slots[i - 1].isOccupied) {
-      console.log("[handleSlotClick] slot is occupied, cannot click");
+  const handleSlotClick = (slotIndex: number) => {
+    const slot = slots[slotIndex];
+    if (slot.memberId || slot.url) {
       return;
     }
-
-    console.log("[handleSlotClick] sending photo_start for slot:", i);
-    sendPhotoStart(sessionId, sessionCode, i);
-    console.log("[handleSlotClick] Navigating to camera page!");
-    navigate(`/camera?r=${sessionCode}&slot=${i}`, { replace: true });
+    sendPhotoStart(sessionId, sessionCode, slotIndex);
+    navigate(`/camera?r=${sessionCode}&slot=${slotIndex}`, { replace: true });
   };
+
+  const handlePhotoStart = (data: SlotInfo & { slotIndex: number }) => {
+    setSlots((prev) => {
+      const updated = [...prev];
+      updated[data.slotIndex] = {
+        slotIndex: data.slotIndex,
+        url: "",
+        memberId: data.memberId,
+        nickname: data.nickname,
+        color: data.color,
+        profileImageUrl: data.profileImageUrl,
+      };
+      return updated;
+    });
+  };
+
+  const handlePhotoUpload = (data: {
+    type: string;
+    photoList: PhotoInfo[];
+  }) => {
+    setSlots((prev) => {
+      const updated = [...prev];
+      data.photoList.forEach(({ slotIndex, url }) => {
+        updated[slotIndex] = {
+          slotIndex,
+          url,
+          memberId: 0,
+          nickname: "",
+          color: "",
+          profileImageUrl: "",
+        };
+      });
+      return updated;
+    });
+  };
+
+  const handleDrawReady = () => {
+    navigate(`/preview?r=${sessionCode}`, { replace: true });
+  };
+
+  useEffect(() => {
+    setHandlers({
+      photo_start: handlePhotoStart,
+      photo_upload: handlePhotoUpload,
+      stroke_ready: handleDrawReady,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (sessionFrame?.frameId) {
+      frameStore.setSelectedFrame(sessionFrame?.frameId === 1 ? "four" : "six");
+    }
+  }, [sessionFrame]);
 
   return (
     <MainLayout
@@ -108,58 +121,26 @@ const PhotoCapturePage: React.FC = () => {
       footer={
         <Button
           label={
-            !slots.every((slot) => !!slot.url)
+            !allPhotosUploaded
               ? "사진을 전부 촬영해주세요"
-              : "촬영 완료"
+              : isOwner
+              ? "촬영 완료"
+              : "방장이 진행할 수 있습니다"
           }
           onClick={() => {
             sendDrawReady(sessionId, sessionCode);
             navigate(`/preview?r=${sessionCode}`, { replace: true });
           }}
-          disabled={!slots.every((slot) => !!slot.url)}
+          disabled={!allPhotosUploaded || !isOwner}
         />
       }
     >
-      <div className="w-full h-fit bg-gray-600 p-4 grid grid-cols-2 gap-4">
-        {Array(SLOT_COUNT)
-          .fill(0)
-          .map((_, i) => {
-            return (
-              <div
-                key={i}
-                className={`bg-white w-full h-[150px] rounded-sm shadow-inner flex items-center justify-center border-4 ${
-                  slots[i].color ? "" : "border-transparent"
-                } ${
-                  slots[i].isOccupied
-                    ? "opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
-                }`}
-                style={slots[i].color ? { borderColor: slots[i].color } : {}}
-                onClick={() => handleSlotClick(i + 1)}
-              >
-                {slots[i].url ? (
-                  <img
-                    src={slots[i].url}
-                    alt="uploaded"
-                    className="object-cover w-full h-full rounded-sm -scale-x-100"
-                    style={{ transform: "scaleX(-1)" }}
-                  />
-                ) : slots[i].profileImageUrl ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <img
-                      src={slots[i].profileImageUrl}
-                      alt={`profile-${i + 1}`}
-                      className="object-cover w-20 h-20 rounded-full"
-                    />
-                    <span className="text-sm text-gray-600">
-                      {slots[i].nickname}님이 찍는 중...
-                    </span>
-                  </div>
-                ) : null}
-              </div>
-            );
-          })}
-      </div>
+      {sessionFrame?.frameId === 1 && (
+        <FourFrame photos={slots} onClick={handleSlotClick}></FourFrame>
+      )}
+      {sessionFrame?.frameId === 2 && (
+        <SixFrame photos={slots} onClick={handleSlotClick}></SixFrame>
+      )}
     </MainLayout>
   );
 };

@@ -7,14 +7,14 @@ import { useGetSessionImages } from "../../api/getImage";
 import Button from "../../components/Button";
 import Frame1 from "../../components/Layouts/FourFrame";
 import MainLayout from "../../components/Layouts/MainLayout";
+import SixFrame from "../../components/Layouts/SixFrame";
+import { usePageExitEvent } from "../../hooks/usePageExitEvent";
 import { useSessionCode } from "../../hooks/useSessionCode";
 import { sendDrawStart } from "../../sockets/sessionSocket";
 import { setHandlers } from "../../sockets/stompClient";
+import { useFrameStore } from "../../store/store";
 import { getCurrentDateTimeString } from "../CameraPage";
 import { getPresignedUrl } from "../CameraPage/useUploadImage";
-import { usePageExitEvent } from "../../hooks/usePageExitEvent";
-import { useFrameStore } from "../../store/store";
-import SixFrame from "../../components/Layouts/SixFrame";
 
 const PreviewPage = () => {
   usePageExitEvent("PreviewPage");
@@ -39,7 +39,11 @@ const PreviewPage = () => {
 
   const postImage = usePostCollageImage();
 
-  const { data: imageList } = useGetSessionImages(sessionId);
+  const { data: imageList, refetch } = useGetSessionImages(sessionId);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   const dataURLtoFile = (dataurl: string, filename: string): File => {
     const arr = dataurl.split(",");
@@ -116,7 +120,7 @@ const PreviewPage = () => {
         <Frame1
           photos={imageList.map((img) => ({
             slotIndex: img.slotIndex,
-            photoImageUrl: img.photoImageUrl ?? "",
+            url: img.photoImageUrl,
           }))}
         />
       )}
@@ -124,7 +128,7 @@ const PreviewPage = () => {
         <SixFrame
           photos={imageList?.map((img) => ({
             slotIndex: img.slotIndex,
-            photoImageUrl: img.photoImageUrl,
+            url: img.photoImageUrl,
           }))}
         />
       )}
@@ -144,7 +148,7 @@ const PreviewPage = () => {
           <Frame1
             photos={imageList.map((img) => ({
               slotIndex: img.slotIndex,
-              photoImageUrl: img.photoImageUrl ?? "",
+              url: img.photoImageUrl,
             }))}
           />
         )}
@@ -152,7 +156,7 @@ const PreviewPage = () => {
           <SixFrame
             photos={imageList?.map((img) => ({
               slotIndex: img.slotIndex,
-              photoImageUrl: img.photoImageUrl,
+              url: img.photoImageUrl,
             }))}
           />
         )}

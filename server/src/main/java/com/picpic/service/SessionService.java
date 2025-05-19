@@ -250,4 +250,22 @@ public class SessionService {
 		return res;
 	}
 
+	@Transactional
+	public Boolean canEnterSession(Long memberId, String sessionCode, String password) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
+		);
+
+		Session session = sessionRepository.findBySessionCode(sessionCode).orElseThrow(
+			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+		);
+
+		if (!passwordEncoder.matches(password, session.getPassword())) {
+			throw new ApiException(ErrorCode.INCORRECT_PASSWORD);
+		}
+
+		return true;
+
+	}
+
 }
