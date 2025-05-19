@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 
 import { useNavigate } from "react-router";
 import { usePostCollageImage } from "../../api/CompImg";
-import { useGetSelectedFrames } from "../../api/frame";
 import { useGetSessionImages } from "../../api/getImage";
 import Button from "../../components/Button";
 import Frame1 from "../../components/Layouts/Frame";
@@ -13,13 +12,6 @@ import { sendDrawStart } from "../../sockets/sessionSocket";
 import { setHandlers } from "../../sockets/stompClient";
 import { getCurrentDateTimeString } from "../CameraPage";
 import { getPresignedUrl } from "../CameraPage/useUploadImage";
-
-const SLOT_POSITIONS = [
-  { top: 158, left: 11, width: 338, height: 204 },
-  { top: 12, left: 371, width: 338, height: 204 },
-  { top: 374, left: 11, width: 338, height: 204 },
-  { top: 228, left: 371, width: 338, height: 204 },
-];
 
 const PreviewPage = () => {
   const captureRef = useRef<HTMLDivElement>(null);
@@ -42,12 +34,7 @@ const PreviewPage = () => {
 
   const postImage = usePostCollageImage();
 
-  const { data: frame, isLoading: frameLoading } =
-    useGetSelectedFrames(sessionId);
-  const { data: imageList, isLoading: imagesLoading } =
-    useGetSessionImages(sessionId);
-
-  if (frameLoading || imagesLoading) return <div>로딩 중..</div>;
+  const { data: imageList } = useGetSessionImages(sessionId);
 
   const dataURLtoFile = (dataurl: string, filename: string): File => {
     const arr = dataurl.split(",");
@@ -75,7 +62,7 @@ const PreviewPage = () => {
   const handleCapture = async () => {
     if (!captureRef.current) return;
     const canvas = await html2canvas(captureRef.current, {
-      scale: 6,
+      scale: 2,
       useCORS: true,
       allowTaint: true,
       backgroundColor: null,
@@ -120,14 +107,14 @@ const PreviewPage = () => {
         />
       }
     >
-      {/* {imageList && (
+      {imageList && (
         <Frame1
           photos={imageList.map((img) => ({
             slotIndex: img.slotIndex,
             photoImageUrl: img.photoImageUrl ?? "",
           }))}
         />
-      )} */}
+      )}
       <div
         ref={captureRef}
         style={{
