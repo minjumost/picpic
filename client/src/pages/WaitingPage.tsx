@@ -72,7 +72,7 @@ const WaitingPage: React.FC = () => {
     };
 
     setHandlers(handlers);
-  }, [sessionCode, navigate]);
+  }, []);
 
   const handleStartPhoto = () => {
     const sessionId = Number(sessionStorage.getItem("sessionId"));

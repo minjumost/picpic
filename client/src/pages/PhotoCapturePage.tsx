@@ -7,6 +7,7 @@ import { sendDrawReady, sendPhotoStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
 import { useFrameStore } from "../store/store";
 import { usePageExitEvent } from "../hooks/usePageExitEvent";
+import { useGetSelectedFrames } from "../api/frame";
 
 interface SlotInfo {
   memberId?: number;
@@ -26,6 +27,7 @@ const PhotoCapturePage: React.FC = () => {
   usePageExitEvent("PhotoCapturePage");
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
+  const frameStore = useFrameStore();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
   const selectedFrame = useFrameStore((state) => state.selectedFrame);
   const SLOT_COUNT = selectedFrame === "six" ? 6 : 4;
@@ -79,6 +81,17 @@ const PhotoCapturePage: React.FC = () => {
         navigate(`/preview?r=${sessionCode}`, { replace: true }),
     });
   }, [SLOT_COUNT]);
+
+  const { data, isLoading, error } = useGetSelectedFrames(sessionId);
+
+  useEffect(() => {
+    if (!data || !sessionId) return;
+    const selectedFrame = data.frameId === 1 ? "four" : "six";
+    frameStore.setSelectedFrame(selectedFrame);
+  }, [data]);
+
+  if (isLoading || !sessionId) return <div>로딩 중입니다</div>;
+  if (error) return <div>에러가 발생했습니다</div>;
 
   const handleSlotClick = (i: number) => {
     console.log(
