@@ -33,6 +33,7 @@ const CanvasDrawOverImage: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const isDrawing = useRef(false);
+  const strokeQueue = useRef<DrawStrokePayload[]>([]);
 
   const sessionCode = useSessionCode();
   const navigate = useNavigate();
@@ -131,6 +132,7 @@ const CanvasDrawOverImage: React.FC = () => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx || strokePoints.length < 2) return;
     ctx.globalCompositeOperation = "source-over";
+
     const payload: DrawStrokePayload = {
       sessionId,
       sessionCode,
@@ -139,26 +141,40 @@ const CanvasDrawOverImage: React.FC = () => {
       points: strokePoints,
       tool: mode,
     };
+
     sendDrawStroke(payload);
     setStrokePoints([]);
+
+    while (strokeQueue.current.length > 0) {
+      const p = strokeQueue.current.shift();
+      if (p) drawFromServer(p);
+    }
+  };
+
+  const drawFromServer = (data: DrawStrokePayload) => {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx || data.points.length < 2) return;
+    ctx.strokeStyle = data.color;
+    ctx.lineWidth = data.lineWidth;
+    ctx.globalCompositeOperation =
+      data.tool === "ERASER" ? "destination-out" : "source-over";
+    ctx.beginPath();
+    ctx.moveTo(data.points[0].x, data.points[0].y);
+    for (let i = 1; i < data.points.length; i++) {
+      ctx.lineTo(data.points[i].x, data.points[i].y);
+    }
+    ctx.stroke();
+    ctx.globalCompositeOperation = "source-over";
   };
 
   useEffect(() => {
     setHandlers({
       stroke: (data) => {
-        const ctx = canvasRef.current?.getContext("2d");
-        if (!ctx || data.points.length < 2) return;
-        ctx.strokeStyle = data.color;
-        ctx.lineWidth = data.lineWidth;
-        ctx.globalCompositeOperation =
-          data.tool === "ERASER" ? "destination-out" : "source-over";
-        ctx.beginPath();
-        ctx.moveTo(data.points[0].x, data.points[0].y);
-        for (let i = 1; i < data.points.length; i++) {
-          ctx.lineTo(data.points[i].x, data.points[i].y);
+        if (isDrawing.current) {
+          strokeQueue.current.push(data);
+        } else {
+          drawFromServer(data);
         }
-        ctx.stroke();
-        ctx.globalCompositeOperation = "source-over";
       },
       collage_start: async () => {
         await handleComplete();
