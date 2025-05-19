@@ -120,14 +120,14 @@ const PhotoCapturePage: React.FC = () => {
         />
       }
     >
-      <div className="w-full h-full bg-gray-600 p-4 grid grid-cols-2 gap-4">
+      <div className="w-full h-fit bg-gray-600 p-4 grid grid-cols-2 gap-4">
         {Array(SLOT_COUNT)
           .fill(0)
           .map((_, i) => {
             return (
               <div
                 key={i}
-                className={`bg-white w-full h-full rounded-sm shadow-inner flex items-center justify-center border-4 ${
+                className={`bg-white w-full h-[150px] rounded-sm shadow-inner flex items-center justify-center border-4 ${
                   slots[i].color ? "" : "border-transparent"
                 } ${
                   slots[i].isOccupied

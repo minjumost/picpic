@@ -2,7 +2,7 @@
   max-width: 480px;
   min-width: 360px;
   height: 100%;
-  max-height: 800px;
+  max-height: 1024px;
   margin: 0 auto;
   background-image: url("../src/assets/backgroundImg.png");
   background-size: cover;

@@ -12,7 +12,6 @@ interface FrameProps {
 }
 
 const FourFrame: React.FC<FrameProps> = ({ photos, captureRef }) => {
-  // slotIndex를 기준으로 정렬 (혹시 순서가 뒤죽박죽일 수 있으므로)
   const sortedPhotos = photos.sort((a, b) => a.slotIndex - b.slotIndex);
 
   return (
@@ -21,7 +20,7 @@ const FourFrame: React.FC<FrameProps> = ({ photos, captureRef }) => {
         className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2"
         style={{ aspectRatio: "1 / 3", height: "100%" }}
       >
-        <div className="bg-white w-full h-full flex flex-col gap-2 p-3 items-center">
+        <div className="bg-white w-full h-full flex flex-col gap-[1%] p-[5%] items-center">
           {sortedPhotos.map(({ slotIndex, photoImageUrl }) => (
             <div
               key={slotIndex}
@@ -35,7 +34,7 @@ const FourFrame: React.FC<FrameProps> = ({ photos, captureRef }) => {
               />
             </div>
           ))}
-          <img src={logo} className="w-12" alt="logo" />
+          <img src={logo} className="w-1/4" alt="logo" />
         </div>
       </div>
     </div>
