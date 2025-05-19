@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Button from "../components/Button";
 import MainLayout from "../components/Layouts/MainLayout";
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { sendSessionStart } from "../sockets/sessionSocket";
 import stompClient, { setHandlers } from "../sockets/stompClient";
-import { usePageExitEvent } from "../hooks/usePageExitEvent";
 interface User {
   memberId: number;
   nickname: string;
@@ -60,7 +60,7 @@ const WaitingPage: React.FC = () => {
         if (data.isOwner) {
           stompClient.deactivate();
           sessionStorage.clear();
-          navigate("/", { replace: true });
+          window.location.href = "/";
           alert("방장이 나가서 세션이 종료되었습니다.");
         }
         setSlots((prev) =>
