@@ -1,7 +1,11 @@
+import Lottie from "lottie-react";
 import { useNavigate } from "react-router";
-import { initStompSession } from "../sockets/stompClient";
-import { connectAndEnterSession } from "../sockets/sessionSocket";
+import completeAnimation from "../assets/Animation.json";
+import Button from "../components/Button";
+import MainLayout from "../components/Layouts/MainLayout";
 import { useSessionCode } from "../hooks/useSessionCode";
+import { connectAndEnterSession } from "../sockets/sessionSocket";
+import { initStompSession } from "../sockets/stompClient";
 
 const InviteRoomPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,21 +28,21 @@ const InviteRoomPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full p-4 gap-8">
-      {/* 제목 */}
-      <div className="flex flex-col gap-2 items-center">
-        <h2 className="text-[24px] font-bold text-gray-800">
-          방 생성이 완료됐어요🥳
+    <MainLayout footer={<Button label="입장하기" onClick={handleEnterRoom} />}>
+      <div className="flex h-full flex-col justify-center items-center gap-2 mb-32">
+        <Lottie
+          animationData={completeAnimation}
+          loop={false}
+          className="w-48"
+        />
+        <h2 className="text-[22px] font-bold text-gray-800">
+          방 생성이 완료됐어요
         </h2>
+        <p className="text-[16px] font-medium text-gray-600">
+          입장하고 친구들을 초대해보세요
+        </p>
       </div>
-
-      <button
-        className="py-3 items-center rounded-lg font-semibold text-lg w-[350px] bg-main1 text-white px-6 cursor-pointer"
-        onClick={handleEnterRoom}
-      >
-        입장하기
-      </button>
-    </div>
+    </MainLayout>
   );
 };
 

@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { client } from "../api/axios";
+import Button from "../components/Button";
+import MainLayout from "../components/Layouts/MainLayout";
 
 const RoomSetUpPage: React.FC = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -58,15 +60,17 @@ const RoomSetUpPage: React.FC = () => {
     }
   };
   return (
-    <div className="flex flex-col justify-center w-full h-full p-4 gap-8">
-      <div className="flex flex-col gap-2">
-        <h2 className="text-[24px] font-bold text-gray-800">
-          비밀번호를 입력해주세요.
-        </h2>
-        <p className="text-[18px] font-semibold text-gray-500">
-          설정한 비밀번호로 방에 입장할 수 있어요.
-        </p>
-      </div>
+    <MainLayout
+      title="방 비밀번호를 설정 해주세요."
+      description={["4자리 숫자만 입력할 수 있어요"]}
+      footer={
+        <Button
+          label="방 만들기"
+          onClick={handleCreateRoom}
+          disabled={!isFilled}
+        />
+      }
+    >
       <div className="flex gap-4 w-full justify-center">
         {Array(4)
           .fill(0)
@@ -81,22 +85,11 @@ const RoomSetUpPage: React.FC = () => {
               maxLength={1}
               onChange={(e) => handleChange(idx, e.target.value)}
               onKeyDown={(e) => handleKeyDown(idx, e)}
-              className="w-[80px] h-[80px] text-center text-3xl font-medium border border-gray-300 bg-white rounded-md focus:outline-none"
+              className="w-full aspect-square text-center text-3xl font-medium border border-gray-300 bg-white rounded-md focus:outline-none"
             />
           ))}
       </div>
-      <button
-        disabled={!isFilled}
-        className={`w-full py-3 rounded-lg font-semibold transition-colors text-lg ${
-          isFilled
-            ? "bg-main1 text-white cursor-pointer"
-            : "bg-gray-300 text-white cursor-not-allowed"
-        }`}
-        onClick={handleCreateRoom}
-      >
-        비밀방으로 시작
-      </button>
-    </div>
+    </MainLayout>
   );
 };
 

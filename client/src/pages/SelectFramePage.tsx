@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGetFrames, type FrameResponse } from "../api/frame";
+import MainLayout from "../components/Layouts/MainLayout";
 
 interface FrameOptionProps {
   name: string;
@@ -29,22 +30,15 @@ const FrameOption: React.FC<FrameOptionProps> = ({ name, image, onClick }) => (
 
 const SelectFrameScreen: React.FC = () => {
   const navigate = useNavigate();
-  const { data, isLoading } = useGetFrames();
-
-  if (isLoading) return <div>로딩 중..</div>;
+  const { data } = useGetFrames();
 
   console.log(data);
 
   return (
-    <div className="flex flex-col justify-center w-full h-full p-4 gap-8">
-      <div className="flex flex-col gap-2">
-        <h2 className="text-[24px] font-bold text-gray-800">
-          프레임을 선택해주세요.
-        </h2>
-        <p className="text-[18px] font-semibold text-gray-500">
-          추후에 프레임을 추가할게요.
-        </p>
-      </div>
+    <MainLayout
+      title="프레임을 선택해주세요"
+      description={["추후에 프레임을 추가할게요"]}
+    >
       <div className="flex overflow-x-auto w-full justify-center gap-2">
         {data &&
           data.map((frame: FrameResponse) => (
@@ -53,14 +47,12 @@ const SelectFrameScreen: React.FC = () => {
               name={frame.name}
               image={frame.frameImageUrl}
               onClick={() => {
-                setTimeout(() => {
-                  navigate(`/roomSet?f=${frame.frameId}`, { replace: true });
-                }, 200);
+                navigate(`/roomSet?f=${frame.frameId}`, { replace: true });
               }}
             />
           ))}
       </div>
-    </div>
+    </MainLayout>
   );
 };
 

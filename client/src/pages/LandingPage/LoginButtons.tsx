@@ -1,23 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGuestLogin } from "../../api/auth";
-
-interface ButtonProps {
-  text: string;
-  bgColor: string;
-  onClick: () => void;
-}
-
-const Button: React.FC<ButtonProps> = ({ text, bgColor, onClick }) => {
-  return (
-    <button
-      className={`w-full ${bgColor} text-text-white font-semibold py-3 px-6 rounded-lg cursor-pointer`}
-      onClick={onClick}
-    >
-      {text}
-    </button>
-  );
-};
+import Button from "../../components/Button";
 
 const LoginButtons: React.FC = () => {
   const navigate = useNavigate();
@@ -38,10 +22,14 @@ const LoginButtons: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
-      {/* <Button text="SSAFY 로그인" bgColor="bg-main2" onClick={handleLogin} />
-      <Button text="카카오톡 로그인" bgColor="bg-kakao" onClick={handleLogin} /> */}
-      <Button text="시작하기" bgColor="bg-main1" onClick={handleLogin} />
+    <div className="w-full flex flex-col gap-4">
+      <Button
+        label="카카오 로그인"
+        onClick={handleLogin}
+        className="!bg-kakao !text-black"
+      />
+      <Button label="SSAFY 로그인" onClick={handleLogin} className="bg-main2" />
+      <Button label="게스트 로그인" onClick={handleLogin} />
     </div>
   );
 };
