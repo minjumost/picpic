@@ -1,7 +1,7 @@
 import type { Ref } from "react";
 import logo from "../../assets/logo.png";
 
-interface FramePhoto {
+export interface FramePhoto {
   slotIndex: number;
   photoImageUrl: string;
 }
@@ -11,7 +11,7 @@ interface FrameProps {
   captureRef?: Ref<HTMLDivElement>;
 }
 
-const Frame: React.FC<FrameProps> = ({ photos, captureRef }) => {
+const FourFrame: React.FC<FrameProps> = ({ photos, captureRef }) => {
   // slotIndex를 기준으로 정렬 (혹시 순서가 뒤죽박죽일 수 있으므로)
   const sortedPhotos = photos.sort((a, b) => a.slotIndex - b.slotIndex);
 
@@ -42,4 +42,4 @@ const Frame: React.FC<FrameProps> = ({ photos, captureRef }) => {
   );
 };
 
-export default Frame;
+export default FourFrame;

@@ -38,8 +38,6 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
     setConnected(true);
 
     stompClient.onConnect = () => {
-      console.log("히히 나야");
-
       stompClient.subscribe(
         `/broadcast/${sessionCode}`,
         (message: IMessage) => {

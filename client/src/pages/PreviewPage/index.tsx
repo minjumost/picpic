@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { usePostCollageImage } from "../../api/CompImg";
 import { useGetSessionImages } from "../../api/getImage";
 import Button from "../../components/Button";
-import Frame1 from "../../components/Layouts/Frame";
+import Frame1 from "../../components/Layouts/FourFrame";
 import MainLayout from "../../components/Layouts/MainLayout";
 import { useSessionCode } from "../../hooks/useSessionCode";
 import { sendDrawStart } from "../../sockets/sessionSocket";

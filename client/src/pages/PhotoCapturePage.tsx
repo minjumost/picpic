@@ -5,8 +5,8 @@ import MainLayout from "../components/Layouts/MainLayout";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { sendDrawReady, sendPhotoStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
+import { useFrameStore } from "../store/store";
 import { usePageExitEvent } from "../hooks/usePageExitEvent";
-const SLOT_COUNT = 4;
 
 interface SlotInfo {
   memberId?: number;
@@ -27,6 +27,8 @@ const PhotoCapturePage: React.FC = () => {
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
+  const selectedFrame = useFrameStore((state) => state.selectedFrame);
+  const SLOT_COUNT = selectedFrame === "six" ? 6 : 4;
 
   const [slots, setSlots] = useState<SlotInfo[]>(() =>
     Array.from({ length: SLOT_COUNT }, () => ({}))
@@ -76,7 +78,7 @@ const PhotoCapturePage: React.FC = () => {
       stroke_ready: () =>
         navigate(`/preview?r=${sessionCode}`, { replace: true }),
     });
-  }, []);
+  }, [SLOT_COUNT]);
 
   const handleSlotClick = (i: number) => {
     console.log(

@@ -1,6 +1,6 @@
 import logo from "../../assets/logo.png";
 
-const Frame = () => {
+const SixFrame = () => {
   return (
     <div className="relative h-full w-full">
       <div
@@ -29,4 +29,4 @@ const Frame = () => {
   );
 };
 
-export default Frame;
+export default SixFrame;
