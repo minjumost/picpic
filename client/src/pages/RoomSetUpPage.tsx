@@ -1,18 +1,17 @@
 import React, { useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { client } from "../api/axios";
 import Button from "../components/Button";
 import MainLayout from "../components/Layouts/MainLayout";
 import { usePageExitEvent } from "../hooks/usePageExitEvent";
+import { useFrameStore } from "../store/store";
 
 const RoomSetUpPage: React.FC = () => {
   usePageExitEvent("RoomSetUpPage");
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
 
-  const [searchParams] = useSearchParams();
-
-  const frameId = searchParams.get("f");
+  const frameStore = useFrameStore();
 
   const navigate = useNavigate();
 
@@ -49,7 +48,7 @@ const RoomSetUpPage: React.FC = () => {
 
     try {
       const res = await client.post("/api/v1/session", {
-        frameId: Number(frameId),
+        frameId: Number(frameStore.selectedFrame === "four" ? 1 : 2),
         backgroundId: 1,
         password: Number(password),
       });

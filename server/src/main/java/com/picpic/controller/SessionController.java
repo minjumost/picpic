@@ -7,11 +7,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.picpic.common.response.ApiResponse;
+import com.picpic.dto.session.CanEnterSessionRequestDTO;
 import com.picpic.dto.session.CreateSessionRequestDTO;
 import com.picpic.dto.session.CreateSessionResponseDTO;
 import com.picpic.dto.session.GetSessionFrameResponseDTO;
@@ -53,4 +55,16 @@ public class SessionController {
 		List<GetSessionPhotosResponseDTO> res = sessionService.getSessionPhotos(memberId, sessionId);
 		return ResponseEntity.ok(ApiResponse.success(res));
 	}
+
+	@PutMapping("/{sessionCode}")
+	public ResponseEntity<ApiResponse<Boolean>> enterSession(
+		@AuthenticationPrincipal Long memberId,
+		@PathVariable String sessionCode,
+		@RequestBody CanEnterSessionRequestDTO canEnterSessionRequestDTO
+	) {
+
+		Boolean res = sessionService.canEnterSession(memberId, sessionCode, canEnterSessionRequestDTO.password());
+		return ResponseEntity.ok(ApiResponse.success(res));
+	}
+
 }
