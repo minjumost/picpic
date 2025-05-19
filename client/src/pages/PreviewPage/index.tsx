@@ -1,15 +1,18 @@
+import html2canvas from "html2canvas-pro";
 import { useEffect, useRef } from "react";
-import html2canvas from "html2canvas";
 
+import { useNavigate } from "react-router";
+import { usePostCollageImage } from "../../api/CompImg";
 import { useGetSelectedFrames } from "../../api/frame";
 import { useGetSessionImages } from "../../api/getImage";
+import Button from "../../components/Button";
+import Frame1 from "../../components/Layouts/Frame";
+import MainLayout from "../../components/Layouts/MainLayout";
+import { useSessionCode } from "../../hooks/useSessionCode";
+import { sendDrawStart } from "../../sockets/sessionSocket";
+import { setHandlers } from "../../sockets/stompClient";
 import { getCurrentDateTimeString } from "../CameraPage";
 import { getPresignedUrl } from "../CameraPage/useUploadImage";
-import { usePostCollageImage } from "../../api/CompImg";
-import { useNavigate } from "react-router";
-import { useSessionCode } from "../../hooks/useSessionCode";
-import { setHandlers } from "../../sockets/stompClient";
-import { sendDrawStart } from "../../sockets/sessionSocket";
 
 const SLOT_POSITIONS = [
   { top: 158, left: 11, width: 338, height: 204 },
@@ -72,7 +75,7 @@ const PreviewPage = () => {
   const handleCapture = async () => {
     if (!captureRef.current) return;
     const canvas = await html2canvas(captureRef.current, {
-      scale: 2,
+      scale: 6,
       useCORS: true,
       allowTaint: true,
       backgroundColor: null,
@@ -104,64 +107,49 @@ const PreviewPage = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full gap-3 p-4">
-      <p className="text-xl font-bold">사진이 완성되었어요 🥳</p>
-      <p className="text-heading4 font-bold text-gray-500">
-        🎨 한 컷씩 같이 꾸밀 수 있어요.
-      </p>
-
-      <p className="text-heading4 font-bold text-gray-500">
-        ⏰ 2분 안에 꾸미기를 완료해주세요.
-      </p>
-
-      <p className="text-heading4 font-bold text-gray-500">
-        ❌ 되돌릴 수 없으니 신중하게 꾸며주세요.
-      </p>
-
+    <MainLayout
+      title="사진 촬영이 끝났어요"
+      description={["이제 다같이 꾸며볼까요?"]}
+      footer={
+        <Button
+          label="꾸미러 가기"
+          onClick={async () => {
+            await handleCapture();
+            sendDrawStart(sessionId, sessionCode);
+          }}
+        />
+      }
+    >
+      {/* {imageList && (
+        <Frame1
+          photos={imageList.map((img) => ({
+            slotIndex: img.slotIndex,
+            photoImageUrl: img.photoImageUrl ?? "",
+          }))}
+        />
+      )} */}
       <div
         ref={captureRef}
-        className="relative"
-        style={{ width: "720px", height: "590px" }}
-      >
-        {imageList && frame && (
-          <>
-            {imageList.map((img, idx) => {
-              const { top, left, width, height } = SLOT_POSITIONS[idx];
-              return (
-                <img
-                  key={img.slotIndex}
-                  src={img.photoImageUrl + "?" + new Date().getTime()}
-                  alt={`photo-${idx}`}
-                  style={{
-                    position: "absolute",
-                    top,
-                    left,
-                    width,
-                    height,
-                    objectFit: "cover",
-                  }}
-                />
-              );
-            })}
-            <img
-              src={frame.frameImageUrl + "?" + new Date().getTime()}
-              alt="frame"
-              className="absolute top-0 left-0 w-full h-full pointer-events-none"
-            />
-          </>
-        )}
-      </div>
-
-      <button
-        className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
-        onClick={async () => {
-          await handleCapture();
-          sendDrawStart(sessionId, sessionCode);
+        style={{
+          width: "1080px",
+          height: "1440px",
+          position: "absolute",
+          top: "-9999px",
+          left: "-9999px",
+          pointerEvents: "none",
+          opacity: 1,
         }}
       >
-        꾸미러 가기
-      </button>
-    </div>
+        {imageList && (
+          <Frame1
+            photos={imageList.map((img) => ({
+              slotIndex: img.slotIndex,
+              photoImageUrl: img.photoImageUrl ?? "",
+            }))}
+          />
+        )}
+      </div>
+    </MainLayout>
   );
 };
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import Button from "../components/Button";
+import MainLayout from "../components/Layouts/MainLayout";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { sendDrawReady, sendPhotoStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
@@ -94,12 +96,27 @@ const PhotoCapturePage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center w-full h-full p-16 gap-5">
-      <h2 className="text-heading1 font-bold mb-2">사진을 찍어주세요</h2>
-      <p className="text-body1 font-bold text-gray-500 mb-6">
-        원하는 칸에 들어가 사진을 찍을 수 있어요. 다시 찍기도 가능해요.
-      </p>
-
+    <MainLayout
+      title="사진을 촬영해주세요"
+      description={[
+        "원하는 칸에 들어가 사진을 찍어주세요",
+        "동시에 들어갈 수 없어요",
+      ]}
+      footer={
+        <Button
+          label={
+            !slots.every((slot) => !!slot.url)
+              ? "사진을 전부 촬영해주세요"
+              : "촬영 완료"
+          }
+          onClick={() => {
+            sendDrawReady(sessionId, sessionCode);
+            navigate(`/preview?r=${sessionCode}`, { replace: true });
+          }}
+          disabled={!slots.every((slot) => !!slot.url)}
+        />
+      }
+    >
       <div className="w-full h-full bg-gray-600 p-4 grid grid-cols-2 gap-4">
         {Array(SLOT_COUNT)
           .fill(0)
@@ -140,16 +157,7 @@ const PhotoCapturePage: React.FC = () => {
             );
           })}
       </div>
-      <button
-        className="w-full bg-main1 text-white font-semibold py-3 px-6 rounded-lg shadow-md cursor-pointer"
-        onClick={() => {
-          sendDrawReady(sessionId, sessionCode);
-          navigate(`/preview?r=${sessionCode}`, { replace: true });
-        }}
-      >
-        꾸미러 가기
-      </button>
-    </div>
+    </MainLayout>
   );
 };
 
