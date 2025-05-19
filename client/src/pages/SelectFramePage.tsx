@@ -1,7 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGetFrames } from "../api/frame";
-import type { FramePhoto } from "../components/Layouts/FourFrame";
 import FourFrame from "../components/Layouts/FourFrame";
 import MainLayout from "../components/Layouts/MainLayout";
 import SixFrame from "../components/Layouts/SixFrame";
@@ -10,42 +9,6 @@ import { useFrameStore } from "../store/store";
 
 const fourFrameId = 1;
 const sixFrameId = 2;
-
-const fourFrame: FramePhoto[] = [
-  {
-    slotIndex: 0,
-  },
-  {
-    slotIndex: 1,
-  },
-  {
-    slotIndex: 2,
-  },
-  {
-    slotIndex: 3,
-  },
-];
-
-const sixFrame: FramePhoto[] = [
-  {
-    slotIndex: 0,
-  },
-  {
-    slotIndex: 1,
-  },
-  {
-    slotIndex: 2,
-  },
-  {
-    slotIndex: 3,
-  },
-  {
-    slotIndex: 4,
-  },
-  {
-    slotIndex: 5,
-  },
-];
 
 const SelectFrameScreen: React.FC = () => {
   usePageExitEvent("SelectFramePage");
@@ -69,7 +32,7 @@ const SelectFrameScreen: React.FC = () => {
               navigate(`/roomSet?f=${fourFrameId}`, { replace: true });
             }}
           >
-            <FourFrame photos={fourFrame} />
+            <FourFrame photos={[]} />
           </div>
           <div
             className="w-1/2 h-[300px] relative cursor-pointer"
@@ -78,7 +41,7 @@ const SelectFrameScreen: React.FC = () => {
               navigate(`/roomSet?f=${sixFrameId}`, { replace: true });
             }}
           >
-            <SixFrame photos={sixFrame} />
+            <SixFrame photos={[]} />
           </div>
         </div>
       </div>
