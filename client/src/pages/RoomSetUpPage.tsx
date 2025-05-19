@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate } from "react-router";
 import { client } from "../api/axios";
 import Button from "../components/Button";
 import MainLayout from "../components/Layouts/MainLayout";
@@ -10,8 +10,6 @@ const RoomSetUpPage: React.FC = () => {
   usePageExitEvent("RoomSetUpPage");
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
-
-  const [searchParams] = useSearchParams();
 
   const frameStore = useFrameStore();
 
