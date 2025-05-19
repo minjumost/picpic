@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useGetSelectedFrames } from "../api/frame";
 import Button from "../components/Button";
 import MainLayout from "../components/Layouts/MainLayout";
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { sendDrawReady, sendPhotoStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
 import { useFrameStore } from "../store/store";
-import { usePageExitEvent } from "../hooks/usePageExitEvent";
-import { useGetSelectedFrames } from "../api/frame";
 
 interface SlotInfo {
   memberId?: number;
@@ -30,11 +30,12 @@ const PhotoCapturePage: React.FC = () => {
   const frameStore = useFrameStore();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
   const selectedFrame = useFrameStore((state) => state.selectedFrame);
-  const SLOT_COUNT = selectedFrame === "six" ? 6 : 4;
+  const SLOT_COUNT = selectedFrame === "four" ? 4 : 6;
 
-  const [slots, setSlots] = useState<SlotInfo[]>(() =>
-    Array.from({ length: SLOT_COUNT }, () => ({}))
-  );
+  const [slots, setSlots] = useState<SlotInfo[]>(() => {
+    console.log(SLOT_COUNT);
+    return Array.from({ length: SLOT_COUNT }, () => ({}));
+  });
 
   useEffect(() => {
     console.log("setHandlers 등록됨, sessionCode:", sessionCode);
@@ -69,7 +70,6 @@ const PhotoCapturePage: React.FC = () => {
               newSlots[slotIdx] = {
                 ...newSlots[slotIdx],
                 url: photo.url,
-                isOccupied: false,
               };
             }
           });
@@ -94,13 +94,7 @@ const PhotoCapturePage: React.FC = () => {
   if (error) return <div>에러가 발생했습니다</div>;
 
   const handleSlotClick = (i: number) => {
-    console.log(
-      "[handleSlotClick] slot:",
-      i,
-      "isOccupied:",
-      slots[i - 1].isOccupied
-    );
-    if (slots[i - 1].isOccupied) {
+    if (slots[i - 1].isOccupied || slots[i - 1].url) {
       console.log("[handleSlotClick] slot is occupied, cannot click");
       return;
     }
@@ -143,9 +137,7 @@ const PhotoCapturePage: React.FC = () => {
                 className={`bg-white w-full h-[150px] rounded-sm shadow-inner flex items-center justify-center border-4 ${
                   slots[i].color ? "" : "border-transparent"
                 } ${
-                  slots[i].isOccupied
-                    ? "opacity-50 cursor-not-allowed"
-                    : "cursor-pointer"
+                  slots[i].isOccupied ? " cursor-not-allowed" : "cursor-pointer"
                 }`}
                 style={slots[i].color ? { borderColor: slots[i].color } : {}}
                 onClick={() => handleSlotClick(i + 1)}
