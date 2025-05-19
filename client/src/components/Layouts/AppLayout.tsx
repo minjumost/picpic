@@ -10,17 +10,9 @@ const AppLayout = () => {
   useEffect(() => {
     if (didRun.current) return;
     didRun.current = true;
-
-    const flag = sessionStorage.getItem("firstLoadDone");
-    if (flag === null) {
-      console.log("첫 로드");
-      sessionStorage.setItem("firstLoadDone", "1");
-    } else {
-      console.log("리로드");
-      stompClient.deactivate();
-      sessionStorage.clear();
-      navigate("/", { replace: true });
-    }
+    stompClient.deactivate({ force: true });
+    sessionStorage.clear();
+    navigate("/", { replace: true });
   }, []);
 
   return (

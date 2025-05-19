@@ -35,9 +35,9 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
       return;
     }
 
-    setConnected(true);
-
     stompClient.onConnect = () => {
+      setConnected(true);
+
       stompClient.subscribe(
         `/broadcast/${sessionCode}`,
         (message: IMessage) => {

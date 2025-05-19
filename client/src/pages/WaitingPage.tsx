@@ -3,15 +3,8 @@ import { useNavigate } from "react-router";
 import Button from "../components/Button";
 import MainLayout from "../components/Layouts/MainLayout";
 import { useSessionCode } from "../hooks/useSessionCode";
-import {
-  connectAndEnterSession,
-  sendSessionStart,
-} from "../sockets/sessionSocket";
-import stompClient, {
-  initStompSession,
-  setHandlers,
-} from "../sockets/stompClient";
-import { useStompStatusStore } from "../sockets/useStompStore";
+import { sendSessionStart } from "../sockets/sessionSocket";
+import stompClient, { setHandlers } from "../sockets/stompClient";
 import { usePageExitEvent } from "../hooks/usePageExitEvent";
 interface User {
   memberId: number;
@@ -36,7 +29,6 @@ const WaitingPage: React.FC = () => {
   const [copied, setCopied] = useState(false);
 
   const mId = Number(sessionStorage.getItem("memberId"));
-  const { isConnected } = useStompStatusStore.getState();
   const sessionCode = useSessionCode();
   const navigate = useNavigate();
   const roomUrl = `https://minipia.co.kr/roomPwd?r=${sessionCode}`;
@@ -82,17 +74,6 @@ const WaitingPage: React.FC = () => {
     setHandlers(handlers);
   }, [sessionCode, navigate]);
 
-  // 재접속 로직
-  useEffect(() => {
-    const reConnect = async () => {
-      await initStompSession(sessionCode);
-      await connectAndEnterSession(sessionCode, 1234);
-    };
-    if (!isConnected) {
-      reConnect();
-    }
-  }, [isConnected, sessionCode]);
-
   const handleStartPhoto = () => {
     const sessionId = Number(sessionStorage.getItem("sessionId"));
     if (!sessionId || !sessionCode) {
@@ -133,7 +114,11 @@ const WaitingPage: React.FC = () => {
           {copied ? "링크 복사 완료" : "친구 초대"}
         </button>
         <button
-          onClick={handleCopy}
+          onClick={() => {
+            stompClient.deactivate();
+            sessionStorage.clear();
+            window.location.href = "/";
+          }}
           className="w-full h-14 text-md px-3 py-3 rounded-md transition-colors duration-200
               bg-white text-md text-main1 font-semibold hover:bg-main1/10 border border-main1
           "

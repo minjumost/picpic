@@ -19,6 +19,10 @@ export const connectAndEnterSession = (
   password: number
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
+    if (!stompClient.connected) {
+      console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
+      return;
+    }
     stompClient.publish({
       destination: "/send/session/enter",
       body: JSON.stringify({ sessionCode, password }),

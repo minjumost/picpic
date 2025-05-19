@@ -14,46 +14,46 @@ const sixFrameId = 2;
 const fourFrame: FramePhoto[] = [
   {
     slotIndex: 0,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 1,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 2,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 3,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
 ];
 
 const sixFrame: FramePhoto[] = [
   {
     slotIndex: 0,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 1,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 2,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 3,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 4,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
   {
     slotIndex: 5,
-    photoImageUrl: "/src/assets/frames/none.jpg",
+    photoImageUrl: "../src/assets/frames/none.jpg",
   },
 ];
 
