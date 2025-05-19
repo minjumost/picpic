@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import GA4Initializer from "../../GA4Initializer";
 import stompClient from "../../sockets/stompClient";
 
 const AppLayout = () => {
   const navigate = useNavigate();
-  const didRun = useRef(false);
 
   useEffect(() => {
     const entries = performance.getEntriesByType("navigation");
