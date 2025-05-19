@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router";
 import { getPresignedUrl, uploadToS3 } from "./useUploadImage";
 import { useSessionCode } from "../../hooks/useSessionCode";
 import { sendPhotoUpload } from "../../sockets/sessionSocket";
-
+import { usePageExitEvent } from "../../hooks/usePageExitEvent";
 // 날짜+시간 파일명 생성 함수
 export function getCurrentDateTimeString() {
   const now = new Date();
@@ -18,6 +18,7 @@ export function getCurrentDateTimeString() {
 }
 
 const CameraPage: React.FC = () => {
+  usePageExitEvent("CameraPage");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);

@@ -12,6 +12,8 @@ import { getCurrentDateTimeString } from "./CameraPage";
 import { dataURLtoFile } from "../utils/dataURLtoFile";
 import { getPresignedUrl } from "./CameraPage/useUploadImage";
 import { uploadToS3 } from "../utils/uploadToS3";
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
+import { sendEvent } from "../utils/analytics";
 
 const colors = [
   "#000000",
@@ -36,6 +38,7 @@ const CanvasDrawOverImage: React.FC = () => {
   const sessionCode = useSessionCode();
   const navigate = useNavigate();
   const postImage = usePostCollageLastImage();
+  const enterTimeRef = useRef<number>(Date.now());
 
   const sessionId = Number(sessionStorage.getItem("sessionId"));
   const { data, isLoading } = useGetCollageImage(sessionId);
@@ -46,6 +49,8 @@ const CanvasDrawOverImage: React.FC = () => {
     duration: number;
   };
   const [remainingTime, setRemainingTime] = useState<number>(0);
+
+  usePageExitEvent("CanvasDraw");
 
   useEffect(() => {
     const start = new Date(startTime).getTime(); // 시작 시간 (ms)
@@ -113,6 +118,8 @@ const CanvasDrawOverImage: React.FC = () => {
   };
 
   const handleComplete = async () => {
+    const staySeconds = Math.floor((Date.now() - enterTimeRef.current) / 1000);
+    sendEvent("CanvasDraw", "Complete", `${staySeconds}초 걸림`);
     console.log("완료");
     const captured = await captureCanvas();
     if (!captured) return;

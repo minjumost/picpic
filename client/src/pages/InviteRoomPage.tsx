@@ -6,8 +6,10 @@ import MainLayout from "../components/Layouts/MainLayout";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { connectAndEnterSession } from "../sockets/sessionSocket";
 import { initStompSession } from "../sockets/stompClient";
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 
 const InviteRoomPage: React.FC = () => {
+  usePageExitEvent("InviteRoomPage");
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
 

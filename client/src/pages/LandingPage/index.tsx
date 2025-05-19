@@ -8,12 +8,14 @@ import 소개2 from "../../assets/소개2.png";
 import 소개3 from "../../assets/소개3.png";
 import 소개4 from "../../assets/소개4.png";
 import LoginButtons from "./LoginButtons";
+import { usePageExitEvent } from "../../hooks/usePageExitEvent";
 
 const LandingPage: React.FC = () => {
+  usePageExitEvent("LandingPage");
   const images = [소개1, 소개2, 소개3, 소개4];
 
   const settings = {
-    dots: false, // 점 네비게이션 숨김
+    dots: false,
     arrows: true,
     infinite: true,
     speed: 500,
