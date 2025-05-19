@@ -1,8 +1,7 @@
 // stompClient
 
-import { Client } from "@stomp/stompjs";
+import { Client, type IMessage } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { type IMessage } from "@stomp/stompjs";
 import { useStompStatusStore } from "./useStompStore";
 
 type HandlerMap = {
@@ -22,8 +21,8 @@ const stompClient = new Client({
   connectHeaders: {},
   debug: (str) => console.log("[STOMP DEBUG]:", str),
   reconnectDelay: 5000,
-  heartbeatIncoming: 4000,
-  heartbeatOutgoing: 4000,
+  heartbeatIncoming: 30000,
+  heartbeatOutgoing: 30000,
 });
 
 export const initStompSession = (sessionCode: string): Promise<void> => {
