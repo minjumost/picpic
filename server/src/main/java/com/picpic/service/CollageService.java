@@ -1,5 +1,7 @@
 package com.picpic.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +37,20 @@ public class CollageService {
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
 
-		Collage collage = Collage.builder()
-			.session(session)
-			.collageImageUrl(collageImageUrl).build();
+		Optional<Collage> optionalCollage = collageRepository.findBySession(session);
 
-		collageRepository.save(collage);
+		if (optionalCollage.isPresent()) {
+			// 이미 존재하면 업데이트
+			Collage collage = optionalCollage.get();
+			collage.setCollageImageUrl(collageImageUrl);
+		} else {
+			// 없으면 새로 생성
+			Collage collage = Collage.builder()
+				.session(session)
+				.collageImageUrl(collageImageUrl)
+				.build();
+			collageRepository.save(collage);
+		}
 
 	}
 
