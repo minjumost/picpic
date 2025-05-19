@@ -12,8 +12,10 @@ import { sendDrawStart } from "../../sockets/sessionSocket";
 import { setHandlers } from "../../sockets/stompClient";
 import { getCurrentDateTimeString } from "../CameraPage";
 import { getPresignedUrl } from "../CameraPage/useUploadImage";
+import { usePageExitEvent } from "../../hooks/usePageExitEvent";
 
 const PreviewPage = () => {
+  usePageExitEvent("PreviewPage");
   const captureRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const sessionCode = useSessionCode();

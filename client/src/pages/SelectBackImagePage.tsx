@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { useGetBackgrounds } from "../api/backImage";
-
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 interface BackImageOption {
   backgroundId: number;
   name: string;
@@ -31,6 +31,7 @@ const BackImageOption: React.FC<BackImageOption> = ({
 const SelectBackImagePage: React.FC = () => {
   const navigate = useNavigate();
   const { isLoading } = useGetBackgrounds();
+  usePageExitEvent("SelectBackImagePage");
 
   // TODO: 스피너 컴포넌트로 교체필요
   if (isLoading) return <div>로딩 중..</div>;

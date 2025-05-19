@@ -12,7 +12,7 @@ import stompClient, {
   setHandlers,
 } from "../sockets/stompClient";
 import { useStompStatusStore } from "../sockets/useStompStore";
-
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 interface User {
   memberId: number;
   nickname: string;
@@ -41,7 +41,8 @@ const WaitingPage: React.FC = () => {
   const navigate = useNavigate();
   const roomUrl = `https://minipia.co.kr/roomPwd?r=${sessionCode}`;
 
-  // 점 애니메이션
+  usePageExitEvent("WaitingPage");
+
   useEffect(() => {
     const interval = setInterval(() => {
       setDots((prev) => (prev === ".." ? "..." : ".."));

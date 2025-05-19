@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useGetFrames, type FrameResponse } from "../api/frame";
 import MainLayout from "../components/Layouts/MainLayout";
 
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 interface FrameOptionProps {
   name: string;
   image: string;
@@ -29,6 +30,7 @@ const FrameOption: React.FC<FrameOptionProps> = ({ name, image, onClick }) => (
 );
 
 const SelectFrameScreen: React.FC = () => {
+  usePageExitEvent("SelectFramePage");
   const navigate = useNavigate();
   const { data } = useGetFrames();
 

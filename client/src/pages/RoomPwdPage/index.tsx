@@ -5,7 +5,7 @@ import { connectAndEnterSession } from "../../sockets/sessionSocket";
 import { useGuestLogin } from "../../api/auth";
 import { useSessionCode } from "../../hooks/useSessionCode";
 import { initStompSession } from "../../sockets/stompClient";
-
+import { usePageExitEvent } from "../../hooks/usePageExitEvent";
 const RoomPwdPage = () => {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const [isFilled, setIsFilled] = useState(false);
@@ -13,6 +13,8 @@ const RoomPwdPage = () => {
   const sessionCode = useSessionCode();
 
   const guestLoginMutation = useGuestLogin();
+
+  usePageExitEvent("RoomPwdPage");
 
   const navigate = useNavigate();
 

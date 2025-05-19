@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useGetFinalImages } from "../../api/finalImages";
 import { useNavigate } from "react-router";
 import stompClient from "../../sockets/stompClient";
+import { usePageExitEvent } from "../../hooks/usePageExitEvent";
 
 const FinalPage = () => {
   const [step, setStep] = useState<1 | 2>(1);
@@ -10,6 +11,7 @@ const FinalPage = () => {
   const sessionId = Number(sessionStorage.getItem("sessionId"));
 
   const { data: images, isLoading, isError } = useGetFinalImages(sessionId);
+  usePageExitEvent("FinalPage");
 
   useEffect(() => {
     const timer = setTimeout(() => {

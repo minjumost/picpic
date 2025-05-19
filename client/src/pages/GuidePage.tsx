@@ -3,11 +3,13 @@ import { useSessionCode } from "../hooks/useSessionCode";
 import { useEffect } from "react";
 import { setHandlers } from "../sockets/stompClient";
 import { sendDrawStart } from "../sockets/sessionSocket";
-
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 const GuidePage: React.FC = () => {
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
+
+  usePageExitEvent("GuidePage");
 
   useEffect(() => {
     setHandlers({

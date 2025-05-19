@@ -5,7 +5,7 @@ import MainLayout from "../components/Layouts/MainLayout";
 import { useSessionCode } from "../hooks/useSessionCode";
 import { sendDrawReady, sendPhotoStart } from "../sockets/sessionSocket";
 import { setHandlers } from "../sockets/stompClient";
-
+import { usePageExitEvent } from "../hooks/usePageExitEvent";
 const SLOT_COUNT = 4;
 
 interface SlotInfo {
@@ -23,6 +23,7 @@ interface PhotoInfo {
 }
 
 const PhotoCapturePage: React.FC = () => {
+  usePageExitEvent("PhotoCapturePage");
   const navigate = useNavigate();
   const sessionCode = useSessionCode();
   const sessionId = Number(sessionStorage.getItem("sessionId"));
