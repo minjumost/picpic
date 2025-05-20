@@ -42,6 +42,15 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
+	public String createToken() {
+		Date now = new Date();
+		return Jwts.builder()
+			.issuedAt(now)
+			.expiration(new Date(now.getTime() + expiration))
+			.signWith(getSignInKey())
+			.compact();
+	}
+
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parser()

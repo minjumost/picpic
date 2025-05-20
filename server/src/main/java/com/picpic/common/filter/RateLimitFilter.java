@@ -56,6 +56,18 @@ public class RateLimitFilter extends OncePerRequestFilter {
 			return;
 		}
 
+		if (path.contains("/oauth")) {
+			String ip = request.getRemoteAddr();
+			Bucket ipBucket = ipBuckets.get(ip);
+
+			if (!ipBucket.tryConsume(1)) {
+				throw new ApiException(ErrorCode.AUTH_LIMIT);
+			}
+
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		// 2. 나머지는 로그인된 사용자 기준 제한
 		String token = jwtTokenProvider.resolveToken(request);
 
