@@ -26,6 +26,8 @@ const CameraPage: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [showVideo, setShowVideo] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const countdownRef = useRef<NodeJS.Timeout | null>(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -87,6 +89,25 @@ const CameraPage: React.FC = () => {
     return new File([u8arr], filename, { type: mime });
   };
 
+  const startCountdown = () => {
+    setCountdown(3);
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          if (countdownRef.current) {
+            clearInterval(countdownRef.current);
+            countdownRef.current = null;
+          }
+          if (prev === 1) {
+            handleCapture();
+          }
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
   const handleCapture = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -98,12 +119,10 @@ const CameraPage: React.FC = () => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
 
-      // 미러링 제거
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const imageData = canvas.toDataURL("image/png");
       setCapturedImage(imageData);
-      // 원하는 파일명으로 File 객체 생성
       const fileName = `${getCurrentDateTimeString()}.png`;
       const file = dataURLtoFile(imageData, fileName);
       setFile(file);
@@ -113,6 +132,7 @@ const CameraPage: React.FC = () => {
   const handleRetake = async () => {
     setCapturedImage(null);
     setFile(null);
+    startCountdown();
     // 스트림 다시 켜기
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -157,12 +177,27 @@ const CameraPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-center text-center justify-center w-full h-full p-16 gap-5">
       <h2 className="text-heading1 font-bold mb-2">사진을 찍어주세요</h2>
 
       <div className="flex justify-center items-center w-full">
-        <div className="w-full max-w-full h-[450px] mx-auto bg-black mb-6 rounded-md overflow-hidden flex items-center justify-center">
+        <div className="w-full max-w-full h-[450px] mx-auto bg-black mb-6 rounded-md overflow-hidden flex items-center justify-center relative">
+          {countdown !== null && (
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <span className="text-white text-8xl font-bold drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+                {countdown}
+              </span>
+            </div>
+          )}
           {capturedImage ? (
             <img
               src={capturedImage}
@@ -190,14 +225,14 @@ const CameraPage: React.FC = () => {
           <button
             onClick={handleRetake}
             className="px-6 py-3 rounded-lg bg-gray-400 text-white font-semibold shadow"
-            disabled={uploading}
+            disabled={uploading || countdown !== null}
           >
             재촬영
           </button>
           <button
             onClick={handleConfirm}
             className="px-6 py-3 rounded-lg bg-[#f2552c] text-white font-semibold shadow"
-            disabled={uploading}
+            disabled={uploading || countdown !== null}
           >
             {uploading ? "업로드 중..." : "확인"}
           </button>
@@ -205,7 +240,8 @@ const CameraPage: React.FC = () => {
       ) : (
         <button
           className="w-16 h-16 mx-auto rounded-full bg-white shadow-lg flex items-center justify-center"
-          onClick={handleCapture}
+          onClick={startCountdown}
+          disabled={countdown !== null}
         >
           <img src={Camera} alt="촬영" className="w-8 h-8" />
         </button>
