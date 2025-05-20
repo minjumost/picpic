@@ -14,7 +14,7 @@ const getFrames = async (): Promise<FrameResponse[]> => {
   const response = await client.get<ApiResponse<FrameResponse[]>>(
     "/api/v1/frames"
   );
-  console.log(response);
+
   return response.data.result;
 };
 
@@ -24,7 +24,7 @@ const getSelectedFrames = async (
   const response = await client.get<ApiResponse<FrameWithoutName>>(
     `/api/v1/session/${sessionId}/frame`
   );
-  console.log(response);
+
   return response.data.result;
 };
 

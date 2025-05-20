@@ -14,7 +14,7 @@ const getImages = async (sessionId: number): Promise<Collage> => {
   const response = await client.get<ApiResponse<Collage>>(
     `/api/v1/collage/${sessionId}`
   );
-  console.log(response);
+
   return response.data.result;
 };
 
@@ -22,7 +22,7 @@ export const getSessionImages = async (sessionId: number): Promise<Image[]> => {
   const response = await client.get<ApiResponse<Image[]>>(
     `/api/v1/session/${sessionId}/photos`
   );
-  console.log(response);
+
   return response.data.result;
 };
 

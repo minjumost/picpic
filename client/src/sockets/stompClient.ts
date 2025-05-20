@@ -19,7 +19,6 @@ const stompClient = new Client({
   webSocketFactory: () =>
     new SockJS(`${import.meta.env.VITE_BASE_URL}/connection`),
   connectHeaders: {},
-  debug: (str) => console.log("[STOMP DEBUG]:", str),
   reconnectDelay: 5000,
   heartbeatIncoming: 30000,
   heartbeatOutgoing: 30000,
@@ -29,7 +28,6 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const { isConnected, setConnected } = useStompStatusStore.getState();
     if (isConnected) {
-      console.log("🟡 이미 연결됨");
       resolve();
       return;
     }
@@ -40,7 +38,6 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
       stompClient.subscribe(
         `/broadcast/${sessionCode}`,
         (message: IMessage) => {
-          console.log(message.body);
           try {
             const parsed = JSON.parse(message.body);
             const { type } = parsed;
@@ -57,9 +54,8 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
         }
       );
 
-      stompClient.subscribe("/user/private", (message: IMessage) =>
-        console.log(message)
-      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      stompClient.subscribe("/user/private/error", (_message: IMessage) => {});
 
       resolve();
     };
