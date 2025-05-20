@@ -49,6 +49,8 @@ const CanvasDrawOverImage: React.FC = () => {
     duration: number;
   };
 
+  const MAX_POINTS_PER_MESSAGE = 20;
+
   const [mode, setMode] = useState<"PEN" | "ERASER">("PEN");
   const [color, setColor] = useState("#F2552C");
   const [lineWidth, setLineWidth] = useState<number>(12);
@@ -90,6 +92,26 @@ const CanvasDrawOverImage: React.FC = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [data]);
+
+  const flushStrokePoints = (points: { x: number; y: number }[]) => {
+    if (points.length < 2) return;
+
+    for (let i = 0; i < points.length - 1; i += MAX_POINTS_PER_MESSAGE) {
+      const chunk = points.slice(i, i + MAX_POINTS_PER_MESSAGE + 1);
+      if (chunk.length < 2) continue;
+
+      const payload: DrawStrokePayload = {
+        sessionId,
+        sessionCode,
+        color,
+        lineWidth,
+        points: chunk,
+        tool: mode,
+      };
+
+      sendDrawStroke(payload);
+    }
+  };
 
   const getOffset = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -142,7 +164,8 @@ const CanvasDrawOverImage: React.FC = () => {
       tool: mode,
     };
 
-    sendDrawStroke(payload);
+    flushStrokePoints(strokePoints); // <- 여기에 분할 전송
+
     setStrokePoints([]);
 
     while (strokeQueue.current.length > 0) {
@@ -272,7 +295,7 @@ const CanvasDrawOverImage: React.FC = () => {
       description={[remainingTime + "초 남음"]}
       footer={<Button label="완료" onClick={handleComplete} />}
     >
-      <div className="relative w-full h-[calc(100vh-200px)] flex justify-center items-center bg-gray-100 overflow-auto">
+      <div className="relative w-[380px] h-[calc(100vh-200px)] flex justify-center items-center bg-gray-100 overflow-auto">
         {data && (
           <>
             <img
@@ -321,7 +344,7 @@ const CanvasDrawOverImage: React.FC = () => {
             </button>
           </div>
           <div className="flex items-center gap-4">
-            {[12, 20, 28].map((w) => (
+            {[15, 30, 60, 120].map((w) => (
               <button
                 key={w}
                 onClick={() => setLineWidth(w)}
@@ -330,8 +353,8 @@ const CanvasDrawOverImage: React.FC = () => {
                 }`}
               >
                 <div
-                  className="rounded-full bg-black"
-                  style={{ width: `${w / 2}px`, height: `${w / 2}px` }}
+                  className="rounded-full bg-black max-w-9 max-h-9"
+                  style={{ width: `${w / 3}px`, height: `${w / 3}px` }}
                 />
               </button>
             ))}

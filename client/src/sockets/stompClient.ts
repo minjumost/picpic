@@ -64,6 +64,17 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
       console.error("STOMP Error:", frame);
       reject(frame);
     };
+
+    stompClient.onWebSocketClose = (event) => {
+      if (!event.wasClean) {
+        setConnected(false);
+        alert("서버와의 연결이 끊겼습니다.");
+        window.location.href = "/";
+      }
+    };
+
+    stompClient.deactivate();
+
     stompClient.activate();
   });
 };
