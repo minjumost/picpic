@@ -155,15 +155,6 @@ const CanvasDrawOverImage: React.FC = () => {
     if (!ctx || strokePoints.length < 2) return;
     ctx.globalCompositeOperation = "source-over";
 
-    const payload: DrawStrokePayload = {
-      sessionId,
-      sessionCode,
-      color,
-      lineWidth,
-      points: strokePoints,
-      tool: mode,
-    };
-
     flushStrokePoints(strokePoints); // <- 여기에 분할 전송
 
     setStrokePoints([]);
