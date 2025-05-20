@@ -1,6 +1,7 @@
 package com.picpic.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +25,11 @@ public class CollageController {
 
 	@PostMapping("/collage")
 	public ResponseEntity<ApiResponse<Void>> createCollage(
+		@AuthenticationPrincipal Long memberId,
 		@RequestBody CollageRequestDTO collageRequestDTO) {
 
 		collageService.createCollage(
+			memberId,
 			collageRequestDTO.sessionId(),
 			collageRequestDTO.collageImageUrl()
 		);
@@ -36,18 +39,20 @@ public class CollageController {
 
 	@GetMapping("/collages/{sessionId}")
 	public ResponseEntity<ApiResponse<GetCollageResponseDTO>> getCollage(
+		@AuthenticationPrincipal Long memberId,
 		@PathVariable Long sessionId) {
 
-		GetCollageResponseDTO collage = collageService.getCollages(sessionId);
+		GetCollageResponseDTO collage = collageService.getCollages(memberId, sessionId);
 
 		return ResponseEntity.ok(ApiResponse.success(collage));
 	}
 
 	@PostMapping("/collages/update")
 	public ResponseEntity<ApiResponse<Void>> updateCollage(
+		@AuthenticationPrincipal Long memberId,
 		@RequestBody CollageRequestDTO collageRequestDTO) {
 
-		collageService.updateCollages(collageRequestDTO.sessionId(),
+		collageService.updateCollages(memberId, collageRequestDTO.sessionId(),
 			collageRequestDTO.collageImageUrl());
 
 		return ResponseEntity.ok(ApiResponse.success());
