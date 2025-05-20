@@ -47,8 +47,6 @@ export const sendSessionStart = (sessionId: number, sessionCode: string) => {
     destination: "/send/session/start",
     body: JSON.stringify({ sessionId, sessionCode }),
   });
-
-  console.log("📨 세션 시작 요청 전송 완료");
 };
 
 export const sendDrawStroke = (payload: DrawStrokePayload) => {
@@ -63,8 +61,6 @@ export const sendDrawStroke = (payload: DrawStrokePayload) => {
       ...payload,
     }),
   });
-
-  console.log("📤 stroke 메시지 전송:", payload);
 };
 
 export const sendPhotoStart = (
@@ -85,8 +81,6 @@ export const sendPhotoStart = (
       slotIndex,
     }),
   });
-
-  console.log("📨 사진 촬영 시작 메시지 전송");
 };
 
 export const sendPhotoUpload = (
@@ -109,8 +103,6 @@ export const sendPhotoUpload = (
       url,
     }),
   });
-
-  console.log("📨 사진 업로드 완료 메시지 전송");
 };
 
 export const sendDrawStart = (sessionId: number, sessionCode: string) => {

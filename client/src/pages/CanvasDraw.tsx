@@ -262,7 +262,6 @@ const CanvasDrawOverImage: React.FC = () => {
     await uploadToS3(presignedUrl, file);
     await postImage.mutateAsync({ sessionId, collageImageUrl: imageUrl });
     sendCollageStart(sessionId, sessionCode);
-    navigate(`/final?r=${sessionCode}`, { replace: true });
   };
 
   if (isLoading) return <div>로딩 중</div>;
@@ -285,7 +284,6 @@ const CanvasDrawOverImage: React.FC = () => {
             />
             <canvas
               ref={canvasRef}
-              style={{ touchAction: "none" }}
               className="absolute top-0 left-0 pointer-events-auto"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}

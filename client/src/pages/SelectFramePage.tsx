@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import { useGetFrames } from "../api/frame";
 import FourFrame from "../components/Layouts/FourFrame";
 import MainLayout from "../components/Layouts/MainLayout";
 import SixFrame from "../components/Layouts/SixFrame";
@@ -13,10 +12,8 @@ const sixFrameId = 2;
 const SelectFrameScreen: React.FC = () => {
   usePageExitEvent("SelectFramePage");
   const navigate = useNavigate();
-  const { data } = useGetFrames();
-  const setSelectedFrame = useFrameStore((state) => state.setSelectedFrame);
 
-  console.log(data);
+  const setSelectedFrame = useFrameStore((state) => state.setSelectedFrame);
 
   return (
     <MainLayout
