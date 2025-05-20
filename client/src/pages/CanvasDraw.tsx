@@ -286,7 +286,7 @@ const CanvasDrawOverImage: React.FC = () => {
       description={[remainingTime + "초 남음"]}
       footer={<Button label="완료" onClick={handleComplete} />}
     >
-      <div className="relative w-[380px] h-[calc(100vh-200px)] flex justify-center items-center bg-gray-100 overflow-auto">
+      <div className="relative w-full h-[calc(100vh-200px)] flex justify-center items-center bg-gray-100 overflow-auto">
         {data && (
           <>
             <img
