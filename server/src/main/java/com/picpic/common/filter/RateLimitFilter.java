@@ -71,7 +71,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
 	private Bucket createLoginBucket(String ip) {
 		return Bucket.builder()
-			.addLimit(Bandwidth.classic(10, Refill.intervally(10, Duration.ofMinutes(1))))
+			.addLimit(Bandwidth.classic(100, Refill.intervally(10, Duration.ofSeconds(1))))
 			.build();
 	}
 
