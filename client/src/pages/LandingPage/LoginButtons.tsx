@@ -29,21 +29,24 @@ const LoginButtons: React.FC = () => {
   //   alert("카카오 로그인은 추후 지원됩니다.");
   // };
 
-  // // SSAFY 로그인 (추후 구현)
   // const handleSSAFYLogin = () => {
   //   sendEvent("Login", "Click", "SSAFY");
-  //   // SSAFY 로그인 로직 추가 예정
-  //   alert("SSAFY 로그인은 추후 지원됩니다.");
+  //   const ssafyLoginUrl = `https://project.ssafy.com/oauth/sso-check?client_id=${process.env.REACT_APP_SSAFY_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_SSAFY_BACKEND_URL}&response_type=code`;
+  //   window.location.href = ssafyLoginUrl;
   // };
 
   return (
     <div className="w-full flex flex-col gap-4">
-      {/* <Button
+      {/* { <Button
         label="카카오 로그인"
         onClick={handleKakaoLogin}
         className="!bg-kakao !text-black"
-      />
-      <Button label="SSAFY 로그인" onClick={handleLogin} className="bg-main2" /> */}
+      /> */}
+      {/* <Button
+        label="SSAFY 로그인"
+        onClick={handleSSAFYLogin}
+        className="bg-main2"
+      /> */}
       <Button label="게스트 로그인" onClick={handleLogin} />
     </div>
   );
