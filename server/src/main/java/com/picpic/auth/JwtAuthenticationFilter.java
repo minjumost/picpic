@@ -64,13 +64,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				"/api/v1/auth/guest"
 			)
 		);
+		put(
+			HttpMethod.GET, Arrays.asList(
+				"/api/v1/oauth/ssafy/**"
+			)
+
+		);
 	}};
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		// 현재 요청의 HTTP 메서드를 가져옵니다.
 		HttpMethod currentMethod = HttpMethod.valueOf(request.getMethod());
+		String uri = request.getRequestURI();
 
+		// ✅ SSAFY 인증 관련 요청은 필터 타지 않도록
+		if (uri.startsWith("/api/v1/oauth/ssafy")) {
+			return true;
+		}
+
+		// 기존 로직 유지 (method + 패턴 기반 스킵 처리)
 		if (methodUrlPatterns.containsKey(currentMethod)) {
 			List<String> urlPatterns = methodUrlPatterns.get(currentMethod);
 			for (String pattern : urlPatterns) {

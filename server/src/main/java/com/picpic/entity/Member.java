@@ -43,6 +43,9 @@ public class Member {
 	@Column(unique = true, length = 100)
 	private String email;
 
+	@Column(name = "ssafy_user_id", unique = true, length = 50)
+	private String ssafyUserId;
+
 	@Column(nullable = false)
 	private Role role;
 
@@ -61,7 +64,8 @@ public class Member {
 	public enum Role {
 		ADMIN(0),
 		GUEST(1),
-		KAKAO(2);
+		KAKAO(2),
+		SSAFY(3);
 
 		private final int code;
 

@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -41,11 +40,15 @@ public class SecurityConfig {
 			.addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
 			.addFilterBefore(logFilter, ExceptionHandlerFilter.class)
 
-			.authorizeHttpRequests(
-				authorizeRequests ->
-					authorizeRequests.requestMatchers(HttpMethod.POST, "api/v1/auth/guest")
-						.permitAll()
-						.anyRequest().authenticated()).build();
+			.authorizeHttpRequests(authorizeRequests ->
+				authorizeRequests
+					.requestMatchers(
+						"/api/v1/oauth/ssafy/callback",
+						"/api/v1/oauth/ssafy/refresh",
+						"/api/v1/oauth/**",      // OAuth 전부 허용
+						"/api/v1/auth/guest"
+					).permitAll()
+					.anyRequest().authenticated()).build();
 
 	}
 
