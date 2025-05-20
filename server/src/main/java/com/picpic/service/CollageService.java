@@ -14,6 +14,7 @@ import com.picpic.entity.Member;
 import com.picpic.entity.Session;
 import com.picpic.repository.CollageRepository;
 import com.picpic.repository.MemberRepository;
+import com.picpic.repository.ParticipantRepository;
 import com.picpic.repository.PhotoRepository;
 import com.picpic.repository.SessionRepository;
 
@@ -30,12 +31,23 @@ public class CollageService {
 	private final SessionRepository sessionRepository;
 	private final PhotoRepository photoRepository;
 	private final MemberRepository memberRepository;
+	private final ParticipantRepository participantRepository;
 
 	@Transactional
-	public void createCollage(Long sessionId, String collageImageUrl) {
+	public void createCollage(Long memberId, Long sessionId, String collageImageUrl) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.FORBIDDEN_ACCESS)
+		);
+
 		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
+
+		Boolean isParticipant = participantRepository.existsBySessionAndMember(session, member);
+
+		if (!isParticipant) {
+			throw new ApiException(ErrorCode.FORBIDDEN_ACCESS);
+		}
 
 		Optional<Collage> optionalCollage = collageRepository.findBySession(session);
 
@@ -55,10 +67,20 @@ public class CollageService {
 	}
 
 	@Transactional
-	public GetCollageResponseDTO getCollages(Long sessionId) {
+	public GetCollageResponseDTO getCollages(Long memberId, Long sessionId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.FORBIDDEN_ACCESS)
+		);
+
 		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
+
+		Boolean isParticipant = participantRepository.existsBySessionAndMember(session, member);
+
+		if (!isParticipant) {
+			throw new ApiException(ErrorCode.FORBIDDEN_ACCESS);
+		}
 
 		Collage collage = collageRepository.findBySession(session).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_COLLAGE)
@@ -72,7 +94,11 @@ public class CollageService {
 	}
 
 	@Transactional
-	public void updateCollages(Long sessionId, String collageImageUrl) {
+	public void updateCollages(Long memberId, Long sessionId, String collageImageUrl) {
+		Member member = memberRepository.findById(memberId).orElseThrow(
+			() -> new ApiException(ErrorCode.FORBIDDEN_ACCESS)
+		);
+		
 		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
 		);
@@ -80,6 +106,12 @@ public class CollageService {
 		Collage collage = collageRepository.findBySession(session).orElseThrow(
 			() -> new ApiException(ErrorCode.NOT_FOUND_COLLAGE)
 		);
+
+		Boolean isParticipant = participantRepository.existsBySessionAndMember(session, member);
+
+		if (!isParticipant) {
+			throw new ApiException(ErrorCode.FORBIDDEN_ACCESS);
+		}
 
 		collage.setCollageImageUrl(collageImageUrl);
 

@@ -151,6 +151,49 @@ const CanvasDrawOverImage: React.FC = () => {
     }
   };
 
+  const getTouchOffset = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const touch = e.touches[0];
+    return {
+      x: (touch.clientX - rect.left) * scaleX,
+      y: (touch.clientY - rect.top) * scaleY,
+    };
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    isDrawing.current = true;
+    const { x, y } = getTouchOffset(e);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setStrokePoints([{ x, y }]);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    if (!isDrawing.current) return;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    const { x, y } = getTouchOffset(e);
+    ctx.globalCompositeOperation =
+      mode === "PEN" ? "source-over" : "destination-out";
+    ctx.strokeStyle = mode === "PEN" ? color : "rgba(0,0,0,1)";
+    ctx.lineWidth = lineWidth;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    setStrokePoints((prev) => [...prev, { x, y }]);
+  };
+
+  const handleTouchEnd = () => {
+    handleMouseUp(); // 로직 동일하므로 재사용
+  };
+
   const drawFromServer = (data: DrawStrokePayload) => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx || data.points.length < 2) return;
@@ -226,9 +269,9 @@ const CanvasDrawOverImage: React.FC = () => {
   return (
     <MainLayout
       title="사진을 꾸며주세요"
+      description={[remainingTime + "초 남음"]}
       footer={<Button label="완료" onClick={handleComplete} />}
     >
-      <p>{remainingTime}초 남음</p>
       <div className="relative w-full h-[calc(100vh-200px)] flex justify-center items-center bg-gray-100 overflow-auto">
         {data && (
           <>
@@ -245,6 +288,9 @@ const CanvasDrawOverImage: React.FC = () => {
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
             />
           </>
         )}
