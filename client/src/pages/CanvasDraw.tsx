@@ -219,7 +219,6 @@ const CanvasDrawOverImage: React.FC = () => {
     await uploadToS3(presignedUrl, file);
     await postImage.mutateAsync({ sessionId, collageImageUrl: imageUrl });
     sendCollageStart(sessionId, sessionCode);
-    navigate(`/final?r=${sessionCode}`, { replace: true });
   };
 
   if (isLoading) return <div>로딩 중</div>;

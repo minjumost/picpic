@@ -11,7 +11,6 @@ const getFinalImages = async (
   const response = await client.get<ApiResponse<FinalImageResponse>>(
     `api/v1/collages/${sessionId}`
   );
-  console.log(response);
   return response.data.result;
 };
 

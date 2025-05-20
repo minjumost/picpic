@@ -16,11 +16,9 @@ const LoginButtons: React.FC = () => {
         navigate("/frame", { replace: true });
         sessionStorage.setItem("isOwner", "1");
         sessionStorage.setItem("memberId", `${data.memberId}`);
-        console.log("로그인 성공:", data);
       },
-      onError: (error) => {
-        console.error("에러 발생:", error);
-      },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onError: (_error) => {},
     });
   };
 

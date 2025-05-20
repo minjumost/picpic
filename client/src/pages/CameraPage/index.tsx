@@ -45,7 +45,6 @@ const CameraPage: React.FC = () => {
         videoRef.current.srcObject = null;
         setShowVideo(false);
       }
-      console.log("비디오 스트림 중지됨");
     }
     streamRef.current = null;
   }, []);

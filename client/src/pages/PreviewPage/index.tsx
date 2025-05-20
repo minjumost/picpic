@@ -58,7 +58,6 @@ const PreviewPage = () => {
   };
 
   const uploadToS3 = async (presignedUrl: string, file: File) => {
-    console.log(file);
     await fetch(presignedUrl, {
       method: "PUT",
       headers: {
@@ -78,7 +77,7 @@ const PreviewPage = () => {
       logging: false,
     });
     const dataUrl = canvas.toDataURL("image/png");
-    console.log("캡쳐본: ", dataUrl);
+
     const fileName = `${getCurrentDateTimeString()}.png`;
     const file = dataURLtoFile(dataUrl, fileName);
 
@@ -95,8 +94,6 @@ const PreviewPage = () => {
         sessionId: sessionId,
         collageImageUrl: imageUrl,
       });
-
-      console.log("성공");
     } catch (error) {
       console.error("에러 발생:", error);
     }
