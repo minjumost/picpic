@@ -58,6 +58,7 @@ const CanvasDrawOverImage: React.FC = () => {
     []
   );
   const [remainingTime, setRemainingTime] = useState<number>(0);
+  const hasCompletedRef = useRef(false);
 
   usePageExitEvent("CanvasDraw");
 
@@ -71,6 +72,16 @@ const CanvasDrawOverImage: React.FC = () => {
     }, 1000);
     return () => clearInterval(timer);
   }, [startTime, duration]);
+
+  useEffect(() => {
+    if (remainingTime === 1 && !hasCompletedRef.current) {
+      hasCompletedRef.current = true;
+      handleComplete().then(() => {
+        console.log("자동 실행 완료됨");
+        navigate(`/final?r=${sessionCode}`, { replace: true });
+      });
+    }
+  }, [remainingTime]);
 
   useEffect(() => {
     if (!imageRef.current || !canvasRef.current) return;
