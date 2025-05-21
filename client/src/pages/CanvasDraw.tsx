@@ -325,7 +325,7 @@ const CanvasDrawOverImage: React.FC = () => {
           )}
         </div>
       </MainLayout>
-      <div className="relative bottom-[120px] left-[10px] z-50 flex flex-col items-start">
+      <div className="relative bottom-36 left-[10px] z-50 flex flex-col items-start">
         <div className="relative flex flex-col items-start">
           {showToolbar && (
             <div className="absolute bottom-full mb-2 left-0 bg-white rounded-xl shadow-xl p-4 w-[280px] flex flex-col gap-4 border border-gray-200">
