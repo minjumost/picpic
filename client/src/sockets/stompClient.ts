@@ -64,8 +64,6 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
         if (type === "4006") {
           alert(message);
           window.location.replace("/");
-        } else if (type === "4008") {
-          alert(message);
         }
       });
 
