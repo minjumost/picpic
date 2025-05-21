@@ -30,6 +30,8 @@ const colors = [
 ];
 
 const CanvasDrawOverImage: React.FC = () => {
+  const [showToolbar, setShowToolbar] = useState<boolean>(false);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const isDrawing = useRef(false);
@@ -292,91 +294,107 @@ const CanvasDrawOverImage: React.FC = () => {
   if (isLoading) return <div>로딩 중</div>;
 
   return (
-    <MainLayout
-      title="사진을 꾸며주세요"
-      description={[remainingTime + "초 남음"]}
-      footer={<Button label="완료" onClick={handleComplete} />}
-    >
-      <div className="relative w-full h-[calc(100vh-200px)] flex justify-center items-center bg-gray-100 overflow-auto">
-        {data && (
-          <>
-            <img
-              ref={imageRef}
-              src={data.collageImageUrl}
-              alt="base"
-              className="absolute top-0 left-0 object-contain"
-              style={{ maxHeight: "100%", height: "100%" }}
-            />
-            <canvas
-              ref={canvasRef}
-              className="absolute top-0 left-0 pointer-events-auto"
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            />
-          </>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-4 mt-6">
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex gap-4">
-            <button
-              className={`px-4 py-2 rounded-lg font-bold ${
-                mode === "PEN"
-                  ? "bg-main1 text-white"
-                  : "bg-gray-100 text-black"
-              }`}
-              onClick={() => setMode("PEN")}
-            >
-              펜
-            </button>
-            <button
-              className={`px-4 rounded-lg font-bold ${
-                mode === "ERASER"
-                  ? "bg-main1 text-white"
-                  : "bg-gray-100 text-black"
-              }`}
-              onClick={() => setMode("ERASER")}
-            >
-              지우개
-            </button>
-          </div>
-          <div className="flex items-center gap-4">
-            {[15, 30, 60, 120].map((w) => (
-              <button
-                key={w}
-                onClick={() => setLineWidth(w)}
-                className={`w-12 h-12 rounded-full flex items-center justify-center border ${
-                  lineWidth === w ? "border-main1" : "border-gray-300"
-                }`}
-              >
-                <div
-                  className="rounded-full bg-black max-w-9 max-h-9"
-                  style={{ width: `${w / 3}px`, height: `${w / 3}px` }}
-                />
-              </button>
-            ))}
-          </div>
+    <>
+      <MainLayout
+        title="사진을 꾸며주세요"
+        description={[remainingTime + "초 남음"]}
+        footer={<Button label="완료" onClick={handleComplete} />}
+      >
+        <div className="relative w-full h-[calc(100vh-280px)] flex justify-center items-center bg-gray-100 overflow-auto">
+          {data && (
+            <>
+              <img
+                ref={imageRef}
+                src={data.collageImageUrl}
+                alt="base"
+                className="absolute top-0 left-0 object-contain"
+                style={{ maxHeight: "100%", height: "100%" }}
+              />
+              <canvas
+                ref={canvasRef}
+                style={{ touchAction: "none" }}
+                className="absolute top-0 left-0 pointer-events-auto"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              />
+            </>
+          )}
         </div>
-
-        <div className="flex gap-2 flex-wrap justify-center">
-          {colors.map((c, idx) => (
-            <div
-              key={idx}
-              onClick={() => setColor(c)}
-              className={`w-12 h-12 rounded-full cursor-pointer border-2 ${
-                color === c ? "border-main1" : "border-gray-300"
-              }`}
-              style={{ backgroundColor: c }}
-            />
-          ))}
+      </MainLayout>
+      <div className="relative bottom-36 left-[10px] z-50 flex flex-col items-start">
+        <div className="relative flex flex-col items-start">
+          {showToolbar && (
+            <div className="absolute bottom-full mb-2 left-0 bg-white rounded-xl shadow-xl p-4 w-[280px] flex flex-col gap-4 border border-gray-200">
+              <div className="flex gap-2 mb-2">
+                <button
+                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${
+                    mode === "PEN"
+                      ? "bg-main1 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                  onClick={() => setMode("PEN")}
+                >
+                  ✏️ 펜
+                </button>
+                <button
+                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold ${
+                    mode === "ERASER"
+                      ? "bg-main1 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                  onClick={() => setMode("ERASER")}
+                >
+                  🧽 지우개
+                </button>
+              </div>
+              <div className="flex items-center gap-3 overflow-x-auto">
+                {[15, 30, 60, 120].map((w) => (
+                  <button
+                    key={w}
+                    onClick={() => setLineWidth(w)}
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center ${
+                      lineWidth === w ? "border-main1" : "border-gray-300"
+                    }`}
+                  >
+                    <div
+                      className="rounded-full bg-black"
+                      style={{ width: `${w / 4}px`, height: `${w / 4}px` }}
+                    />
+                  </button>
+                ))}
+              </div>
+              {mode === "PEN" && (
+                <div className="flex gap-2 flex-wrap pt-2">
+                  {colors.map((c, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        setColor(c);
+                        setShowToolbar(false);
+                      }}
+                      className={`w-8 h-8 rounded-full cursor-pointer border-2 ${
+                        color === c ? "border-main1" : "border-gray-300"
+                      }`}
+                      style={{ backgroundColor: c }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          <button
+            onClick={() => setShowToolbar(!showToolbar)}
+            className="w-14 h-14 rounded-full bg-main1/10 text-white shadow-md flex items-center justify-center hover:bg-main1 cursor-pointer"
+          >
+            ✏️
+          </button>
         </div>
       </div>
-    </MainLayout>
+    </>
   );
 };
 
