@@ -55,10 +55,16 @@ const PhotoCapturePage: React.FC = () => {
       return;
     }
     sendPhotoStart(sessionId, sessionCode, slotIndex);
-    navigate(`/camera?r=${sessionCode}&slot=${slotIndex}`, { replace: true });
   };
 
   const handlePhotoStart = (data: SlotInfo & { slotIndex: number }) => {
+    const mId = Number(sessionStorage.getItem("memberId"));
+    if (mId === data.memberId) {
+      navigate(`/camera?r=${sessionCode}&slot=${data.slotIndex}`, {
+        replace: true,
+      });
+      return;
+    }
     setSlots((prev) => {
       const updated = [...prev];
       updated[data.slotIndex] = {

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import logo from "../../assets/logo.png";
+import stompClient from "../../sockets/stompClient";
 
 interface MainLayoutProps {
   title?: string;
@@ -19,6 +20,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({
   const navigate = useNavigate();
 
   const handleLogoClick = () => {
+    stompClient.deactivate();
+    sessionStorage.clear();
     navigate("/", { replace: true });
   };
 

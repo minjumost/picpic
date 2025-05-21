@@ -39,6 +39,7 @@ const FourFrame: React.FC<FrameProps> = ({ photos, captureRef, onClick }) => {
         <div className="bg-white w-full h-full flex flex-col gap-[1%] p-[5%] items-center">
           {fullSlots.map(({ slotIndex, url, profileImageUrl, color }) => (
             <div
+              id={`${slotIndex}`}
               key={slotIndex}
               onClick={() => onClick?.(slotIndex)}
               className="relative w-full h-full flex items-center justify-center overflow-hidden bg-gray-200 border"
