@@ -60,8 +60,8 @@ const WaitingPage: React.FC = () => {
         if (data.isOwner) {
           stompClient.deactivate();
           sessionStorage.clear();
-          window.location.href = "/";
           alert("방장이 나가서 세션이 종료되었습니다.");
+          window.location.href = "/";
         }
         setSlots((prev) =>
           prev.map((slot) =>
