@@ -26,6 +26,7 @@ interface PhotoInfo {
 
 const PhotoCapturePage: React.FC = () => {
   const navigate = useNavigate();
+  const [isClick, setIsClick] = useState(false);
 
   const sessionId = Number(sessionStorage.getItem("sessionId"));
   const sessionCode = useSessionCode();
@@ -50,15 +51,22 @@ const PhotoCapturePage: React.FC = () => {
     slots.filter((slot) => !!slot.url).length === expectedSlotCount;
 
   const handleSlotClick = (slotIndex: number) => {
+    setIsClick(true);
     const slot = slots[slotIndex];
     if (slot.memberId || slot.url) {
       return;
     }
     sendPhotoStart(sessionId, sessionCode, slotIndex);
-    navigate(`/camera?r=${sessionCode}&slot=${slotIndex}`, { replace: true });
   };
 
   const handlePhotoStart = (data: SlotInfo & { slotIndex: number }) => {
+    if (isClick) {
+      setIsClick(false);
+      navigate(`/camera?r=${sessionCode}&slot=${data.slotIndex}`, {
+        replace: true,
+      });
+      return;
+    }
     setSlots((prev) => {
       const updated = [...prev];
       updated[data.slotIndex] = {
