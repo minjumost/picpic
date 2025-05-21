@@ -18,6 +18,9 @@ export const setHandlers = (newHandlers: HandlerMap) => {
 const stompClient = new Client({
   webSocketFactory: () =>
     new SockJS(`${import.meta.env.VITE_BASE_URL}/connection`),
+  debug: function (str) {
+    console.log("[STOMP DEBUG] " + str);
+  },
   connectHeaders: {},
   reconnectDelay: 5000,
   heartbeatIncoming: 30000,
@@ -54,8 +57,15 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
         }
       );
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      stompClient.subscribe("/user/private/error", (_message: IMessage) => {});
+      stompClient.subscribe("/user/private/error", (msg: IMessage) => {
+        const parsed = JSON.parse(msg.body);
+        console.log(parsed);
+        const { type, message } = parsed;
+        if (type === "4006") {
+          alert(message);
+          window.location.replace("/");
+        }
+      });
 
       resolve();
     };
