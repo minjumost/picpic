@@ -18,9 +18,7 @@ export const setHandlers = (newHandlers: HandlerMap) => {
 const stompClient = new Client({
   webSocketFactory: () =>
     new SockJS(`${import.meta.env.VITE_BASE_URL}/connection`),
-  debug: function (str) {
-    console.log("[STOMP DEBUG] " + str);
-  },
+
   connectHeaders: {},
   reconnectDelay: 5000,
   heartbeatIncoming: 30000,
@@ -48,18 +46,15 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
             const handler = handlers[type];
             if (handler) {
               handler(parsed);
-            } else {
-              console.warn("👻 No handler for type:", type);
             }
-          } catch (e) {
-            console.error("❌ Failed to parse STOMP message:", e);
+          } catch {
+            /* empty */
           }
         }
       );
 
       stompClient.subscribe("/user/private/error", (msg: IMessage) => {
         const parsed = JSON.parse(msg.body);
-        console.log(parsed);
         const { type, message } = parsed;
         if (type === "4006") {
           alert(message);
@@ -73,7 +68,6 @@ export const initStompSession = (sessionCode: string): Promise<void> => {
     };
 
     stompClient.onStompError = (frame) => {
-      console.error("STOMP Error:", frame);
       reject(frame);
     };
 

@@ -94,8 +94,8 @@ const PreviewPage = () => {
         sessionId: sessionId,
         collageImageUrl: imageUrl,
       });
-    } catch (error) {
-      console.error("에러 발생:", error);
+    } catch {
+      /* empty */
     }
   };
 

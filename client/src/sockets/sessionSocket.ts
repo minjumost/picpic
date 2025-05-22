@@ -20,7 +20,6 @@ export const connectAndEnterSession = (
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     if (!stompClient.connected) {
-      console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
       return;
     }
     stompClient.publish({
@@ -31,7 +30,6 @@ export const connectAndEnterSession = (
     resolve();
 
     stompClient.onStompError = (frame) => {
-      console.error("STOMP Error:", frame);
       reject(frame);
     };
   });
@@ -39,7 +37,6 @@ export const connectAndEnterSession = (
 
 export const sendSessionStart = (sessionId: number, sessionCode: string) => {
   if (!stompClient.connected) {
-    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
     return;
   }
 
@@ -51,7 +48,6 @@ export const sendSessionStart = (sessionId: number, sessionCode: string) => {
 
 export const sendDrawStroke = (payload: DrawStrokePayload) => {
   if (!stompClient || !stompClient.connected) {
-    console.warn("❌ STOMP 연결되지 않음. 메시지를 보낼 수 없습니다.");
     return;
   }
 
@@ -69,7 +65,6 @@ export const sendPhotoStart = (
   slotIndex: number
 ) => {
   if (!stompClient.connected) {
-    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
     return;
   }
 
@@ -90,7 +85,6 @@ export const sendPhotoUpload = (
   url: string
 ) => {
   if (!stompClient.connected) {
-    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
     return;
   }
 
@@ -107,7 +101,6 @@ export const sendPhotoUpload = (
 
 export const sendDrawStart = (sessionId: number, sessionCode: string) => {
   if (!stompClient.connected) {
-    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
     return;
   }
 
@@ -119,7 +112,6 @@ export const sendDrawStart = (sessionId: number, sessionCode: string) => {
 
 export const sendDrawReady = (sessionId: number, sessionCode: string) => {
   if (!stompClient.connected) {
-    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
     return;
   }
 
@@ -131,7 +123,6 @@ export const sendDrawReady = (sessionId: number, sessionCode: string) => {
 
 export const sendCollageStart = (sessionId: number, sessionCode: string) => {
   if (!stompClient.connected) {
-    console.warn("❌ stompClient가 아직 연결되지 않았습니다.");
     return;
   }
 

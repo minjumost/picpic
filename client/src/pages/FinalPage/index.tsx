@@ -64,8 +64,9 @@ const FinalPage = () => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("다운로드 실패", error);
+      /* empty */
     }
   };
 

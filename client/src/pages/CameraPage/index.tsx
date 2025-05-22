@@ -63,8 +63,8 @@ const CameraPage: React.FC = () => {
           videoRef.current.srcObject = stream;
           streamRef.current = stream;
         }
-      } catch (err) {
-        console.error("카메라 접근 실패:", err);
+      } catch {
+        // 카메라 접근 실패
       }
     };
 
@@ -144,8 +144,9 @@ const CameraPage: React.FC = () => {
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
-    } catch (err) {
-      console.error("재촬영 시 카메라 재시작 실패:", err);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_err) {
+      /* empty */
     }
   };
 
@@ -169,9 +170,9 @@ const CameraPage: React.FC = () => {
       sendPhotoUpload(sessionId, sessionCode, slotIndex, imageUrl);
       // 4. 화면 이동 등
       navigate(`/photo?r=${sessionCode}`, { replace: true });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       alert("업로드 실패");
-      console.error(err);
     } finally {
       setUploading(false);
     }

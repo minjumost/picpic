@@ -12,10 +12,7 @@ export const handleError = (error: unknown) => {
         alert("너무 많은 요청을 보냈어요. 잠시 후 다시 시도해주세요");
         break;
       default:
-        console.error("Unexpected error:", error);
         break;
     }
-  } else {
-    console.error("Unknown error:", error);
   }
 };

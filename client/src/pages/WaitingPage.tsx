@@ -77,7 +77,6 @@ const WaitingPage: React.FC = () => {
   const handleStartPhoto = () => {
     const sessionId = Number(sessionStorage.getItem("sessionId"));
     if (!sessionId || !sessionCode) {
-      console.error("세션 정보가 없습니다.");
       return;
     }
     sendSessionStart(sessionId, sessionCode);
