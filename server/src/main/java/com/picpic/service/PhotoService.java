@@ -81,39 +81,48 @@ public class PhotoService {
 	public PhotoUploadResponseDTO uploadPhoto(Long sessionId, Long memberId,
 		PhotoUploadRequestDTO photoUploadRequestDTO) {
 
-		Member member = memberRepository.findById(memberId).orElseThrow(
-			() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
-		);
-
-		Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
-			() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
-		);
-
-		Photo photo = photoRepository.findBySessionAndSlotIndex(session, photoUploadRequestDTO.slotIndex())
-			.orElseThrow(
-				() -> new ApiException(ErrorCode.NOT_FOUND_PHOTO)
+		try {
+			Member member = memberRepository.findById(memberId).orElseThrow(
+				() -> new ApiException(ErrorCode.NOT_FOUND_MEMBER)
 			);
 
-		if (!photo.getMember().getMemberId().equals(memberId)) {
-			throw new ApiException(ErrorCode.FORBIDDEN_ACCESS);
+			Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(
+				() -> new ApiException(ErrorCode.NOT_FOUND_SESSION)
+			);
+
+			Photo photo = photoRepository.findBySessionAndSlotIndex(session, photoUploadRequestDTO.slotIndex())
+				.orElseThrow(
+					() -> new ApiException(ErrorCode.NOT_FOUND_PHOTO)
+				);
+
+			if (!photo.getMember().getMemberId().equals(memberId)) {
+				throw new ApiException(ErrorCode.FORBIDDEN_ACCESS);
+			}
+
+			photo.setPhotoImageUrl(photoUploadRequestDTO.url());
+
+			// 모든 슬롯의 포토 조회
+			List<Photo> photos = photoRepository.findAllBySession(session);
+
+			// 각 photo를 PhotoInfoDTO로 매핑
+			List<Photo> finalPhotos = photos; // Java 17 이상이면 바로 .toList() 가능
+			List<PhotoInfoDTO> photoList = finalPhotos.stream()
+				.map(p -> new PhotoInfoDTO(p.getSlotIndex(), p.getPhotoImageUrl()))
+				.toList();
+
+			PhotoUploadResponseDTO res = new PhotoUploadResponseDTO("photo_upload", photoList);
+
+			MDC.put("sessionId", sessionId.toString());
+			log.info("사진 업로드 완료");
+
+			return res;
+
+		} catch (jakarta.persistence.OptimisticLockException | org.hibernate.StaleObjectStateException e) {
+			// 낙관적 락 충돌 발생 시 사용자에게 알려줌
+			log.warn("동시 수정 충돌 발생: sessionId={}, memberId={}, slotIndex={}", sessionId, memberId,
+				photoUploadRequestDTO.slotIndex());
+			throw new ApiException(ErrorCode.CONFLICT_EDIT); // 필요 시 새로운 ErrorCode 정의
 		}
-
-		photo.setPhotoImageUrl(photoUploadRequestDTO.url());
-
-		// 모든 슬롯의 포토 조회
-		List<Photo> photos = photoRepository.findAllBySession(session);
-
-		// 각 photo를 PhotoInfoDTO로 매핑
-		List<PhotoInfoDTO> photoList = photos.stream()
-			.map(p -> new PhotoInfoDTO(p.getSlotIndex(), p.getPhotoImageUrl()))
-			.toList();
-
-		PhotoUploadResponseDTO res = new PhotoUploadResponseDTO("photo_upload", photoList);
-
-		MDC.put("sessionId", sessionId.toString());
-		log.info("사진 업로드 완료");
-
-		return res;
 	}
 
 	@Transactional

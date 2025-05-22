@@ -34,7 +34,7 @@ public enum ErrorCode {
 	ALREADY_USED("4008", HttpStatus.BAD_REQUEST, "이미 선택된 슬롯입니다."),
 	INVALID_JSON_FORMAT("4009", HttpStatus.BAD_REQUEST, "잘못된 JSON형식 입니다."),
 	NOT_PARTICIPANT("4010", HttpStatus.BAD_REQUEST, "참여자가 아닙니다."),
-
+	CONFLICT_EDIT("4011", HttpStatus.BAD_REQUEST, "참여자 충돌입니다."),
 	// ⚙️ 서버 오류
 	INTERNAL_ERROR("5000", HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류입니다."),
 
